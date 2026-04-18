@@ -14,7 +14,9 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.4.0",
+    "@better-auth/drizzle-adapter": "^1.6.5",
     "@neondatabase/serverless": "^1.0.2",
+    "better-auth": "^1.6.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",

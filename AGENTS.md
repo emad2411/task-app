@@ -6,10 +6,10 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ## Project Summary
 
-**TaskFlow** — A responsive task management web application for individual users. Built with Next.js 16 App Router, React 19, Tailwind CSS v4, shadcn/ui, Neon PostgreSQL, Drizzle ORM, Better Auth, and Zod v4.
+**TaskFlow** — A responsive task management web application for individual users. Built with Next.js 16 App Router, React 19, Tailwind CSS v4, shadcn/ui, Neon PostgreSQL, Drizzle ORM, Better Auth, Resend, and Zod v4.
 
 ### Core Features (MVP)
-- Authentication (sign up, sign in, password reset, email verification)
+- Authentication (sign up, sign in, password reset via Resend, email verification)
 - Dashboard overview (tasks due, overdue, completed, priority distribution)
 - Task CRUD with status, priority, due dates, categories
 - Category management
@@ -17,7 +17,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - User settings (theme, timezone, preferences)
 
 ### Current Status
-Phase 1 complete: Project scaffolded with Next.js 16, Tailwind v4, shadcn/ui, route groups, ThemeProvider, proxy.ts for auth protection, and env configuration.
+Phase 1 complete (partial): Project scaffolded with Next.js 16, Tailwind v4, shadcn/ui, route groups, ThemeProvider, proxy.ts for auth protection, and env configuration. Better Auth core setup and Resend email integration pending (P1-F4, P1-F5).
 
 ---
 
@@ -146,6 +146,8 @@ Required (see `.env.example`):
 - `DATABASE_URL_UNPOOLED`
 - `BETTER_AUTH_SECRET`
 - `BETTER_AUTH_URL`
+- `RESEND_API_KEY`
+- `RESEND_FROM_EMAIL`
 
 ---
 

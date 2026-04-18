@@ -1,4 +1,4 @@
-# Feature: Better Auth Configuration
+# Feature: Better Auth Core Setup
 
 **Phase:** 1 — Foundation  
 **Feature ID:** P1-F4  
@@ -9,29 +9,34 @@
 
 ## 1) Overview
 
-This feature configures Better Auth for email/password authentication, integrates with the Drizzle adapter using the schema from P1-F3, and establishes auth client/server setup. This is the authentication foundation that Phase 2 features will build upon.
+This feature configures the Better Auth core: server instance with email/password authenticator, Drizzle adapter integration, auth client for browser usage, session utilities, API route handler, and proxy updates. This establishes the authentication foundation that all other features build upon.
+
+Password reset, forgot password, change password, and email verification flows are covered in **P1-F5**.
 
 ---
 
 ## 2) Scope
 
 ### In Scope
-- Install Better Auth and Drizzle adapter dependencies
+- Check the latest docs of Better Auth and Drizzle adapter using the Context7 MCP
+- Install Better Auth and Drizzle adapter dependencies (separate packages)
+- Fix the `sessions` table schema (add missing `token` column required by Better Auth)
 - Configure Better Auth server instance with email/password authenticator
-- Configure Better Auth client for browser usage
+- Configure Better Auth client for browser usage (sign up, sign in, sign out, useSession only)
 - Set up auth API route handlers
-- Integrate with Drizzle adapter (using schema from P1-F3)
+- Integrate with Drizzle adapter (using schema from P1-F3, with plural table name mapping)
 - Configure session management and cookie settings
-- Set up email verification flow (configurable)
-- Set up password reset flow
-- Set up password change flow
 - Create server-side session utilities
-- Update `proxy.ts` for session checks
-- Configure email placeholder for development
+- Update `proxy.ts` for session checks using `getSessionCookie` helper
+- Configure environment variables
 
 ### Out of Scope
-- Auth page UI components (covered in Phase 2)
-- Actual email delivery (use console/dev mode for MVP)
+- Password reset flow (P1-F5)
+- Forgot password flow (P1-F5)
+- Change password flow (P1-F5)
+- Email verification flow (P1-F5)
+- Resend email service integration (P1-F5)
+- Auth page UI components (Phase 2)
 - OAuth providers (future scope)
 
 ---
@@ -43,8 +48,7 @@ This feature configures Better Auth for email/password authentication, integrate
 | US-1 | Developer | Configure Better Auth with email/password | Users can sign up and sign in securely |
 | US-2 | Developer | Have auth client utilities | Frontend can call auth methods easily |
 | US-3 | Developer | Check session on the server | Protected routes and queries are secure |
-| US-4 | User | Request a password reset | I can recover access if I forget my password |
-| US-5 | User | Verify my email (optional) | My account is confirmed |
+| US-4 | Developer | Have API route handlers | Auth endpoints work out of the box |
 
 ---
 
@@ -53,17 +57,42 @@ This feature configures Better Auth for email/password authentication, integrate
 ### 4.1 Dependencies
 
 ```bash
-npm install better-auth
+npm install better-auth @better-auth/drizzle-adapter
 ```
 
-> Drizzle adapter is included with Better Auth.
+> **Important:** The Drizzle adapter is a **separate package** as of Better Auth v1.4+. The import path `better-auth/adapters/drizzle` still works, but `@better-auth/drizzle-adapter` must be installed.
 
-### 4.2 Better Auth Server Configuration
+### 4.2 Schema Fix — Add Missing `token` Column
+
+The `sessions` table created in P1-F3 is missing the `token` column, which Better Auth requires for session cookie storage. Before proceeding, update `lib/db/schema.ts`:
+
+```typescript
+export const sessions = pgTable("sessions", {
+  id: text("id").primaryKey(),
+  token: text("token").notNull().unique(), // ← ADD THIS — session cookie value
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  expiresAt: timestamp("expires_at").notNull(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+```
+
+Then generate and apply a migration:
+
+```bash
+npx drizzle-kit generate
+npx drizzle-kit migrate
+```
+
+### 4.3 Better Auth Server Configuration
 
 Create `lib/auth/auth.ts`:
 
 ```typescript
-// lib/auth/auth.ts
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
@@ -73,77 +102,88 @@ import * as schema from "@/lib/db/schema";
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
-    schema,
+    schema: {
+      ...schema,
+      user: schema.users,
+      session: schema.sessions,
+      account: schema.accounts,
+      verification: schema.verifications,
+    },
+    usePlural: true,
   }),
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: false, // Set to true if email verification required
+    requireEmailVerification: false,
   },
   session: {
-    expiresIn: 60 * 60 * 24 * 7, // 7 days
-    updateAge: 60 * 60 * 24, // Update session once per day
+    expiresIn: 60 * 60 * 24 * 7, // 7 days (in seconds)
+    updateAge: 60 * 60 * 24,     // 1 day  (in seconds)
     cookieCache: {
       enabled: true,
-      maxAge: 60 * 5, // Cache for 5 minutes
+      maxAge: 60 * 5, // 5 minutes (in seconds)
     },
   },
+  experimental: {
+    joins: true, // 2-3x perf on /get-session — requires Drizzle relations (already defined)
+  },
   plugins: [
-    nextCookies(), // Required for App Router
+    nextCookies(), // Must be the last plugin — handles Set-Cookie for server actions
   ],
   secret: process.env.BETTER_AUTH_SECRET!,
   baseURL: process.env.BETTER_AUTH_URL!,
   trustedOrigins: [
     process.env.BETTER_AUTH_URL!,
-    process.env.NEXT_PUBLIC_APP_URL!,
+    // Include NEXT_PUBLIC_APP_URL only if it differs from BETTER_AUTH_URL (e.g. separate client domain)
+    ...(process.env.NEXT_PUBLIC_APP_URL &&
+    process.env.NEXT_PUBLIC_APP_URL !== process.env.BETTER_AUTH_URL
+      ? [process.env.NEXT_PUBLIC_APP_URL]
+      : []),
   ],
 });
 ```
 
-### 4.3 Auth Client Configuration
+> **Why `usePlural` + explicit mapping?** The existing Drizzle schema uses plural table names (`users`, `sessions`, `accounts`, `verifications`). Better Auth internally expects singular names. The `usePlural: true` option + explicit `schema` mapping ensures the adapter resolves tables correctly.
+
+> **Why `experimental.joins`?** Available since v1.4.0, this enables SQL JOINs for endpoints like `/get-session`, yielding 2-3x performance gains. It requires Drizzle relations — which are already defined in `schema.ts`.
+
+> **Cookie cache trade-off:** With a 5-minute cache, revoked sessions may remain active on other devices for up to 5 minutes. This is acceptable for this application. If immediate revocation becomes critical, reduce `maxAge` or disable `cookieCache`.
+
+> Note: `sendResetPassword` and `sendVerificationEmail` callbacks will be added in P1-F5 when Resend is integrated.
+
+### 4.4 Auth Client Configuration
 
 Create `lib/auth/auth-client.ts`:
 
 ```typescript
-// lib/auth/auth-client.ts
 import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_APP_URL!,
 });
 
-// Export typed hooks and methods
 export const {
   signIn,
   signUp,
   signOut,
   useSession,
 } = authClient;
-
-// Password reset methods
-export const {
-  forgetPassword,
-  resetPassword,
-} = authClient;
-
-// Password change
-export const {
-  changePassword,
-} = authClient;
 ```
 
-### 4.4 Server-Side Session Utilities
+> Note: `forgetPassword`, `resetPassword`, and `changePassword` exports will be added in P1-F5.
+
+### 4.5 Server-Side Session Utilities
 
 Create `lib/auth/session.ts`:
 
 ```typescript
-// lib/auth/session.ts
 import { auth } from "./auth";
 import { headers } from "next/headers";
 
 export type Session = Awaited<ReturnType<typeof auth.api.getSession>>;
 
 /**
- * Get the current session or null if not authenticated
+ * Get the current session. Returns the session object or null.
+ * Uses cookie cache when available for performance.
  */
 export async function getSession(): Promise<Session> {
   try {
@@ -157,7 +197,8 @@ export async function getSession(): Promise<Session> {
 }
 
 /**
- * Require authentication - throws if not authenticated
+ * Require an authenticated session. Throws if no session exists.
+ * Use in server components/actions that must be authenticated.
  */
 export async function requireAuth() {
   const session = await getSession();
@@ -168,7 +209,7 @@ export async function requireAuth() {
 }
 
 /**
- * Get the current user ID or null if not authenticated
+ * Get the current user's ID, or null if not authenticated.
  */
 export async function getCurrentUserId(): Promise<string | null> {
   const session = await getSession();
@@ -176,7 +217,8 @@ export async function getCurrentUserId(): Promise<string | null> {
 }
 
 /**
- * Require authentication and return user ID
+ * Require an authenticated user and return their ID.
+ * Throws if no session exists.
  */
 export async function requireUserId(): Promise<string> {
   const session = await requireAuth();
@@ -184,67 +226,24 @@ export async function requireUserId(): Promise<string> {
 }
 ```
 
-### 4.5 API Route Handler
+### 4.6 API Route Handler
 
 Create `app/api/auth/[...all]/route.ts`:
 
 ```typescript
-// app/api/auth/[...all]/route.ts
 import { auth } from "@/lib/auth/auth";
 import { toNextJsHandler } from "better-auth/next-js";
 
-const handler = toNextJsHandler(auth);
-
-export const { GET, POST } = handler;
-```
-
-### 4.6 Email Configuration (Dev Placeholder)
-
-Create `lib/auth/email.ts`:
-
-```typescript
-// lib/auth/email.ts
-/**
- * Email configuration for development
- * In production, replace with actual email service (Resend, SendGrid, etc.)
- */
-
-export const sendVerificationEmail = async (
-  email: string,
-  url: string
-) => {
-  console.log(`[DEV] Verification email for ${email}`);
-  console.log(`[DEV] Verification URL: ${url}`);
-  
-  // In production, implement actual email sending
-  // Example with Resend:
-  // const resend = new Resend(process.env.RESEND_API_KEY);
-  // await resend.emails.send({
-  //   from: "noreply@yourapp.com",
-  //   to: email,
-  //   subject: "Verify your email",
-  //   html: `<a href="${url}">Verify Email</a>`,
-  // });
-};
-
-export const sendPasswordResetEmail = async (
-  email: string,
-  url: string
-) => {
-  console.log(`[DEV] Password reset email for ${email}`);
-  console.log(`[DEV] Reset URL: ${url}`);
-  
-  // In production, implement actual email sending
-};
+export const { GET, POST } = toNextJsHandler(auth);
 ```
 
 ### 4.7 Update Proxy for Session Check
 
-Update `proxy.ts`:
+Update `proxy.ts` to use Better Auth's official `getSessionCookie` helper instead of hardcoding the cookie name:
 
 ```typescript
-// proxy.ts
 import { NextRequest, NextResponse } from "next/server";
+import { getSessionCookie } from "better-auth/cookies";
 
 const PUBLIC_PATHS = [
   "/sign-in",
@@ -269,32 +268,32 @@ const STATIC_PATHS = [
   "/fonts",
 ];
 
-const SESSION_COOKIE = "better-auth.session_token";
-
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  
-  // Skip static and API routes
+
+  // Skip static/API paths entirely
   if (STATIC_PATHS.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
   }
-  
-  const hasSession = request.cookies.has(SESSION_COOKIE);
+
+  // Use Better Auth's official cookie helper — resilient to cookie name changes
+  const sessionCookie = getSessionCookie(request);
+  const hasSession = !!sessionCookie;
   const isPublicPath = PUBLIC_PATHS.some((path) => pathname.startsWith(path));
   const isAuthPath = AUTH_PATHS.some((path) => pathname.startsWith(path));
-  
-  // Redirect authenticated users away from auth pages
+
+  // Authenticated users hitting auth pages → redirect to dashboard
   if (hasSession && isAuthPath) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
-  
-  // Redirect unauthenticated users to sign-in (except public paths)
+
+  // Unauthenticated users hitting protected pages → redirect to sign-in
   if (!hasSession && !isPublicPath) {
     const signInUrl = new URL("/sign-in", request.url);
     signInUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(signInUrl);
   }
-  
+
   return NextResponse.next();
 }
 
@@ -302,6 +301,8 @@ export const config = {
   matcher: ["/((?!api|_next|favicon|icons|images|fonts).*)"],
 };
 ```
+
+> **Why `getSessionCookie`?** This is Better Auth's official helper from `better-auth/cookies`. It reads the correct cookie name (including custom prefixes if configured) without hardcoding `better-auth.session_token`. Note: this is an **optimistic check only** — it does NOT validate the session. Real auth validation happens in server components via `auth.api.getSession()`.
 
 ### 4.8 Environment Variables
 
@@ -321,47 +322,27 @@ openssl rand -base64 32
 
 ---
 
-## 5) Auth Flows
+## 5) Auth Flows (Core)
 
 ### Sign Up Flow
 1. User submits form with name, email, password
-2. Client calls `signUp({ name, email, password })`
-3. Better Auth creates user + account record
-4. Session cookie is set
-5. User is redirected to dashboard (or email verification if enabled)
+2. Client calls `signUp.email({ name, email, password })`
+3. Better Auth creates user + account record (password stored in `accounts` table with `providerId: "credential"`)
+4. Session cookie is set automatically
+5. User is redirected to dashboard
 
 ### Sign In Flow
 1. User submits form with email, password
-2. Client calls `signIn({ email, password })`
-3. Better Auth verifies credentials
-4. Session cookie is set
+2. Client calls `signIn.email({ email, password })`
+3. Better Auth verifies credentials (uses scrypt hashing by default)
+4. Session cookie is set automatically
 5. User is redirected to dashboard
 
 ### Sign Out Flow
 1. User clicks sign out
 2. Client calls `signOut()`
-3. Session cookie is cleared
+3. Session cookie is cleared, session revoked in DB
 4. User is redirected to sign-in page
-
-### Password Reset Flow
-1. User submits email on forgot-password page
-2. Client calls `forgetPassword({ email })`
-3. Better Auth creates reset token, sends email
-4. User clicks link → `/reset-password?token=...`
-5. User submits new password
-6. Client calls `resetPassword({ token, newPassword })`
-7. User redirected to sign-in
-
-### Password Change Flow
-1. Authenticated user submits current + new password
-2. Client calls `changePassword({ currentPassword, newPassword })`
-3. Password updated, user shown success message
-
-### Email Verification Flow (Optional)
-1. After sign-up, verification email sent
-2. User clicks link → `/verify-email?token=...`
-3. Token verified, `emailVerified` set to true
-4. User redirected to dashboard
 
 ---
 
@@ -370,17 +351,16 @@ openssl rand -base64 32
 | ID | Criterion | Validation |
 |----|-----------|------------|
 | AC-1 | Better Auth server configured with Drizzle adapter | `auth.ts` exports working instance |
-| AC-2 | Auth client configured and exported | Client methods usable in components |
-| AC-3 | API route handler processes auth requests | `/api/auth/*` endpoints respond correctly |
-| AC-4 | Session utilities work on server | `getSession()` returns session or null |
-| AC-5 | Proxy checks session cookie | Unauthenticated redirects to sign-in |
-| AC-6 | Sign up works | New user created in database |
-| AC-7 | Sign in works | Session created, cookie set |
-| AC-8 | Sign out works | Session cleared, redirect to sign-in |
-| AC-9 | Password reset request works | Token created |
-| AC-10 | Password reset completion works | Password updated |
-| AC-11 | Password change works | Password updated with valid current password |
-| AC-12 | Environment variables documented | `.env.example` has all auth vars |
+| AC-2 | Drizzle adapter uses `usePlural` and explicit schema mapping | No SQL errors for table names |
+| AC-3 | Auth client configured and exported | Client methods usable in components |
+| AC-4 | API route handler processes auth requests | `/api/auth/*` endpoints respond correctly |
+| AC-5 | Session utilities work on server | `getSession()` returns session or null |
+| AC-6 | Proxy uses `getSessionCookie` helper | Unauthenticated redirects to sign-in |
+| AC-7 | Sign up works | New user created in database |
+| AC-8 | Sign in works | Session created, cookie set |
+| AC-9 | Sign out works | Session cleared, redirect to sign-in |
+| AC-10 | Sessions table has `token` column | Migration applied successfully |
+| AC-11 | Environment variables documented | `.env.example` has all auth vars |
 
 ---
 
@@ -388,15 +368,19 @@ openssl rand -base64 32
 
 ### Must Create
 - [ ] `lib/auth/auth.ts` — Better Auth server instance
-- [ ] `lib/auth/auth-client.ts` — React auth client
+- [ ] `lib/auth/auth-client.ts` — React auth client (sign up, sign in, sign out, useSession)
 - [ ] `lib/auth/session.ts` — Server session utilities
-- [ ] `lib/auth/email.ts` — Email placeholder
 - [ ] `app/api/auth/[...all]/route.ts` — Auth API handler
 
 ### Must Update
-- [ ] `proxy.ts` — Add session cookie check
+- [ ] `lib/db/schema.ts` — Add `token` column to sessions table
+- [ ] `proxy.ts` — Use `getSessionCookie` helper + session cookie check
 - [ ] `.env.example` — Add Better Auth variables (already done in P1-F2)
-- [ ] `package.json` — Add better-auth dependency
+- [ ] `package.json` — Add `better-auth` and `@better-auth/drizzle-adapter` dependencies
+
+### Must Run
+- [ ] `npx drizzle-kit generate` — Generate migration for sessions `token` column
+- [ ] `npx drizzle-kit migrate` — Apply migration
 
 ---
 
@@ -404,13 +388,16 @@ openssl rand -base64 32
 
 | Check | Requirement | Status |
 |-------|-------------|--------|
-| V-1 | Use `better-auth` package (current name) | ☐ |
-| V-2 | Use `drizzleAdapter` with `provider: "pg"` | ☐ |
-| V-3 | Use `toNextJsHandler` for Next.js route | ☐ |
-| V-4 | Include `nextCookies()` plugin for App Router | ☐ |
-| V-5 | Session cookie name: `better-auth.session_token` | ☐ |
-| V-6 | Use App Router API routes (`app/api/`) | ☐ |
-| V-7 | Import schema to adapter for relations | ☐ |
+| V-1 | Install `better-auth` package | ☐ |
+| V-2 | Install `@better-auth/drizzle-adapter` (separate package) | ☐ |
+| V-3 | Use `drizzleAdapter` with `provider: "pg"` and `usePlural: true` | ☐ |
+| V-4 | Pass explicit schema mapping (`user: schema.users`, etc.) | ☐ |
+| V-5 | Use `toNextJsHandler` for Next.js App Router route | ☐ |
+| V-6 | Include `nextCookies()` plugin as last plugin for App Router | ☐ |
+| V-7 | Use `getSessionCookie` from `better-auth/cookies` in proxy | ☐ |
+| V-8 | Use App Router API routes (`app/api/`) | ☐ |
+| V-9 | Sessions table includes `token` column (text, not null, unique) | ☐ |
+| V-10 | Import schema with relations to adapter for `experimental.joins` | ☐ |
 
 ---
 
@@ -419,9 +406,10 @@ openssl rand -base64 32
 This feature requires:
 - **P1-F1:** Project Initialization (complete)
 - **P1-F2:** Neon + Drizzle Setup (must be complete)
-- **P1-F3:** Schema Generation & Migration (must be complete)
+- **P1-F3:** Schema Generation & Migration (must be complete — schema fix for `token` column included here)
 
 This feature blocks:
+- **P1-F5:** Password Reset, Forgot Password & Resend Integration
 - **P2-F1:** Auth Pages UI
 - **P2-F2:** Dashboard
 - **All authenticated features**
@@ -430,21 +418,38 @@ This feature blocks:
 
 ## 10) Testing Checklist
 
-After implementation, test these flows:
-
 ### Manual Testing
 
 ```bash
-# Start dev server
 npm run dev
 
-# Test API endpoints manually or with Postman/Insomnia
-POST http://localhost:3000/api/auth/sign-up
-POST http://localhost:3000/api/auth/sign-in
+# Test auth endpoints via API 
+POST http://localhost:3000/api/auth/sign-up/email
+Content-Type: application/json
+{
+  "name": "Test User",
+  "email": "test@example.com",
+  "password": "password1234"
+}
+
+POST http://localhost:3000/api/auth/sign-in/email
+Content-Type: application/json
+{
+  "email": "test@example.com",
+  "password": "password1234"
+}
+
 POST http://localhost:3000/api/auth/sign-out
-POST http://localhost:3000/api/auth/forget-password
-POST http://localhost:3000/api/auth/reset-password
 ```
+
+### Verification Steps
+1. Verify `token` column exists in `sessions` table after migration
+2. POST to `/api/auth/sign-up/email` — confirm user + account + session rows created
+3. Check response includes `Set-Cookie` header with `better-auth.session_token`
+4. POST to `/api/auth/sign-in/email` — confirm session created
+5. POST to `/api/auth/sign-out` — confirm session removed
+6. Access a protected route without session — confirm redirect to `/sign-in`
+7. Access `/sign-in` with active session — confirm redirect to `/dashboard`
 
 ### Integration Testing (After P2-F1)
 
@@ -463,31 +468,20 @@ POST http://localhost:3000/api/auth/reset-password
 ## 11) Commands Reference
 
 ```bash
-# Install Better Auth
-npm install better-auth
+# Install dependencies
+npm install better-auth @better-auth/drizzle-adapter
 
-# Generate auth secret
+# Generate secret
 openssl rand -base64 32
 
-# Start dev server
-npm run dev
+# Schema migration (for sessions token column)
+npx drizzle-kit generate
+npx drizzle-kit migrate
 
-# Test auth endpoints (with curl)
-curl -X POST http://localhost:3000/api/auth/sign-up \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Test","email":"test@example.com","password":"password123"}'
+# Run dev server
+npm run dev
 ```
 
 ---
 
-## 12) Notes
-
-- Email verification is optional for MVP (set `requireEmailVerification: false`)
-- In production, replace console logging with actual email service
-- Session cookies are HTTP-only and secure in production
-- Use `trustedOrigins` to prevent CSRF attacks
-- Consider rate limiting for auth endpoints in production
-
----
-
-*This feature configures authentication. Auth page UI (Phase 2) will provide the user-facing flows.*
+*This feature configures core authentication only. Password reset, forgot password, change password, and email verification with Resend are in P1-F5.*

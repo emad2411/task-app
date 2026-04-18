@@ -4,7 +4,7 @@
 
 **Document type:** Product + Technical PRD  
 **Primary platform:** Responsive web application  
-**Target stack:** Next.js 16 App Router, React 19, Tailwind CSS v4, shadcn/ui, Neon PostgreSQL, Drizzle ORM, Better Auth, React Hook Form, Zod v4  
+**Target stack:** Next.js 16 App Router, React 19, Tailwind CSS v4, shadcn/ui, Neon PostgreSQL, Drizzle ORM, Better Auth, Resend, React Hook Form, Zod v4  
 **Version validation date:** 2026-04-16  
 **Status:** Draft v1.0 (implementation-ready)
 
@@ -398,6 +398,7 @@ All primary pages must include meaningful empty states with calls to action.
 - **Database:** Neon PostgreSQL
 - **ORM / schema / migrations:** Drizzle ORM + Drizzle Kit
 - **Authentication:** Better Auth
+- **Email service:** Resend
 - **Forms:** React Hook Form
 - **Validation:** Zod v4
 - **Language:** TypeScript
@@ -421,6 +422,7 @@ All primary pages must include meaningful empty states with calls to action.
 - `components/` — reusable UI and feature components.
 - `components/ui/` — shadcn/ui generated primitives.
 - `lib/auth/` — Better Auth server/client setup.
+- `lib/email/` — Resend email service configuration and templates.
 - `lib/db/` — Drizzle client, schema, query helpers.
 - `lib/validation/` — Zod schemas.
 - `lib/actions/` — mutations and domain-specific server actions.
@@ -458,10 +460,15 @@ lib/
   db/
     index.ts
     schema.ts
+  email/
+    resend.ts
+    templates/
+      password-reset.tsx
+      email-verification.tsx
   validation/
   actions/
   queries/
-proxy.ts
+  proxy.ts
 ```
 
 ---
@@ -482,6 +489,27 @@ Better Auth is the source of truth for:
 - Use Better Auth **Drizzle adapter** with PostgreSQL provider (`pg`).
 - Store sessions in the database.
 - Enable email verification based on product policy (recommended: enabled but not blocking MVP if email delivery is not yet production-ready).
+- Use **Resend** for all transactional email delivery (password reset, email verification).
+
+## 10.3 Email Service — Resend
+- **Resend** is the designated email service for transactional emails.
+- Required for: password reset emails, email verification emails.
+- Configuration via `RESEND_API_KEY` environment variable.
+- Email sending functions should be centralized in `lib/email/resend.ts`.
+- React Email templates should be stored in `lib/email/templates/`.
+- Better Auth `sendResetPassword` and `sendVerificationEmail` callbacks must be wired to Resend.
+- In development, emails can be logged to console instead of sent (controlled via `RESEND_API_KEY` presence).
+
+### Resend Integration Points
+- **Password Reset:** Better Auth `sendResetPassword` callback → Resend sends reset link email.
+- **Email Verification:** Better Auth `sendVerificationEmail` callback → Resend sends verification link email.
+- **From address:** Configure a verified sender domain in Resend (e.g., `noreply@yourdomain.com`).
+
+### Environment Variables
+```env
+RESEND_API_KEY=re_xxxxxxxxxxxx
+RESEND_FROM_EMAIL=noreply@yourdomain.com
+```
 
 ## 10.3 Route Protection Strategy
 - Use **`proxy.ts`** for lightweight request interception / optimistic redirects.
@@ -504,7 +532,7 @@ Better Auth is the source of truth for:
 ### Request Password Reset
 1. User submits email.
 2. Better Auth triggers `requestPasswordReset` flow.
-3. Email contains reset link to `/reset-password?token=...`.
+3. Resend sends email containing reset link to `/reset-password?token=...`.
 
 ### Reset Password
 1. User opens reset link.
@@ -863,6 +891,37 @@ Neon PostgreSQL is the **primary application database**.
 
 ---
 
+## 18.5) Resend Email Service Requirements
+
+### Service Role
+Resend is the **transactional email provider** for all auth-related emails.
+
+### Required Emails
+- Password reset email (with tokenized link).
+- Email verification email (with verification link).
+
+### Configuration
+- API key via `RESEND_API_KEY` environment variable.
+- Sender address via `RESEND_FROM_EMAIL` environment variable.
+- Verify sender domain in Resend dashboard before production use.
+
+### Development Mode
+- If `RESEND_API_KEY` is not set, email content is logged to console instead of sent.
+- This allows local development without a Resend account.
+
+### Integration with Better Auth
+- Wire Better Auth `sendResetPassword` callback to Resend.
+- Wire Better Auth `sendVerificationEmail` callback to Resend.
+- Use React Email for templating (optional but recommended for maintainable HTML emails).
+
+### Dependencies
+```bash
+npm install resend
+npm install @react-email/components @react-email/render
+```
+
+---
+
 ## 19) Security Requirements
 
 ### Authentication / Session Security
@@ -922,9 +981,11 @@ Neon PostgreSQL is the **primary application database**.
 - Configure Tailwind v4.
 - Initialize shadcn/ui.
 - Configure Neon + Drizzle.
-- Configure Better Auth.
+- Configure Better Auth (core setup: server instance, client, session utilities, API route handler, proxy integration).
 - Generate and migrate schema.
 - Establish authenticated layout and proxy.
+- Configure Resend email service.
+- Implement password reset and forgot password email flows with Resend.
 
 ### Phase 2 — Core Product
 - Build auth pages.
@@ -1033,6 +1094,11 @@ The product should be built as a **clean, maintainable, responsive web app** wit
 - CLI: https://better-auth.com/docs/concepts/cli
 - Email concepts: https://better-auth.com/docs/concepts/email
 - Security reference: https://better-auth.com/docs/reference/security
+
+### Resend
+- Resend docs: https://resend.com/docs
+- Resend + Next.js: https://resend.com/docs/send-with-nextjs
+- React Email: https://react.email/docs
 
 ### Drizzle ORM / Drizzle Kit
 - PostgreSQL getting started: https://orm.drizzle.team/docs/get-started/postgresql-new

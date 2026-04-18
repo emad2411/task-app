@@ -1,16 +1,26 @@
-# Current Feature
+# Current Feature: Better Auth Core Setup
 
 ## Status
 
-Not Started
+Complete
 
 ## Goals
 
-<!-- Add goals here -->
+- Configure Better Auth server instance with email/password authenticator and Drizzle adapter
+- Set up auth client for browser usage (sign up, sign in, sign out, useSession)
+- Create auth API route handlers at /api/auth/[...all]
+- Add token column to sessions table via migration
+- Update proxy.ts to use getSessionCookie helper for session checks
+- Verify sign up, sign in, and sign out flows work correctly
 
 ## Notes
 
-<!-- Add notes here -->
+- Critical feature — all authenticated features depend on this
+- P1-F4 (Phase 1, Feature 4)
+- Out of scope: Password reset, forgot password, email verification, Resend integration (covered in P1-F5)
+- Requires installing better-auth and @better-auth/drizzle-adapter packages
+- Sessions table needs token column added (migration required)
+- Uses usePlural: true with explicit schema mapping for plural table names
 
 ## History
 
