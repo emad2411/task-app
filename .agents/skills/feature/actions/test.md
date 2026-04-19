@@ -4,6 +4,8 @@
 2. Identify server actions and utility functions added/modified for this feature
 3. Check if tests already exist for these functions
 4. For functions without tests that have testable logic, write unit tests:
+   - install vitest if not installed 
+   - check latest docs of vitest using context7 mcp
    - Create unit tests using Vitest
    - Focus on server actions and utilities (not components)
    - Test happy path and error cases

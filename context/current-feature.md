@@ -1,4 +1,4 @@
-# Current Feature: Better Auth Core Setup
+# Current Feature: Auth Server Actions
 
 ## Status
 
@@ -6,21 +6,28 @@ Complete
 
 ## Goals
 
-- Configure Better Auth server instance with email/password authenticator and Drizzle adapter
-- Set up auth client for browser usage (sign up, sign in, sign out, useSession)
-- Create auth API route handlers at /api/auth/[...all]
-- Add token column to sessions table via migration
-- Update proxy.ts to use getSessionCookie helper for session checks
-- Verify sign up, sign in, and sign out flows work correctly
+- Create signIn server action that handles email/password signin
+- Create signUp server action that handles user registration with name, email, password
+- Create forgotPassword server action for requesting password reset
+- Create resetPassword server action for completing password reset with token
+- Create updatePassword server action for authenticated users to change password
+- Create verifyEmail server action for email verification
+- All actions should use Zod v4 for validation
+- All actions should return { success, data?, error? } pattern
+- Actions should be in lib/actions/auth.ts
 
 ## Notes
 
-- Critical feature — all authenticated features depend on this
-- P1-F4 (Phase 1, Feature 4)
-- Out of scope: Password reset, forgot password, email verification, Resend integration (covered in P1-F5)
-- Requires installing better-auth and @better-auth/drizzle-adapter packages
-- Sessions table needs token column added (migration required)
-- Uses usePlural: true with explicit schema mapping for plural table names
+- Use Better Auth for underlying auth operations
+- Use existing authClient from lib/auth/auth-client.ts or auth server from lib/auth/auth.ts
+- Password reset and email verification require Resend integration
+- Check context7-mcp for Better Auth latest documentation
+- This is P1-F5 in the PRD
+
+## Depends on
+
+- Better Auth Core Setup (already complete)
+- Resend Email Integration
 
 ## History
 
