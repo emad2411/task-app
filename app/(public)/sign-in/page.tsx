@@ -1,11 +1,21 @@
-import { FolderOpen } from "lucide-react";
+import { getSession } from "@/lib/auth/session";
+import { redirect } from "next/navigation";
+import { AuthCard } from "@/components/auth/auth-card";
+import { SignInForm } from "@/components/auth/sign-in-form";
 
-export default function SignInPage() {
+export default async function SignInPage() {
+  const session = await getSession();
+  
+  if (session) {
+    redirect("/dashboard");
+  }
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
-      <FolderOpen className="h-12 w-12" />
-      <h1 className="text-2xl font-semibold">Sign In</h1>
-      <p className="text-muted-foreground">Coming soon</p>
-    </div>
+    <AuthCard
+      title="Welcome back"
+      description="Sign in to your account to continue"
+    >
+      <SignInForm />
+    </AuthCard>
   );
 }

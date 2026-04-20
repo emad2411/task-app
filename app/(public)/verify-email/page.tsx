@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import { getSession } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
-import { ResetPasswordForm } from "@/components/auth/reset-password-form";
+import { VerifyEmailHandler } from "@/components/auth/verify-email-handler";
 
-export default async function ResetPasswordPage() {
+export default async function VerifyEmailPage() {
   const session = await getSession();
   
   if (session) {
@@ -12,7 +12,7 @@ export default async function ResetPasswordPage() {
 
   return (
     <Suspense fallback={<div className="py-4 text-center text-muted-foreground">Loading...</div>}>
-      <ResetPasswordForm />
+      <VerifyEmailHandler />
     </Suspense>
   );
 }

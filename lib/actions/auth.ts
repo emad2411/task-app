@@ -1,6 +1,10 @@
 "use server";
 
 import { auth } from "@/lib/auth/auth";
+import { db } from "@/lib/db";
+import { users } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
+import { APIError, isAPIError } from "better-auth/api";
 import { headers } from "next/headers";
 import {
   signInSchema,
@@ -26,21 +30,26 @@ export interface ActionResult<T = unknown> {
 export async function signInAction(input: SignInInput): Promise<ActionResult> {
   try {
     const validated = signInSchema.parse(input);
-    
-    const result = await auth.api.signInEmail({
+
+    await auth.api.signInEmail({
       body: {
         email: validated.email,
         password: validated.password,
       },
-      asResponse: true,
     });
-
-    if (!result) {
-      return { success: false, error: "Invalid email or password" };
-    }
 
     return { success: true, data: { message: "Signed in successfully" } };
   } catch (error) {
+    if (isAPIError(error)) {
+      const apiError = error as unknown as APIError;
+      if (apiError.status === 401) {
+        return { success: false, error: "Invalid email or password" };
+      }
+      if (apiError.status === 403) {
+        return { success: false, error: "Email not verified. Please check your email for a verification link." };
+      }
+      return { success: false, error: apiError.message };
+    }
     if (error instanceof Error) {
       return { success: false, error: error.message };
     }
@@ -51,7 +60,19 @@ export async function signInAction(input: SignInInput): Promise<ActionResult> {
 export async function signUpAction(input: SignUpInput): Promise<ActionResult> {
   try {
     const validated = signUpSchema.parse(input);
-    
+
+    // Bypass Better Auth's email enumeration protection so the UI can show the error
+    const existingUser = await db.query.users.findFirst({
+      where: eq(users.email, validated.email.toLowerCase()),
+    });
+
+    if (existingUser) {
+      return { 
+        success: false, 
+        error: "An account with this email already exists. Please sign in instead." 
+      };
+    }
+
     const result = await auth.api.signUpEmail({
       body: {
         email: validated.email,
@@ -60,13 +81,26 @@ export async function signUpAction(input: SignUpInput): Promise<ActionResult> {
       },
     });
 
-    if (!result) {
-      return { success: false, error: "Failed to create account" };
-    }
-
     return { success: true, data: { user: result } };
   } catch (error) {
+    if (isAPIError(error)) {
+      const apiError = error as unknown as APIError;
+      if (apiError.status === 409) {
+        return { success: false, error: "An account with this email already exists. Please sign in instead." };
+      }
+      if (apiError.status === 422) {
+        return { success: false, error: "Invalid input. Please check your information and try again." };
+      }
+      return { success: false, error: apiError.message };
+    }
     if (error instanceof Error) {
+      // Check for common error patterns in error messages
+      const errorMessage = error.message.toLowerCase();
+      if (errorMessage.includes("user already exists") ||
+          errorMessage.includes("already registered") ||
+          errorMessage.includes("duplicate")) {
+        return { success: false, error: "An account with this email already exists. Please sign in instead." };
+      }
       return { success: false, error: error.message };
     }
     return { success: false, error: "An unexpected error occurred" };

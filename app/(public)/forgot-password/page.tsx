@@ -1,8 +1,21 @@
-export default function ForgotPasswordPage() {
+import { getSession } from "@/lib/auth/session";
+import { redirect } from "next/navigation";
+import { AuthCard } from "@/components/auth/auth-card";
+import { ForgotPasswordForm } from "@/components/auth/forgot-password-form";
+
+export default async function ForgotPasswordPage() {
+  const session = await getSession();
+  
+  if (session) {
+    redirect("/dashboard");
+  }
+
   return (
-    <div className="flex items-center justify-center min-h-[50vh]">
-      <h1 className="text-2xl font-semibold">Forgot Password</h1>
-      <p className="text-muted-foreground">Coming soon</p>
-    </div>
+    <AuthCard
+      title="Reset your password"
+      description="Enter your email to receive a reset link"
+    >
+      <ForgotPasswordForm />
+    </AuthCard>
   );
 }

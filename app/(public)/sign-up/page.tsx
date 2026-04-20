@@ -1,8 +1,21 @@
-export default function SignUpPage() {
+import { getSession } from "@/lib/auth/session";
+import { redirect } from "next/navigation";
+import { AuthCard } from "@/components/auth/auth-card";
+import { SignUpForm } from "@/components/auth/sign-up-form";
+
+export default async function SignUpPage() {
+  const session = await getSession();
+  
+  if (session) {
+    redirect("/dashboard");
+  }
+
   return (
-    <div className="flex items-center justify-center min-h-[50vh]">
-      <h1 className="text-2xl font-semibold">Sign Up</h1>
-      <p className="text-muted-foreground">Coming soon</p>
-    </div>
+    <AuthCard
+      title="Create an account"
+      description="Enter your details to get started"
+    >
+      <SignUpForm />
+    </AuthCard>
   );
 }

@@ -1,16 +1,78 @@
 # Current Feature
 
-## Status
-
-Not Started
+**Feature ID:** P2-F1  
+**Feature Name:** Auth Pages UI  
+**Phase:** 2 - Core Product  
+**Status:** In Progress
 
 ## Goals
 
-<!-- List goals here when a feature is loaded -->
+- Build a complete, polished, and accessible authentication UI that connects the existing backend auth system (Better Auth, Server Actions) to user-facing forms
+- Provide clear visual feedback for all auth states (loading, success, error)
+- Implement mobile-first responsive design for auth pages
+- Ensure all auth flows have proper success/instructions states
+- Create a consistent brand experience across all public pages
+- Validate all forms with Zod before submission
+- Prevent duplicate submissions and show loading states
 
 ## Notes
 
-<!-- Add notes and context here -->
+**Scope:**
+- 5 auth pages: /sign-in, /sign-up, /forgot-password, /reset-password, /verify-email
+- 3 success states: Post-registration, Post-password-reset, Email verification
+- All forms use React Hook Form + Zod validation
+- All components are Client Components
+- Mobile-first responsive design
+- Accessibility requirements: WCAG 2.1 AA compliant
+
+**Dependencies:**
+- Server actions already implemented (lib/actions/auth.ts)
+- Validation schemas already implemented (lib/validation/auth.ts)
+- Better Auth already configured
+- Resend email integration complete
+- react-hook-form, @hookform/resolvers, zod, sonner already installed
+
+**Component Structure:**
+```
+components/auth/
+├── sign-in-form.tsx
+├── sign-up-form.tsx
+├── forgot-password-form.tsx
+├── reset-password-form.tsx
+├── verify-email-handler.tsx
+├── success-card.tsx
+└── auth-card.tsx
+```
+
+**Page Structure:**
+```
+app/(public)/
+├── layout.tsx
+├── sign-in/page.tsx
+├── sign-up/page.tsx
+├── forgot-password/page.tsx
+├── reset-password/page.tsx
+└── verify-email/page.tsx
+```
+
+**Key Requirements:**
+- REQ-001: Sign-In Page with email/password, redirect to /dashboard on success
+- REQ-002: Sign-Up Page with name/email/password, show success card on completion
+- REQ-003: Forgot Password Page with security-aware success message
+- REQ-004: Reset Password Page with token validation and success state
+- REQ-005: Verify Email Page with auto-verification and resend option
+- REQ-006: Public Layout with centered card, branding, theme support
+- REQ-007: Form validation with React Hook Form + Zod, inline errors, toast for server errors
+- REQ-008: Loading states with disabled buttons and spinners
+- REQ-009: Post-Registration Success UI with email display and resend option
+- REQ-010: Post-Password Reset Success UI with CTA to sign in
+- REQ-011: Already authenticated redirect to /dashboard
+- REQ-012: Component architecture with TypeScript prop interfaces
+- REQ-013: Integration with existing server actions
+- REQ-014: Tailwind CSS v4 styling with shadcn/ui components
+- REQ-015: Accessibility requirements (labels, aria, focus states, keyboard nav)
+
+**Branch:** feature/P2-F1-auth-pages-ui
 
 ## History
 
