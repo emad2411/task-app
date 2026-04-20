@@ -3,6 +3,10 @@ import { drizzleAdapter } from "@better-auth/drizzle-adapter";
 import { nextCookies } from "better-auth/next-js";
 import { db } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
+import {
+  sendPasswordResetEmail,
+  sendVerificationEmail,
+} from "@/lib/email";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -18,7 +22,30 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: false,
+    requireEmailVerification: true,
+    sendResetPassword: async ({ user, url, token }, request) => {
+      void sendPasswordResetEmail({
+        to: user.email,
+        userName: user.name || user.email,
+        resetUrl: url,
+      }).catch((error) => {
+        console.error("Failed to send password reset email:", error);
+      });
+    },
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    autoSignInAfterVerification: true,
+    expiresIn: 3600,
+    sendVerificationEmail: async ({ user, url, token }, request) => {
+      void sendVerificationEmail({
+        to: user.email,
+        userName: user.name || user.email,
+        verificationUrl: url,
+      }).catch((error) => {
+        console.error("Failed to send verification email:", error);
+      });
+    },
   },
   session: {
     expiresIn: 60 * 60 * 24 * 7,
