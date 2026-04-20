@@ -1,35 +1,16 @@
 # Current Feature
 
-Phase 1 - Feature 5: Resend Email Integration
-
 ## Status
 
-Complete
+Not Started
 
 ## Goals
 
-1. ~~Install and configure Resend email service with React Email templating~~ ✅
-2. ~~Create email templates for password reset and email verification~~ ✅
-3. ~~Configure Better Auth to send emails via Resend callbacks~~ ✅
-4. ~~Enable email verification requirement for new user signups~~ ✅
-5. ~~Support development mode (console logging when API key unavailable)~~ ✅
+<!-- List goals here when a feature is loaded -->
 
 ## Notes
 
-**Feature ID:** P1-F5 | **Priority:** High | **Dependencies:** P1-F4 Complete
-
-Integrate Resend as the transactional email service to enable password reset and email verification flows. This feature wires Better Auth's email callbacks to Resend, sending professional HTML emails using React Email templates.
-
-**Key Implementation Points:**
-- Use `resend` SDK with `@react-email/components` for templating
-- Create 6 new files in `lib/email/` directory
-- Update `lib/auth/auth.ts` with email callbacks and enable `requireEmailVerification: true`
-- Security: Never await email sending in auth callbacks (fire-and-forget with `void`)
-- Development mode logs emails to console when RESEND_API_KEY unavailable
-
-**Environment Variables Required:**
-- `RESEND_API_KEY` - Resend API key
-- `RESEND_FROM_EMAIL` - Verified sender address
+<!-- Add notes and context here -->
 
 ## History
 
