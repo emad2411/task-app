@@ -1,13 +1,4 @@
 {
-  "user": {
-    "id": "user_01j2m8n9p0q1r2s3t4u5v6w7x8y",
-    "name": "Alex Johnson",
-    "email": "alex.johnson@example.com",
-    "emailVerified": true,
-    "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=alex",
-    "createdAt": "2026-01-15T10:30:00.000Z",
-    "updatedAt": "2026-04-20T14:22:00.000Z"
-  },
   "categories": [
     {
       "id": "cat_01j2m8n9p0q1r2s3t4u5v6w7x8a",

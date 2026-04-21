@@ -9,7 +9,8 @@ export async function getSession(): Promise<Session> {
       headers: await headers(),
     });
     return session;
-  } catch {
+  } catch (error) {
+    console.error("[getSession] Failed to get session:", error);
     return null;
   }
 }
