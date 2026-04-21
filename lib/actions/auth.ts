@@ -193,3 +193,18 @@ export async function verifyEmailAction(input: VerifyEmailInput): Promise<Action
     return { success: false, error: "Failed to verify email" };
   }
 }
+
+export async function signOutAction(): Promise<ActionResult> {
+  try {
+    await auth.api.signOut({
+      headers: await headers(),
+    });
+
+    return { success: true, data: { message: "Signed out successfully" } };
+  } catch (error) {
+    if (error instanceof Error) {
+      return { success: false, error: error.message };
+    }
+    return { success: false, error: "Failed to sign out" };
+  }
+}
