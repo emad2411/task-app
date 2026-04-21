@@ -32,6 +32,7 @@ export async function signInAction(input: SignInInput): Promise<ActionResult> {
     const validated = signInSchema.parse(input);
 
     await auth.api.signInEmail({
+      headers: await headers(),
       body: {
         email: validated.email,
         password: validated.password,
@@ -74,6 +75,7 @@ export async function signUpAction(input: SignUpInput): Promise<ActionResult> {
     }
 
     const result = await auth.api.signUpEmail({
+      headers: await headers(),
       body: {
         email: validated.email,
         password: validated.password,

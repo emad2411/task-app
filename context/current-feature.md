@@ -1,16 +1,31 @@
-# Current Feature
+# Current Feature: P2-F3 - Task Management (CRUD)
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- List goals here when a feature is loaded -->
+- Implement complete task lifecycle management so authenticated users can create, view, edit, complete, archive, and delete their personal tasks
+- Provide a rich task list view at `/tasks` with sorting, filtering, and grouping capabilities
+- Provide a dedicated task detail view at `/tasks/[taskId]`
+- Enable quick task creation from both dashboard and task list
+- Support task status transitions (todo → in_progress → done → archived)
+- Allow users to assign categories, set priorities, and define due dates
+- Implement confirmation dialogs for destructive actions (delete, archive)
+- Ensure all data is strictly scoped to the authenticated user
+- Update the existing `task-card.tsx` to link to the correct detail route
 
 ## Notes
 
-<!-- Add notes and context here -->
+- **Phase:** 2 - Core Product
+- **Feature ID:** P2-F3
+- **Spec Status:** Draft - Ready for Implementation
+- **In Scope:** Task List Page (`/tasks`), Task Detail Page (`/tasks/[taskId]`), Task Forms & Dialogs (create, edit, delete, archive), Server Actions (`lib/actions/task.ts`), Validation Schemas (`lib/validation/task.ts`), Data Layer (`lib/data/task.ts`), Task Components (`components/tasks/`)
+- **Out of Scope:** Advanced filtering and search (P2-F5), Category management UI (P2-F4), Bulk operations, Recurring tasks, Task comments/attachments, Drag-and-drop reordering
+- **Dependencies:** Drizzle ORM, Zod v4, React Hook Form, shadcn/ui Dialog/Badge/Checkbox/Skeleton, sonner toasts
+- **Key Files to Create:** `app/(app)/tasks/page.tsx`, `app/(app)/tasks/[taskId]/page.tsx`, `lib/actions/task.ts`, `lib/validation/task.ts`, `lib/data/task.ts`, `components/tasks/task-form.tsx`, `components/tasks/task-list.tsx`, `components/tasks/task-item.tsx`, `components/tasks/create-task-dialog.tsx`, `components/tasks/edit-task-dialog.tsx`
+- **Existing Files to Update:** `components/tasks/task-card.tsx`
 
 ## History
 

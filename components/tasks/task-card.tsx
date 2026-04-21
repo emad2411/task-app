@@ -43,7 +43,7 @@ export function TaskCard({
 
   return (
     <Link
-      href={`/tasks?taskId=${task.id}`}
+      href={`/tasks/${task.id}`}
       className={cn(
         "group flex items-center gap-3 rounded-lg border p-3 transition-colors",
         "hover:bg-accent hover:text-accent-foreground",
