@@ -6,6 +6,7 @@ import { TaskStatus, TaskPriority } from "@/lib/db/schema";
 export interface GetTasksOptions {
   status?: TaskStatus;
   priority?: TaskPriority;
+  categoryId?: string;
 }
 
 export async function getTasks(userId: string, options?: GetTasksOptions) {
@@ -16,6 +17,9 @@ export async function getTasks(userId: string, options?: GetTasksOptions) {
   }
   if (options?.priority) {
     conditions.push(eq(tasks.priority, options.priority));
+  }
+  if (options?.categoryId) {
+    conditions.push(eq(tasks.categoryId, options.categoryId));
   }
 
   return db.query.tasks.findMany({

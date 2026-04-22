@@ -1,16 +1,29 @@
-# Current Feature
+# Current Feature: Category Management
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- List goals here when a feature is loaded -->
+- Implement complete category management (create, rename, delete, assign)
+- Provide a dedicated `/categories` page for managing categories
+- Integrate category selection into the existing task create/edit form (`TaskForm`)
+- Add category filtering to the task list page (`TaskFilters`)
+- Display category badges on task cards and detail views
+- Enforce unique category names per user
+- Handle category deletion by setting associated tasks' `categoryId` to `null`
+- Ensure all data is strictly scoped to the authenticated user
+- Support optional color for each category
 
 ## Notes
 
-<!-- Add notes and context here -->
+- Feature ID: P2-F4 (Phase 2 - Core Product)
+- Data layer based on Drizzle ORM, validation with Zod v4, and mutations via Server Actions.
+- The `categories` table and relations are already defined in `lib/db/schema.ts`.
+- Existing `getCategoriesForUser` in `lib/data/task.ts` should be moved to `lib/data/category.ts`.
+- Mutations must revalidate paths: `/categories`, `/tasks`, and `/dashboard`.
+- Category colors are hex strings with a curated palette in `lib/validation/category.ts`.
 
 ## History
 
