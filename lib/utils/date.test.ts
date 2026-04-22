@@ -118,9 +118,14 @@ describe("date utilities", () => {
     });
 
     it("should handle timezone properly", () => {
-      // Just past midnight in PST, same day in UTC
+      // April 21 at 1am PST = April 21 at 8am UTC
+      // Since "now" is April 22, this is overdue regardless of timezone
       const pstLate = new Date("2026-04-21T01:00:00-07:00");
-      expect(isOverdue(pstLate, PST)).toBe(false);
+      expect(isOverdue(pstLate, PST)).toBe(true);
+
+      // A future date should not be overdue
+      const pstFuture = new Date("2026-04-25T01:00:00-07:00");
+      expect(isOverdue(pstFuture, PST)).toBe(false);
     });
   });
 

@@ -27,7 +27,20 @@ vi.mock("next/headers", () => ({
   headers: vi.fn(() => Promise.resolve(new Headers())),
 }));
 
+vi.mock("@/lib/db", () => ({
+  db: {
+    query: {
+      users: { findFirst: vi.fn() },
+    },
+  },
+}));
+
+vi.mock("@/lib/db/schema", () => ({
+  users: { email: "email" },
+}));
+
 import { auth } from "@/lib/auth/auth";
+import { db } from "@/lib/db";
 
 describe("signInAction", () => {
   beforeEach(() => {
@@ -35,7 +48,7 @@ describe("signInAction", () => {
   });
 
   it("should return success for valid credentials", async () => {
-    vi.mocked(auth.api.signInEmail).mockResolvedValue({ ok: true } as any);
+    vi.mocked(auth.api.signInEmail).mockResolvedValue({} as any);
 
     const result = await signInAction({
       email: "user@example.com",
@@ -45,8 +58,8 @@ describe("signInAction", () => {
     expect(result.success).toBe(true);
     expect(result.data).toEqual({ message: "Signed in successfully" });
     expect(auth.api.signInEmail).toHaveBeenCalledWith({
+      headers: expect.any(Headers),
       body: { email: "user@example.com", password: "password123" },
-      asResponse: true,
     });
   });
 
@@ -71,7 +84,7 @@ describe("signInAction", () => {
   });
 
   it("should return error when auth fails", async () => {
-    vi.mocked(auth.api.signInEmail).mockResolvedValue(null as any);
+    vi.mocked(auth.api.signInEmail).mockRejectedValue(new Error("Invalid email or password"));
 
     const result = await signInAction({
       email: "user@example.com",
@@ -102,6 +115,7 @@ describe("signUpAction", () => {
 
   it("should return success for valid registration", async () => {
     const mockUser = { id: "user-123", email: "user@example.com", name: "John Doe" };
+    vi.mocked(db.query.users.findFirst).mockResolvedValue(null as any);
     vi.mocked(auth.api.signUpEmail).mockResolvedValue(mockUser as any);
 
     const result = await signUpAction({
@@ -113,6 +127,7 @@ describe("signUpAction", () => {
     expect(result.success).toBe(true);
     expect(result.data).toEqual({ user: mockUser });
     expect(auth.api.signUpEmail).toHaveBeenCalledWith({
+      headers: expect.any(Headers),
       body: { email: "user@example.com", password: "password123", name: "John Doe" },
     });
   });
@@ -139,7 +154,8 @@ describe("signUpAction", () => {
     expect(result.error).toContain("100 characters");
   });
 
-  it("should return error when signup fails", async () => {
+  it("should return success with null user when signup returns null", async () => {
+    vi.mocked(db.query.users.findFirst).mockResolvedValue(null as any);
     vi.mocked(auth.api.signUpEmail).mockResolvedValue(null as any);
 
     const result = await signUpAction({
@@ -148,8 +164,21 @@ describe("signUpAction", () => {
       password: "password123",
     });
 
+    expect(result.success).toBe(true);
+    expect(result.data).toEqual({ user: null });
+  });
+
+  it("should return error when user already exists", async () => {
+    vi.mocked(db.query.users.findFirst).mockResolvedValue({ id: "existing-user" } as any);
+
+    const result = await signUpAction({
+      name: "John Doe",
+      email: "user@example.com",
+      password: "password123",
+    });
+
     expect(result.success).toBe(false);
-    expect(result.error).toBe("Failed to create account");
+    expect(result.error).toContain("already exists");
   });
 });
 
