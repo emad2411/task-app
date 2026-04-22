@@ -9,7 +9,7 @@ import { CreateTaskDialog } from "@/components/tasks/create-task-dialog";
 import { TaskStatus, TaskPriority } from "@/lib/db/schema";
 
 interface TasksPageProps {
-  searchParams: Promise<{ status?: string; priority?: string }>;
+  searchParams: Promise<{ status?: string; priority?: string; category?: string }>;
 }
 
 export default async function TasksPage({ searchParams }: TasksPageProps) {
@@ -23,17 +23,19 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
   const params = await searchParams;
   const statusFilter = params.status as TaskStatus | undefined;
   const priorityFilter = params.priority as TaskPriority | undefined;
+  const categoryFilter = params.category;
 
   const [tasks, categories, { timezone }] = await Promise.all([
     getTasks(user.id, {
       status: statusFilter,
       priority: priorityFilter,
+      categoryId: categoryFilter,
     }),
     getCategoriesForUser(user.id),
     getDashboardData(user.id),
   ]);
 
-  const hasFilters = statusFilter || priorityFilter;
+  const hasFilters = statusFilter || priorityFilter || categoryFilter;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -48,7 +50,7 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
           <CreateTaskDialog categories={categories} />
         </div>
 
-        <TaskFilters />
+        <TaskFilters categories={categories} />
 
         {tasks.length > 0 ? (
           <TaskList tasks={tasks} timezone={timezone} />

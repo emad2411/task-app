@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+import type { Category } from "@/lib/db/schema";
 
 const statusOptions: { value: string; label: string }[] = [
   { value: "all", label: "All Statuses" },
@@ -28,12 +28,17 @@ const priorityOptions: { value: string; label: string }[] = [
   { value: "low", label: "Low" },
 ];
 
-export function TaskFilters() {
+interface TaskFiltersProps {
+  categories?: Category[];
+}
+
+export function TaskFilters({ categories = [] }: TaskFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const status = searchParams.get("status") || "all";
   const priority = searchParams.get("priority") || "all";
+  const category = searchParams.get("category") || "all";
 
   function updateFilter(key: string, value: string) {
     const params = new URLSearchParams(searchParams);
@@ -49,7 +54,7 @@ export function TaskFilters() {
     router.push("/tasks");
   }
 
-  const hasFilters = status !== "all" || priority !== "all";
+  const hasFilters = status !== "all" || priority !== "all" || category !== "all";
 
   return (
     <div className="flex flex-wrap items-center gap-3">
@@ -79,6 +84,26 @@ export function TaskFilters() {
             ))}
           </SelectContent>
         </Select>
+
+        {categories.length > 0 && (
+          <Select value={category} onValueChange={(value) => updateFilter("category", value)}>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Filter by category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {categories.map((cat) => (
+                <SelectItem key={cat.id} value={cat.id}>
+                  <span
+                    className="mr-2 inline-block h-2.5 w-2.5 rounded-full"
+                    style={{ backgroundColor: cat.color || "#6B7280" }}
+                  />
+                  {cat.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </div>
 
       {hasFilters && (
