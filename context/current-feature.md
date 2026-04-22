@@ -1,29 +1,16 @@
-# Current Feature: Category Management
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Implement complete category management (create, rename, delete, assign)
-- Provide a dedicated `/categories` page for managing categories
-- Integrate category selection into the existing task create/edit form (`TaskForm`)
-- Add category filtering to the task list page (`TaskFilters`)
-- Display category badges on task cards and detail views
-- Enforce unique category names per user
-- Handle category deletion by setting associated tasks' `categoryId` to `null`
-- Ensure all data is strictly scoped to the authenticated user
-- Support optional color for each category
+<!-- List goals here when a feature is loaded -->
 
 ## Notes
 
-- Feature ID: P2-F4 (Phase 2 - Core Product)
-- Data layer based on Drizzle ORM, validation with Zod v4, and mutations via Server Actions.
-- The `categories` table and relations are already defined in `lib/db/schema.ts`.
-- Existing `getCategoriesForUser` in `lib/data/task.ts` should be moved to `lib/data/category.ts`.
-- Mutations must revalidate paths: `/categories`, `/tasks`, and `/dashboard`.
-- Category colors are hex strings with a curated palette in `lib/validation/category.ts`.
+<!-- Add notes and context here -->
 
 ## History
 
@@ -36,3 +23,4 @@ In Progress
 - **Auth Pages UI** (2026-04-21) - Implemented complete authentication UI: sign-in, sign-up, forgot-password, reset-password, verify-email pages. Created reusable auth-card and success-card components. Fixed Better Auth error handling using isAPIError() function to properly catch and display error messages (invalid password, existing user). Added loading states, inline validation with React Hook Form + Zod, and toast notifications. Implemented mobile-first responsive design with Tailwind CSS v4 and shadcn/ui components.
 - **Dashboard Overview** (2026-04-21) - Built personalized dashboard with stats cards (Due Today, Overdue, Completed Today, Total Active), priority distribution summary, upcoming tasks list (7 days), quick actions, and empty state for new users. Created date utilities with timezone support in lib/utils/date.ts, dashboard data layer in lib/data/dashboard.ts, and all UI components (stats-cards, priority-summary, upcoming-tasks, quick-actions, empty-state, dashboard-header). Added loading skeleton and error boundary. 22 date utility tests passing. Build passes successfully.
 - **Task Management (CRUD)** (2026-04-22) - Implemented complete task lifecycle management: create, read, update, delete, toggle completion, and archive. Added Zod v4 validation schemas (lib/validation/task.ts), task data layer with Drizzle ORM queries (lib/data/task.ts), and server actions (lib/actions/task.ts) returning { success, data?, error? }. Built reusable TaskForm component with React Hook Form, plus CreateTaskDialog, EditTaskDialog, DeleteTaskDialog, and ArchiveTaskDialog. Created TaskList, TaskItem with completion checkbox, TaskFilters with URL param state, and TaskDetailView with full CRUD actions. Implemented /tasks page with status/priority filtering and /tasks/[taskId] detail page with not-found handling, loading skeletons, and error boundaries. Updated task-card.tsx to link to /tasks/[taskId]. Build passes successfully.
+- **Category Management (P2-F4)** (2026-04-22) - Implemented complete category management with /categories page for CRUD operations, integrated category dropdown in TaskForm, added category filter in TaskFilters, and display category badges on TaskItem/TaskDetailView/Dashboard components. Created Zod validation (lib/validation/category.ts), data layer (lib/data/category.ts), and server actions (lib/actions/category.ts). Built reusable CategoryForm, ColorPicker with 12 preset colors, CategoryBadge, and dialogs (create/edit/delete). All data strictly scoped to authenticated user. Build passes, 113 tests pass.
