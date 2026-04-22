@@ -1,31 +1,16 @@
 # Current Feature
 
-P2-F5 - Task Filters, Sorting, and Grouping
-
 ## Status
 
-Complete
+Not Started
 
 ## Goals
 
-- Add full-text search across task titles (and optionally descriptions)
-- Add due date state filters: today, upcoming, overdue, no due date
-- Add multi-option sorting with ascending/descending support
-- Add optional task grouping by status, category, or due date bucket
-- Preserve all filter/sort state in URL query params for shareability and back-button support
-- Update the task data layer to support filter/sort parameters in a type-safe way
-- Ensure filtered empty states are informative and provide a clear path to reset filters
-- Maintain performance and responsiveness with indexed query paths
+<!-- List goals here when a feature is loaded -->
 
 ## Notes
 
-- Feature ID: P2-F5
-- Phase: 2 - Core Product
-- Status: Draft - Ready for Implementation
-- Enhance the `/tasks` page with powerful discovery capabilities so users can quickly locate, organize, and prioritize work across large task lists. Build on the existing status, priority, and category filters with text search, due date state filters, sorting controls, and optional grouping.
-- Out of Scope: Full-text search with PostgreSQL `tsvector` (MVP+; use `ILIKE` for now), Saved/filter presets (post-MVP), Advanced date range picker with custom from/to dates (post-MVP), Pagination or infinite scroll (post-MVP; assume personal task volumes fit in memory), Drag-and-drop reordering within groups (post-MVP), Search across archived tasks on dashboard (post-MVP)
-- Branch: `feature/P2-F5-task-filters-sorting-grouping`
-- Next Steps: Implement in order: Validation schemas → Data layer updates → TaskFilters enhancements → TaskList grouping → FilterChips → Page integration → Testing
+<!-- Add notes and context here -->
 
 ## History
 
