@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { createTaskSchema, updateTaskSchema } from "../task";
+import {
+  createTaskSchema,
+  updateTaskSchema,
+  taskQueryParamsSchema,
+} from "../task";
 
 describe("createTaskSchema", () => {
   it("should validate a minimal valid task", () => {
@@ -157,5 +161,107 @@ describe("updateTaskSchema", () => {
       title: "a".repeat(201),
     });
     expect(result.success).toBe(false);
+  });
+});
+
+describe("taskQueryParamsSchema", () => {
+  it("should accept valid filter params", () => {
+    const result = taskQueryParamsSchema.safeParse({
+      status: "todo",
+      priority: "high",
+      category: "550e8400-e29b-41d4-a716-446655440000",
+      q: "search term",
+      dueDate: "today",
+      sort: "dueDate",
+      order: "asc",
+      groupBy: "status",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.status).toEqual(["todo"]);
+      expect(result.data.priority).toEqual(["high"]);
+      expect(result.data.category).toBe("550e8400-e29b-41d4-a716-446655440000");
+      expect(result.data.q).toBe("search term");
+      expect(result.data.dueDate).toBe("today");
+      expect(result.data.sort).toBe("dueDate");
+      expect(result.data.order).toBe("asc");
+      expect(result.data.groupBy).toBe("status");
+    }
+  });
+
+  it("should normalize single status to array", () => {
+    const result = taskQueryParamsSchema.safeParse({ status: "in_progress" });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.status).toEqual(["in_progress"]);
+    }
+  });
+
+  it("should accept array of statuses", () => {
+    const result = taskQueryParamsSchema.safeParse({
+      status: ["todo", "in_progress"],
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.status).toEqual(["todo", "in_progress"]);
+    }
+  });
+
+  it("should reject invalid sort fields", () => {
+    const result = taskQueryParamsSchema.safeParse({ sort: "invalid" });
+    expect(result.success).toBe(false);
+  });
+
+  it("should limit search to 100 chars", () => {
+    const result = taskQueryParamsSchema.safeParse({ q: "a".repeat(101) });
+    expect(result.success).toBe(false);
+  });
+
+  it("should trim search query", () => {
+    const result = taskQueryParamsSchema.safeParse({ q: "  hello  " });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.q).toBe("hello");
+    }
+  });
+
+  it("should validate UUID category", () => {
+    const result = taskQueryParamsSchema.safeParse({
+      category: "not-a-uuid",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("should accept valid dueDate values", () => {
+    const values = ["today", "upcoming", "overdue", "none"] as const;
+    for (const value of values) {
+      const result = taskQueryParamsSchema.safeParse({ dueDate: value });
+      expect(result.success).toBe(true);
+    }
+  });
+
+  it("should reject invalid dueDate values", () => {
+    const result = taskQueryParamsSchema.safeParse({ dueDate: "yesterday" });
+    expect(result.success).toBe(false);
+  });
+
+  it("should accept empty object", () => {
+    const result = taskQueryParamsSchema.safeParse({});
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(Object.keys(result.data).length).toBe(0);
+    }
+  });
+
+  it("should ignore extra fields", () => {
+    const result = taskQueryParamsSchema.safeParse({
+      q: "test",
+      extraField: "should be ignored",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.q).toBe("test");
+      expect("extraField" in result.data).toBe(false);
+    }
   });
 });

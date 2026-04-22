@@ -1,16 +1,31 @@
 # Current Feature
 
+P2-F5 - Task Filters, Sorting, and Grouping
+
 ## Status
 
-Not Started
+Complete
 
 ## Goals
 
-<!-- List goals here when a feature is loaded -->
+- Add full-text search across task titles (and optionally descriptions)
+- Add due date state filters: today, upcoming, overdue, no due date
+- Add multi-option sorting with ascending/descending support
+- Add optional task grouping by status, category, or due date bucket
+- Preserve all filter/sort state in URL query params for shareability and back-button support
+- Update the task data layer to support filter/sort parameters in a type-safe way
+- Ensure filtered empty states are informative and provide a clear path to reset filters
+- Maintain performance and responsiveness with indexed query paths
 
 ## Notes
 
-<!-- Add notes and context here -->
+- Feature ID: P2-F5
+- Phase: 2 - Core Product
+- Status: Draft - Ready for Implementation
+- Enhance the `/tasks` page with powerful discovery capabilities so users can quickly locate, organize, and prioritize work across large task lists. Build on the existing status, priority, and category filters with text search, due date state filters, sorting controls, and optional grouping.
+- Out of Scope: Full-text search with PostgreSQL `tsvector` (MVP+; use `ILIKE` for now), Saved/filter presets (post-MVP), Advanced date range picker with custom from/to dates (post-MVP), Pagination or infinite scroll (post-MVP; assume personal task volumes fit in memory), Drag-and-drop reordering within groups (post-MVP), Search across archived tasks on dashboard (post-MVP)
+- Branch: `feature/P2-F5-task-filters-sorting-grouping`
+- Next Steps: Implement in order: Validation schemas → Data layer updates → TaskFilters enhancements → TaskList grouping → FilterChips → Page integration → Testing
 
 ## History
 
@@ -24,3 +39,6 @@ Not Started
 - **Dashboard Overview** (2026-04-21) - Built personalized dashboard with stats cards (Due Today, Overdue, Completed Today, Total Active), priority distribution summary, upcoming tasks list (7 days), quick actions, and empty state for new users. Created date utilities with timezone support in lib/utils/date.ts, dashboard data layer in lib/data/dashboard.ts, and all UI components (stats-cards, priority-summary, upcoming-tasks, quick-actions, empty-state, dashboard-header). Added loading skeleton and error boundary. 22 date utility tests passing. Build passes successfully.
 - **Task Management (CRUD)** (2026-04-22) - Implemented complete task lifecycle management: create, read, update, delete, toggle completion, and archive. Added Zod v4 validation schemas (lib/validation/task.ts), task data layer with Drizzle ORM queries (lib/data/task.ts), and server actions (lib/actions/task.ts) returning { success, data?, error? }. Built reusable TaskForm component with React Hook Form, plus CreateTaskDialog, EditTaskDialog, DeleteTaskDialog, and ArchiveTaskDialog. Created TaskList, TaskItem with completion checkbox, TaskFilters with URL param state, and TaskDetailView with full CRUD actions. Implemented /tasks page with status/priority filtering and /tasks/[taskId] detail page with not-found handling, loading skeletons, and error boundaries. Updated task-card.tsx to link to /tasks/[taskId]. Build passes successfully.
 - **Category Management (P2-F4)** (2026-04-22) - Implemented complete category management with /categories page for CRUD operations, integrated category dropdown in TaskForm, added category filter in TaskFilters, and display category badges on TaskItem/TaskDetailView/Dashboard components. Created Zod validation (lib/validation/category.ts), data layer (lib/data/category.ts), and server actions (lib/actions/category.ts). Built reusable CategoryForm, ColorPicker with 12 preset colors, CategoryBadge, and dialogs (create/edit/delete). All data strictly scoped to authenticated user. Build passes, 113 tests pass.
+- **Task Filters, Sorting, and Grouping (P2-F5)** (2026-04-22) - Enhanced `/tasks` page with full-text search (debounced 300ms, ILIKE on title/description), due date state filters (today/upcoming/overdue/none, timezone-aware), multi-field sorting (dueDate/createdAt/updatedAt/priority/title with asc/desc), and optional grouping (status/category/dueDate). All state persisted in URL query params via `router.replace` for shareability and back-button support. Updated data layer (`lib/data/task.ts`) with typed `GetTasksOptions` supporting filters and sort, using Drizzle `and()`/`or()`/`inArray()` composition and dynamic `orderBy` with SQL CASE expressions for priority and null-due-date handling. Created grouping utility (`lib/utils/task-grouping.ts`), FilterChips component, TaskGroupHeader with collapse toggle, and responsive TaskFilters with mobile sheet drawer. Added dedicated filtered empty state. Wrote 15 new tests for validation schemas and grouping logic. Build passes, 130 tests pass (1 pre-existing date utility failure unrelated to this feature).
+
+(End of file - total 26 lines)

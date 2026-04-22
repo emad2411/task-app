@@ -13,9 +13,25 @@ export default function TasksLoading() {
           <Skeleton className="h-10 w-32" />
         </div>
 
-        <div className="flex gap-3">
-          <Skeleton className="h-10 w-[160px]" />
-          <Skeleton className="h-10 w-[160px]" />
+        {/* Filter bar skeleton */}
+        <div className="hidden flex-wrap items-center gap-3 sm:flex">
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-8 w-[140px]" />
+          <Skeleton className="h-8 w-[140px]" />
+          <Skeleton className="h-8 w-[150px]" />
+          <Skeleton className="h-8 w-[140px]" />
+          <Skeleton className="h-8 w-[120px]" />
+          <Skeleton className="h-8 w-[130px]" />
+        </div>
+
+        {/* Mobile filter skeleton */}
+        <div className="flex flex-col gap-2 sm:hidden">
+          <Skeleton className="h-9 w-full" />
+          <div className="flex gap-2">
+            <Skeleton className="h-8 flex-1" />
+            <Skeleton className="h-8 flex-1" />
+            <Skeleton className="h-8 flex-1" />
+          </div>
         </div>
 
         <TaskSkeleton />

@@ -1,15 +1,17 @@
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import { requireAuth } from "@/lib/auth/session";
-import { getTasks, getCategoriesForUser } from "@/lib/data/task";
+import { getTasks, getCategoriesForUser, getTaskCount } from "@/lib/data/task";
 import { getDashboardData } from "@/lib/data/dashboard";
 import { TaskList } from "@/components/tasks/task-list";
 import { TaskFilters } from "@/components/tasks/task-filters";
+import { FilterChips } from "@/components/tasks/filter-chips";
+import { TaskEmptyState } from "@/components/tasks/task-empty-state";
 import { CreateTaskDialog } from "@/components/tasks/create-task-dialog";
-import { TaskStatus, TaskPriority } from "@/lib/db/schema";
+import { taskQueryParamsSchema } from "@/lib/validation/task";
 
 interface TasksPageProps {
-  searchParams: Promise<{ status?: string; priority?: string; category?: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
 export default async function TasksPage({ searchParams }: TasksPageProps) {
@@ -21,21 +23,51 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
   }
 
   const params = await searchParams;
-  const statusFilter = params.status as TaskStatus | undefined;
-  const priorityFilter = params.priority as TaskPriority | undefined;
-  const categoryFilter = params.category;
 
-  const [tasks, categories, { timezone }] = await Promise.all([
-    getTasks(user.id, {
-      status: statusFilter,
-      priority: priorityFilter,
-      categoryId: categoryFilter,
-    }),
+  // Validate and sanitize URL params
+  const validated = taskQueryParamsSchema.safeParse(params);
+  const query = validated.success ? validated.data : {};
+
+  const statusFilter = query.status;
+  const priorityFilter = query.priority;
+  const categoryFilter = query.category;
+  const searchQuery = query.q;
+  const dueDateFilter = query.dueDate;
+  const sortField = query.sort;
+  const sortOrder = query.order;
+  const groupBy = query.groupBy ?? "none";
+
+  // Get timezone first (needed for due date filtering)
+  const { timezone } = await getDashboardData(user.id);
+
+  // Fetch tasks, categories, and total count in parallel
+  const [tasks, categories, totalTaskCount] = await Promise.all([
+    getTasks(
+      user.id,
+      {
+        status: statusFilter,
+        priority: priorityFilter,
+        categoryId: categoryFilter,
+        search: searchQuery,
+        dueDate: dueDateFilter,
+        sortField,
+        sortOrder,
+      },
+      timezone
+    ),
     getCategoriesForUser(user.id),
-    getDashboardData(user.id),
+    getTaskCount(user.id),
   ]);
 
-  const hasFilters = statusFilter || priorityFilter || categoryFilter;
+  const hasFilters =
+    !!statusFilter?.length ||
+    !!priorityFilter?.length ||
+    !!categoryFilter ||
+    !!searchQuery ||
+    !!dueDateFilter;
+
+  const hasSortOrGroup =
+    sortField !== undefined || sortOrder !== undefined || groupBy !== "none";
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -43,31 +75,29 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
             <h1 className="text-2xl font-bold tracking-tight">Tasks</h1>
-            <p className="text-muted-foreground">
-              Showing {tasks.length} task{tasks.length !== 1 ? "s" : ""}
+            <p className="text-sm text-muted-foreground">
+              {tasks.length === totalTaskCount
+                ? `Showing ${tasks.length} task${tasks.length !== 1 ? "s" : ""}`
+                : `Showing ${tasks.length} of ${totalTaskCount} task${totalTaskCount !== 1 ? "s" : ""}`}
             </p>
           </div>
           <CreateTaskDialog categories={categories} />
         </div>
 
         <TaskFilters categories={categories} />
+        <FilterChips categories={categories} />
 
         {tasks.length > 0 ? (
-          <TaskList tasks={tasks} timezone={timezone} />
+          <TaskList
+            tasks={tasks}
+            timezone={timezone}
+            groupBy={groupBy}
+          />
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold">
-                {hasFilters ? "No tasks match your filters" : "No tasks yet"}
-              </h3>
-              <p className="text-muted-foreground">
-                {hasFilters
-                  ? "Try adjusting your filters or clear them to see all tasks."
-                  : "Get started by creating your first task."}
-              </p>
-              {!hasFilters && <CreateTaskDialog categories={categories} />}
-            </div>
-          </div>
+          <TaskEmptyState
+            hasFilters={hasFilters || hasSortOrGroup}
+            categories={categories}
+          />
         )}
       </main>
     </div>
