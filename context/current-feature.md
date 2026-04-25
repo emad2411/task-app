@@ -1,31 +1,16 @@
-# Current Feature: P3-F1 - User Settings & Preferences
+# Current Feature
 
 ## Status
 
-Complete
+Not Started
 
 ## Goals
 
-- Build a comprehensive `/settings` page with tabbed navigation for Profile, Security, Appearance, and Preferences
-- Allow users to update their display name (Profile)
-- Allow users to change their password from a dedicated security section (Security)
-- Persist theme preference (light/dark/system) to the database via `user_preferences` (Appearance)
-- Allow users to set timezone, date format, and default task sort order (Preferences)
-- Automatically create a `user_preferences` record on first visit if none exists
-- Ensure all preferences are reflected across the application immediately after save
-- Provide a polished, accessible, mobile-responsive settings UI
+<!-- Add feature goals here -->
 
 ## Notes
 
-- **Phase:** 3 - Preferences and Polish
-- **Feature ID:** P3-F1
-- **Date:** 2026-04-24
-- Reuses existing `updatePasswordAction` and `updatePasswordSchema` from auth modules
-- Theme sync strategy: immediate client-side change via `next-themes`, persisted to DB via `updatePreferencesAction`
-- Uses shadcn/ui Tabs, Input, Button, Select, Card, Label, Command/Popover for timezone combobox
-- All data strictly scoped by authenticated userId
-- File structure: `lib/data/preferences.ts`, `lib/actions/settings.ts`, `lib/validation/settings.ts`, `components/settings/*.tsx`, `app/(app)/settings/page.tsx`
-- Out of scope: avatar upload, session management, account deletion, notifications, export/import, 2FA
+<!-- Add feature notes here -->
 
 ## History
 
@@ -40,5 +25,4 @@ Complete
 - **Task Management (CRUD)** (2026-04-22) - Implemented complete task lifecycle management: create, read, update, delete, toggle completion, and archive. Added Zod v4 validation schemas (lib/validation/task.ts), task data layer with Drizzle ORM queries (lib/data/task.ts), and server actions (lib/actions/task.ts) returning { success, data?, error? }. Built reusable TaskForm component with React Hook Form, plus CreateTaskDialog, EditTaskDialog, DeleteTaskDialog, and ArchiveTaskDialog. Created TaskList, TaskItem with completion checkbox, TaskFilters with URL param state, and TaskDetailView with full CRUD actions. Implemented /tasks page with status/priority filtering and /tasks/[taskId] detail page with not-found handling, loading skeletons, and error boundaries. Updated task-card.tsx to link to /tasks/[taskId]. Build passes successfully.
 - **Category Management (P2-F4)** (2026-04-22) - Implemented complete category management with /categories page for CRUD operations, integrated category dropdown in TaskForm, added category filter in TaskFilters, and display category badges on TaskItem/TaskDetailView/Dashboard components. Created Zod validation (lib/validation/category.ts), data layer (lib/data/category.ts), and server actions (lib/actions/category.ts). Built reusable CategoryForm, ColorPicker with 12 preset colors, CategoryBadge, and dialogs (create/edit/delete). All data strictly scoped to authenticated user. Build passes, 113 tests pass.
 - **Task Filters, Sorting, and Grouping (P2-F5)** (2026-04-22) - Enhanced `/tasks` page with full-text search (debounced 300ms, ILIKE on title/description), due date state filters (today/upcoming/overdue/none, timezone-aware), multi-field sorting (dueDate/createdAt/updatedAt/priority/title with asc/desc), and optional grouping (status/category/dueDate). All state persisted in URL query params via `router.replace` for shareability and back-button support. Updated data layer (`lib/data/task.ts`) with typed `GetTasksOptions` supporting filters and sort, using Drizzle `and()`/`or()`/`inArray()` composition and dynamic `orderBy` with SQL CASE expressions for priority and null-due-date handling. Created grouping utility (`lib/utils/task-grouping.ts`), FilterChips component, TaskGroupHeader with collapse toggle, and responsive TaskFilters with mobile sheet drawer. Added dedicated filtered empty state. Wrote 15 new tests for validation schemas and grouping logic. Build passes, 130 tests pass (1 pre-existing date utility failure unrelated to this feature).
-
-(End of file - total 26 lines)
+- **User Settings & Preferences (P3-F1)** (2026-04-25) - Built comprehensive `/settings` page with tabbed navigation (Profile, Security, Appearance, Preferences). Implemented display name update via Better Auth API, theme persistence (light/dark/system) to user_preferences table, and preferences for timezone, date format, and default task sort order. Auto-creates user_preferences record on first visit. Added Zod validation schemas, preferences data layer, settings server actions, and settings UI components (profile-form, preferences-form, timezone-combobox, appearance-form, security-form). Wrote 21 validation tests for settings schemas. Build passes, 152 tests pass (1 pre-existing date utility failure).
