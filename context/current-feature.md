@@ -1,16 +1,31 @@
-# Current Feature
+# Current Feature: P3-F1 - User Settings & Preferences
 
 ## Status
 
-Not Started
+Complete
 
 ## Goals
 
-<!-- List goals here when a feature is loaded -->
+- Build a comprehensive `/settings` page with tabbed navigation for Profile, Security, Appearance, and Preferences
+- Allow users to update their display name (Profile)
+- Allow users to change their password from a dedicated security section (Security)
+- Persist theme preference (light/dark/system) to the database via `user_preferences` (Appearance)
+- Allow users to set timezone, date format, and default task sort order (Preferences)
+- Automatically create a `user_preferences` record on first visit if none exists
+- Ensure all preferences are reflected across the application immediately after save
+- Provide a polished, accessible, mobile-responsive settings UI
 
 ## Notes
 
-<!-- Add notes and context here -->
+- **Phase:** 3 - Preferences and Polish
+- **Feature ID:** P3-F1
+- **Date:** 2026-04-24
+- Reuses existing `updatePasswordAction` and `updatePasswordSchema` from auth modules
+- Theme sync strategy: immediate client-side change via `next-themes`, persisted to DB via `updatePreferencesAction`
+- Uses shadcn/ui Tabs, Input, Button, Select, Card, Label, Command/Popover for timezone combobox
+- All data strictly scoped by authenticated userId
+- File structure: `lib/data/preferences.ts`, `lib/actions/settings.ts`, `lib/validation/settings.ts`, `components/settings/*.tsx`, `app/(app)/settings/page.tsx`
+- Out of scope: avatar upload, session management, account deletion, notifications, export/import, 2FA
 
 ## History
 

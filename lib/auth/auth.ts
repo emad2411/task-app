@@ -2,21 +2,33 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter";
 import { nextCookies } from "better-auth/next-js";
 import { db } from "@/lib/db";
-import * as schema from "@/lib/db/schema";
+import {
+  users,
+  sessions,
+  accounts,
+  verifications,
+} from "@/lib/db/schema";
 import {
   sendPasswordResetEmail,
   sendVerificationEmail,
 } from "@/lib/email";
 
+/**
+ * Better Auth instance with Drizzle adapter.
+ *
+ * NOTE: Only pass the auth-related tables to the adapter.
+ * Do NOT include relations or application tables (tasks, categories,
+ * userPreferences) as they can cause "referencedTable" errors during
+ * Better Auth internal queries.
+ */
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
     schema: {
-      ...schema,
-      user: schema.users,
-      session: schema.sessions,
-      account: schema.accounts,
-      verification: schema.verifications,
+      users,
+      sessions,
+      accounts,
+      verifications,
     },
     usePlural: true,
   }),
@@ -54,9 +66,6 @@ export const auth = betterAuth({
       enabled: true,
       maxAge: 60 * 5,
     },
-  },
-  experimental: {
-    joins: true,
   },
   plugins: [nextCookies()],
   secret: process.env.BETTER_AUTH_SECRET!,

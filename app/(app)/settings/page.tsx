@@ -1,11 +1,56 @@
-import { Settings } from "lucide-react";
+import { Metadata } from "next";
+import { connection } from "next/server";
+import { requireAuth } from "@/lib/auth/session";
+import { SettingsTabs } from "@/components/settings/settings-tabs";
+import { getUserPreferences, upsertUserPreferences } from "@/lib/data/preferences";
 
-export default function SettingsPage() {
+/**
+ * Metadata for the settings page.
+ */
+export const metadata: Metadata = {
+  title: "Settings",
+  description: "Manage your account settings",
+};
+
+/**
+ * SettingsPage — Server Component for the settings route.
+ *
+ * Protects the route with authentication, fetches the current user
+ * and their preferences (auto-creating defaults if none exist),
+ * and renders the tabbed settings forms.
+ *
+ * @returns The settings page layout
+ */
+export default async function SettingsPage() {
+  // Force dynamic rendering - prevents prerendering for auth-protected pages
+  await connection();
+
+  const { user } = await requireAuth();
+
+  // Ensure user has a preferences record with defaults
+  let preferences = await getUserPreferences(user.id);
+  if (!preferences) {
+    preferences = await upsertUserPreferences(user.id, {});
+  }
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
-      <Settings className="h-12 w-12" />
-      <h1 className="text-2xl font-semibold">Settings</h1>
-      <p className="text-muted-foreground">Coming soon</p>
+    <div className="container max-w-4xl py-8">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
+        <p className="text-sm text-muted-foreground">
+          Manage your account settings and preferences
+        </p>
+      </div>
+
+      <SettingsTabs
+        defaultName={user.name ?? ""}
+        defaultTheme={preferences.theme}
+        preferences={{
+          timezone: preferences.timezone ?? "UTC",
+          dateFormat: preferences.dateFormat ?? "MM/dd/yyyy",
+          defaultTaskSort: preferences.defaultTaskSort ?? "due_date_asc",
+        }}
+      />
     </div>
   );
 }
