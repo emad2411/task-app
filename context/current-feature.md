@@ -1,30 +1,16 @@
-# Current Feature: P3-F2 — Improve Empty, Loading, and Error States
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Systematically audit and improve every user-facing state: empty states, loading skeletons, error boundaries, not-found pages, Suspense fallbacks
-- Add missing `global-error.tsx` (root level) and `not-found.tsx` (global 404)
-- Add `loading.tsx` and `error.tsx` for the `(public)` route group
-- Standardize all error boundaries (AlertTriangle icon, retry button, consistent spacing)
-- Standardize all empty states using the `<Empty>` compound component
-- Replace bare `"Loading..."` Suspense fallbacks with proper skeletons/spinners
-- Fix minor inconsistencies (categories error.tsx missing icon, root error.tsx raw button, CategorySkeleton unnecessary "use client")
-- Audit cache invalidation patterns for completeness across all server actions
+<!-- Add feature goals here -->
 
 ## Notes
 
-- **Phase:** 3 - Preferences and Polish
-- **Feature ID:** P3-F2
-- **Spec:** `context/features/phase-3/02-improve-states/FEATURE.md`
-- All dependencies already installed (lucide-react, shadcn/ui Button/Card/Skeleton, `<Empty>` compound component)
-- Implementation order: global-error.tsx → not-found.tsx → Root loading/error → Public loading/error → Suspense fallbacks → Empty state standardization → Error boundary consistency → Skeleton cleanup → Cache invalidation review
-- Global error boundary must be self-contained (inline styles, cannot use ThemeProvider)
-- Not-found page can be a Server Component with auth-aware navigation links
-- No new unit tests required (UI-only changes)
+<!-- Add feature notes here -->
 
 ## History
 
@@ -40,3 +26,4 @@ In Progress
 - **Category Management (P2-F4)** (2026-04-22) - Implemented complete category management with /categories page for CRUD operations, integrated category dropdown in TaskForm, added category filter in TaskFilters, and display category badges on TaskItem/TaskDetailView/Dashboard components. Created Zod validation (lib/validation/category.ts), data layer (lib/data/category.ts), and server actions (lib/actions/category.ts). Built reusable CategoryForm, ColorPicker with 12 preset colors, CategoryBadge, and dialogs (create/edit/delete). All data strictly scoped to authenticated user. Build passes, 113 tests pass.
 - **Task Filters, Sorting, and Grouping (P2-F5)** (2026-04-22) - Enhanced `/tasks` page with full-text search (debounced 300ms, ILIKE on title/description), due date state filters (today/upcoming/overdue/none, timezone-aware), multi-field sorting (dueDate/createdAt/updatedAt/priority/title with asc/desc), and optional grouping (status/category/dueDate). All state persisted in URL query params via `router.replace` for shareability and back-button support. Updated data layer (`lib/data/task.ts`) with typed `GetTasksOptions` supporting filters and sort, using Drizzle `and()`/`or()`/`inArray()` composition and dynamic `orderBy` with SQL CASE expressions for priority and null-due-date handling. Created grouping utility (`lib/utils/task-grouping.ts`), FilterChips component, TaskGroupHeader with collapse toggle, and responsive TaskFilters with mobile sheet drawer. Added dedicated filtered empty state. Wrote 15 new tests for validation schemas and grouping logic. Build passes, 130 tests pass (1 pre-existing date utility failure unrelated to this feature).
 - **User Settings & Preferences (P3-F1)** (2026-04-25) - Built comprehensive `/settings` page with tabbed navigation (Profile, Security, Appearance, Preferences). Implemented display name update via Better Auth API, theme persistence (light/dark/system) to user_preferences table, and preferences for timezone, date format, and default task sort order. Auto-creates user_preferences record on first visit. Added Zod validation schemas, preferences data layer, settings server actions, and settings UI components (profile-form, preferences-form, timezone-combobox, appearance-form, security-form). Wrote 21 validation tests for settings schemas. Build passes, 152 tests pass (1 pre-existing date utility failure).
+- **Improve Empty, Loading, and Error States (P3-F2)** (2026-04-26) - Created `app/global-error.tsx` (self-contained root error boundary with inline styles and dark mode CSS variables), `app/not-found.tsx` (auth-aware 404 with nav link), `app/(public)/loading.tsx` and `error.tsx` (auth page loading/error boundaries), `components/auth/auth-page-skeleton.tsx` (reusable auth skeleton), `components/categories/category-empty-state.tsx` (extracted from inline JSX). Updated `app/loading.tsx` (branded spinner + app name), `app/error.tsx` (shadcn Button + AlertTriangle icon + card wrapper), `app/(app)/categories/error.tsx` (added AlertTriangle icon and standardized layout), `app/(public)/reset-password/page.tsx` and `verify-email/page.tsx` (replaced "Loading..." Suspense fallbacks with AuthPageSkeleton), `components/categories/category-skeleton.tsx` (removed unused "use client"), `components/dashboard/empty-state.tsx` and `components/tasks/task-empty-state.tsx` (refactored to use `<Empty>` compound component). Added cache invalidation TODO comments to all 4 server action files for post-MVP `revalidateTag` migration. All error boundaries now consistent (AlertTriangle icon in bg-destructive/10 circle, retry button, min-h-[50vh]). All empty states now use `<Empty>` compound component. Build passes.
