@@ -75,7 +75,7 @@ export function TaskDetailView({ task, categories, timezone = "UTC" }: TaskDetai
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
-        <Button variant="ghost" size="sm" asChild className="mb-4">
+        <Button variant="ghost" size="sm" asChild className="mb-4 h-11 px-3 md:h-9">
           <Link href="/tasks">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to tasks
@@ -84,7 +84,7 @@ export function TaskDetailView({ task, categories, timezone = "UTC" }: TaskDetai
       </div>
 
       <div className="space-y-4">
-        <h1 className={cn("text-2xl font-bold tracking-tight", done && "line-through opacity-60")}>
+        <h1 className={cn("text-xl lg:text-2xl font-bold tracking-tight", done && "line-through opacity-60")}>
           {task.title}
         </h1>
 
@@ -93,7 +93,7 @@ export function TaskDetailView({ task, categories, timezone = "UTC" }: TaskDetai
           <Badge variant={priority.variant}>{priority.label}</Badge>
         </div>
 
-        <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+        <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground">
           {task.dueDate && (
             <div className={cn(
               taskIsOverdue && "text-destructive font-medium",
@@ -121,7 +121,7 @@ export function TaskDetailView({ task, categories, timezone = "UTC" }: TaskDetai
         </div>
 
         {task.description && (
-          <div className="whitespace-pre-wrap text-base leading-relaxed">
+          <div className="whitespace-pre-wrap text-base leading-relaxed break-words">
             {task.description}
           </div>
         )}
@@ -129,9 +129,9 @@ export function TaskDetailView({ task, categories, timezone = "UTC" }: TaskDetai
         <div className="flex flex-wrap gap-3 pt-4">
           <Button
             variant={done ? "outline" : "default"}
-            size="sm"
             onClick={handleToggle}
             disabled={isPending}
+            className="h-11 md:h-9"
           >
             {done ? (
               <>
@@ -158,7 +158,7 @@ export function TaskDetailView({ task, categories, timezone = "UTC" }: TaskDetai
             }}
             categories={categories}
           >
-            <Button variant="outline" size="sm">
+            <Button variant="outline" className="h-11 md:h-9">
               <Pencil className="mr-2 h-4 w-4" />
               Edit
             </Button>
@@ -166,7 +166,7 @@ export function TaskDetailView({ task, categories, timezone = "UTC" }: TaskDetai
 
           {task.status !== "archived" && (
             <ArchiveTaskDialog taskId={task.id}>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" className="h-11 md:h-9">
                 <Archive className="mr-2 h-4 w-4" />
                 Archive
               </Button>
@@ -178,7 +178,7 @@ export function TaskDetailView({ task, categories, timezone = "UTC" }: TaskDetai
             taskTitle={task.title}
             onDeleted={() => router.push("/tasks")}
           >
-            <Button variant="destructive" size="sm">
+            <Button variant="destructive" className="h-11 md:h-9">
               <Trash2 className="mr-2 h-4 w-4" />
               Delete
             </Button>

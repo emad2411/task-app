@@ -67,7 +67,7 @@ export function SettingsTabs({
               type="button"
               onClick={() => setActiveTab(item.id)}
               className={cn(
-                "relative px-4 py-2 text-sm font-medium transition-colors rounded-t-md",
+                "relative px-4 h-11 text-sm font-medium transition-colors rounded-t-md flex items-center",
                 activeTab === item.id
                   ? "text-primary"
                   : "text-muted-foreground hover:text-foreground"

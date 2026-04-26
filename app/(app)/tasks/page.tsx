@@ -74,7 +74,7 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
       <main className="flex-1 space-y-6 p-4 md:p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
-            <h1 className="text-2xl font-bold tracking-tight">Tasks</h1>
+            <h1 className="text-xl lg:text-2xl font-bold tracking-tight">Tasks</h1>
             <p className="text-sm text-muted-foreground">
               {tasks.length === totalTaskCount
                 ? `Showing ${tasks.length} task${tasks.length !== 1 ? "s" : ""}`

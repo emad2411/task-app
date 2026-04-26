@@ -37,7 +37,7 @@ export function CategoryItem({ category, taskCount }: CategoryItemProps) {
         </span>
         <div className="flex gap-1">
           <EditCategoryDialog category={category}>
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" className="h-10 w-10 md:h-8 md:w-8">
               <span className="sr-only">Edit</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -55,7 +55,7 @@ export function CategoryItem({ category, taskCount }: CategoryItemProps) {
             </Button>
           </EditCategoryDialog>
           <DeleteCategoryDialog category={category} taskCount={taskCount}>
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" className="h-10 w-10 md:h-8 md:w-8">
               <span className="sr-only">Delete</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"

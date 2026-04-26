@@ -1,16 +1,31 @@
-# Current Feature
+# Current Feature: P3-F3 - Responsive Refinements
 
 ## Status
 
-Not Started
+Complete
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Perform a comprehensive responsive audit and refinement pass across the entire application, ensuring excellent mobile experience (320px–768px), comfortable tablet experience (768px–1024px), and optimized desktop experience (1024px+)
+- Fix mobile navigation with a collapsible sidebar or bottom nav for authenticated pages
+- Improve task list and filter UX on small screens
+- Ensure all touch targets meet the minimum 44×44px accessibility standard
+- Fix horizontal overflow, text truncation, and layout breakage on narrow viewports
+- Ensure dialogs, sheets, and modals work correctly on mobile (proper sizing, scroll behavior)
+- Standardize responsive grid patterns across dashboard, tasks, categories, and settings
+- Ensure forms are comfortable to use on mobile (input heights, font sizes, button sizing)
+- Verify all tables/lists adapt gracefully to narrow screens
 
 ## Notes
 
-<!-- Add feature notes here -->
+- **Phase:** 3 – Preferences and Polish  
+- **Feature ID:** P3-F3  
+- **Date:** 2026-04-26  
+- **Scope:** Navigation/layout, dashboard, task list/detail, categories, settings, auth pages, dialogs/sheets, empty/error states, grid standardization, form standardization, touch-target audit, typography scaling, spacing audit  
+- **Out of scope:** New functionality, dark mode improvements, accessibility beyond touch targets, performance optimizations, new animations, offline support, PWA manifest  
+- **Breakpoint strategy:** Tailwind v4 defaults – mobile-first (`sm:` 640px, `md:` 768px, `lg:` 1024px, `xl:` 1280px)  
+- **Key new file:** `components/layout/mobile-nav.tsx`  
+- **Implementation order:** Mobile navigation → Dashboard → Task list → Task detail → Categories → Settings → Auth pages → Dialog audit → Touch target audit  
 
 ## History
 
@@ -27,3 +42,4 @@ Not Started
 - **Task Filters, Sorting, and Grouping (P2-F5)** (2026-04-22) - Enhanced `/tasks` page with full-text search (debounced 300ms, ILIKE on title/description), due date state filters (today/upcoming/overdue/none, timezone-aware), multi-field sorting (dueDate/createdAt/updatedAt/priority/title with asc/desc), and optional grouping (status/category/dueDate). All state persisted in URL query params via `router.replace` for shareability and back-button support. Updated data layer (`lib/data/task.ts`) with typed `GetTasksOptions` supporting filters and sort, using Drizzle `and()`/`or()`/`inArray()` composition and dynamic `orderBy` with SQL CASE expressions for priority and null-due-date handling. Created grouping utility (`lib/utils/task-grouping.ts`), FilterChips component, TaskGroupHeader with collapse toggle, and responsive TaskFilters with mobile sheet drawer. Added dedicated filtered empty state. Wrote 15 new tests for validation schemas and grouping logic. Build passes, 130 tests pass (1 pre-existing date utility failure unrelated to this feature).
 - **User Settings & Preferences (P3-F1)** (2026-04-25) - Built comprehensive `/settings` page with tabbed navigation (Profile, Security, Appearance, Preferences). Implemented display name update via Better Auth API, theme persistence (light/dark/system) to user_preferences table, and preferences for timezone, date format, and default task sort order. Auto-creates user_preferences record on first visit. Added Zod validation schemas, preferences data layer, settings server actions, and settings UI components (profile-form, preferences-form, timezone-combobox, appearance-form, security-form). Wrote 21 validation tests for settings schemas. Build passes, 152 tests pass (1 pre-existing date utility failure).
 - **Improve Empty, Loading, and Error States (P3-F2)** (2026-04-26) - Created `app/global-error.tsx` (self-contained root error boundary with inline styles and dark mode CSS variables), `app/not-found.tsx` (auth-aware 404 with nav link), `app/(public)/loading.tsx` and `error.tsx` (auth page loading/error boundaries), `components/auth/auth-page-skeleton.tsx` (reusable auth skeleton), `components/categories/category-empty-state.tsx` (extracted from inline JSX). Updated `app/loading.tsx` (branded spinner + app name), `app/error.tsx` (shadcn Button + AlertTriangle icon + card wrapper), `app/(app)/categories/error.tsx` (added AlertTriangle icon and standardized layout), `app/(public)/reset-password/page.tsx` and `verify-email/page.tsx` (replaced "Loading..." Suspense fallbacks with AuthPageSkeleton), `components/categories/category-skeleton.tsx` (removed unused "use client"), `components/dashboard/empty-state.tsx` and `components/tasks/task-empty-state.tsx` (refactored to use `<Empty>` compound component). Added cache invalidation TODO comments to all 4 server action files for post-MVP `revalidateTag` migration. All error boundaries now consistent (AlertTriangle icon in bg-destructive/10 circle, retry button, min-h-[50vh]). All empty states now use `<Empty>` compound component. Build passes.
+- **Responsive Refinements (P3-F3)** (2026-04-26) - Comprehensive responsive audit across all pages. Mobile navigation: created `components/layout/top-bar.tsx` with hamburger Sheet trigger, app title, and user avatar; rebuilt `components/layout/mobile-nav.tsx` as left-side Sheet with nav links, user info, and sign-out; updated `components/layout/app-shell.tsx` to use `lg` breakpoint for sidebar/desktop split; updated `components/layout/sidebar.tsx` to `hidden lg:flex`. Dashboard: `components/dashboard/dashboard-header.tsx` hidden on mobile/tablet. Task list: `components/tasks/task-item.tsx` with mobile-first layout, enlarged checkbox tap area (44px), flex-wrap metadata, priority badge visible on mobile; `components/tasks/task-filters.tsx` with `h-11` mobile inputs/selects, enlarged clear button tap area, filter Sheet with `px-4` padding. Task detail: `components/tasks/task-detail-view.tsx` with responsive title (`text-xl lg:text-2xl`), action buttons `h-11 md:h-9`, back button enlarged. Categories: `components/categories/category-item.tsx` with `h-10 w-10` edit/delete buttons on mobile. Settings: `components/settings/settings-tabs.tsx` with `h-11` mobile tab buttons. Auth: `components/auth/auth-card.tsx` responsive title sizing. Page titles: Dashboard, Tasks, Categories, Settings all use `text-xl lg:text-2xl`. Build passes, 151/153 tests pass (2 pre-existing date utility failures).

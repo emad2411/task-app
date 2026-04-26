@@ -57,29 +57,32 @@ export function TaskItem({ task, timezone = "UTC" }: TaskItemProps) {
   return (
     <div
       className={cn(
-        "group flex items-center gap-3 rounded-lg border p-3 transition-colors",
+        "group flex items-start sm:items-center gap-3 rounded-lg border p-3 transition-colors",
         "hover:bg-accent hover:text-accent-foreground",
         done && "opacity-60",
         taskIsDueToday && "border-primary/50 bg-primary/5",
         taskIsOverdue && "border-destructive/50 bg-destructive/5"
       )}
     >
-      <Checkbox
-        checked={done}
-        onCheckedChange={handleToggle}
-        disabled={isPending}
-        aria-label={done ? "Mark as incomplete" : "Mark as complete"}
-        className="shrink-0"
-      />
+      {/* Checkbox with enlarged tap area on mobile */}
+      <label className="flex items-center justify-center shrink-0 h-11 w-11 -ml-2 cursor-pointer">
+        <Checkbox
+          checked={done}
+          onCheckedChange={handleToggle}
+          disabled={isPending}
+          aria-label={done ? "Mark as incomplete" : "Mark as complete"}
+          className="shrink-0"
+        />
+      </label>
 
       <Link
         href={`/tasks/${task.id}`}
-        className="min-w-0 flex-1 space-y-1"
+        className="min-w-0 flex-1 space-y-1 py-0.5"
       >
         <div className="flex items-center gap-2">
           <span
             className={cn(
-              "truncate font-medium",
+              "truncate font-medium text-base",
               done && "line-through"
             )}
           >
@@ -87,7 +90,7 @@ export function TaskItem({ task, timezone = "UTC" }: TaskItemProps) {
           </span>
         </div>
 
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
           {task.category && (
             <span className="flex items-center gap-1">
               <span
@@ -97,10 +100,24 @@ export function TaskItem({ task, timezone = "UTC" }: TaskItemProps) {
               {task.category.name}
             </span>
           )}
+          <Badge variant={priority.variant} className="text-xs sm:hidden">
+            {priority.label}
+          </Badge>
+          {task.dueDate && (
+            <span
+              className={cn(
+                "text-sm",
+                taskIsOverdue && "font-medium text-destructive",
+                taskIsDueToday && "font-medium text-primary"
+              )}
+            >
+              {formatRelativeDate(task.dueDate, timezone)}
+            </span>
+          )}
         </div>
       </Link>
 
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="hidden sm:flex shrink-0 items-center gap-2">
         <Badge variant={priority.variant} className="text-xs">
           {priority.label}
         </Badge>

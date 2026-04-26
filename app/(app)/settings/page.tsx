@@ -36,7 +36,7 @@ export default async function SettingsPage() {
   return (
     <div className="container max-w-4xl py-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
+        <h1 className="text-xl lg:text-2xl font-bold tracking-tight">Settings</h1>
         <p className="text-sm text-muted-foreground">
           Manage your account settings and preferences
         </p>

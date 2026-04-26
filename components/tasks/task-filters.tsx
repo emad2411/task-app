@@ -146,24 +146,24 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
             placeholder="Search tasks..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            className="h-8 pl-9 pr-8 text-sm"
+            className="h-11 pl-9 pr-10 text-base md:h-8 md:text-sm"
             aria-label="Search tasks"
           />
           {searchInput && (
             <button
               type="button"
               onClick={() => setSearchInput("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center h-8 w-8 text-muted-foreground hover:text-foreground"
               aria-label="Clear search"
             >
-              <X className="h-3.5 w-3.5" />
+              <X className="h-4 w-4" />
             </button>
           )}
         </div>
 
         {/* Status */}
-        <Select value={status} onValueChange={(value) => updateFilter("status", value)}>
-          <SelectTrigger className="h-8 w-full text-sm sm:w-[140px]">
+          <Select value={status} onValueChange={(value) => updateFilter("status", value)}>
+          <SelectTrigger className="h-11 w-full text-base sm:w-[140px] md:h-8 md:text-sm">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -177,7 +177,7 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
 
         {/* Priority */}
         <Select value={priority} onValueChange={(value) => updateFilter("priority", value)}>
-          <SelectTrigger className="h-8 w-full text-sm sm:w-[140px]">
+          <SelectTrigger className="h-11 w-full text-base sm:w-[140px] md:h-8 md:text-sm">
             <SelectValue placeholder="Priority" />
           </SelectTrigger>
           <SelectContent>
@@ -192,7 +192,7 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
         {/* Category */}
         {categories.length > 0 && (
           <Select value={category} onValueChange={(value) => updateFilter("category", value)}>
-            <SelectTrigger className="h-8 w-full text-sm sm:w-[160px]">
+            <SelectTrigger className="h-11 w-full text-base sm:w-[160px] md:h-8 md:text-sm">
               <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent>
@@ -212,7 +212,7 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
 
         {/* Due Date */}
         <Select value={dueDate} onValueChange={(value) => updateFilter("dueDate", value)}>
-          <SelectTrigger className="h-8 w-full text-sm sm:w-[150px]">
+          <SelectTrigger className="h-11 w-full text-base sm:w-[150px] md:h-8 md:text-sm">
             <SelectValue placeholder="Due Date" />
           </SelectTrigger>
           <SelectContent>
@@ -228,7 +228,7 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
         <div className="flex items-center gap-1">
           <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />
           <Select value={sort} onValueChange={(value) => updateFilter("sort", value)}>
-            <SelectTrigger className="h-8 w-full text-sm sm:w-[140px]">
+            <SelectTrigger className="h-11 w-full text-base sm:w-[140px] md:h-8 md:text-sm">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
@@ -243,7 +243,7 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
 
         {/* Sort Order */}
         <Select value={order} onValueChange={(value) => updateFilter("order", value)}>
-          <SelectTrigger className="h-8 w-full text-sm sm:w-[120px]">
+          <SelectTrigger className="h-11 w-full text-base sm:w-[120px] md:h-8 md:text-sm">
             <SelectValue placeholder="Order" />
           </SelectTrigger>
           <SelectContent>
@@ -259,7 +259,7 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
         <div className="flex items-center gap-1">
           <Group className="h-3.5 w-3.5 text-muted-foreground" />
           <Select value={groupBy} onValueChange={(value) => updateFilter("groupBy", value)}>
-            <SelectTrigger className="h-8 w-full text-sm sm:w-[130px]">
+            <SelectTrigger className="h-11 w-full text-base sm:w-[130px] md:h-8 md:text-sm">
               <SelectValue placeholder="Group by" />
             </SelectTrigger>
             <SelectContent>
@@ -274,7 +274,7 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
 
         {/* Clear filters */}
         {(hasFilters || hasSortOrGroup) && (
-          <Button variant="ghost" size="sm" onClick={clearFilters} className="h-8">
+          <Button variant="ghost" size="sm" onClick={clearFilters} className="h-11 md:h-8">
             <X className="mr-1 h-3.5 w-3.5" />
             Reset
           </Button>
@@ -299,17 +299,17 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
               placeholder="Search tasks..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="h-9 pl-9 pr-8 text-sm"
+              className="h-11 pl-9 pr-8 text-base md:h-9 md:text-sm"
               aria-label="Search tasks"
             />
             {searchInput && (
               <button
                 type="button"
                 onClick={() => setSearchInput("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center h-8 w-8 text-muted-foreground hover:text-foreground"
                 aria-label="Clear search"
               >
-                <X className="h-3.5 w-3.5" />
+                <X className="h-4 w-4" />
               </button>
             )}
           </div>
@@ -317,7 +317,7 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
           <div className="flex items-center gap-2">
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 flex-1">
+                <Button variant="outline" size="sm" className="h-11 flex-1 md:h-8">
                   <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
                   Filters
                   {hasFilters && (
@@ -327,8 +327,8 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
                   )}
                 </Button>
               </SheetTrigger>
-              <SheetContent side="bottom" className="max-h-[80vh] overflow-y-auto">
-                <SheetHeader>
+              <SheetContent side="bottom" className="max-h-[80vh] overflow-y-auto px-4 py-6">
+                <SheetHeader className="px-0">
                   <SheetTitle>Filters</SheetTitle>
                 </SheetHeader>
                 <div className="mt-4 space-y-3">{filterContent}</div>
@@ -337,7 +337,7 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
 
             {/* Quick sort/group on mobile */}
             <Select value={sort} onValueChange={(value) => updateFilter("sort", value)}>
-              <SelectTrigger className="h-8 flex-1 text-sm">
+              <SelectTrigger className="h-11 flex-1 text-base md:h-8 md:text-sm">
                 <ArrowUpDown className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />
                 <SelectValue placeholder="Sort" />
               </SelectTrigger>
@@ -351,7 +351,7 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
             </Select>
 
             <Select value={groupBy} onValueChange={(value) => updateFilter("groupBy", value)}>
-              <SelectTrigger className="h-8 flex-1 text-sm">
+              <SelectTrigger className="h-11 flex-1 text-base md:h-8 md:text-sm">
                 <Group className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />
                 <SelectValue placeholder="Group" />
               </SelectTrigger>

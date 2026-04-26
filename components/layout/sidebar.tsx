@@ -22,7 +22,7 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden md:flex flex-col fixed left-0 top-0 z-40 w-[260px] h-screen border-r bg-background">
+    <aside className="hidden lg:flex flex-col fixed left-0 top-0 z-40 w-[260px] h-screen border-r bg-background">
       <div className="flex flex-col h-full">
         <div className="p-6 border-b">
           <h1 className="text-xl font-bold">TaskFlow</h1>

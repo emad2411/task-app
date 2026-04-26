@@ -21,7 +21,7 @@ export function AuthCard({ title, description, children, className }: AuthCardPr
             <FolderOpen className="h-8 w-8 text-primary" />
           </div>
         </div>
-        <CardTitle className="text-2xl text-center font-semibold tracking-tight">
+        <CardTitle className="text-xl lg:text-2xl text-center font-semibold tracking-tight">
           {title}
         </CardTitle>
         {description && (
@@ -53,7 +53,7 @@ export function SuccessCard({ title, message, children, className }: SuccessCard
             <CheckCircle2 className="h-12 w-12 text-green-600 dark:text-green-400" />
           </div>
           <div className="space-y-2">
-            <h2 className="text-2xl font-semibold tracking-tight">
+            <h2 className="text-xl lg:text-2xl font-semibold tracking-tight">
               {title}
             </h2>
             <p className="text-sm text-muted-foreground">

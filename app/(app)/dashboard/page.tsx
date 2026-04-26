@@ -60,7 +60,7 @@ export default async function DashboardPage() {
       <main className="flex-1 space-y-6 p-4 md:p-6">
         {/* Page Header - Title and welcome message */}
         <div className="space-y-1">
-          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-xl lg:text-2xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-muted-foreground">
             Welcome back, {user.name}. Here&apos;s your task overview.
           </p>
