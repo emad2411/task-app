@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { getSession } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 import { VerifyEmailHandler } from "@/components/auth/verify-email-handler";
+import { AuthPageSkeleton } from "@/components/auth/auth-page-skeleton";
 
 export default async function VerifyEmailPage() {
   const session = await getSession();
@@ -11,7 +12,7 @@ export default async function VerifyEmailPage() {
   }
 
   return (
-    <Suspense fallback={<div className="py-4 text-center text-muted-foreground">Loading...</div>}>
+    <Suspense fallback={<AuthPageSkeleton />}>
       <VerifyEmailHandler />
     </Suspense>
   );

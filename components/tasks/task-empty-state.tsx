@@ -1,5 +1,6 @@
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Empty, EmptyMedia, EmptyHeader, EmptyTitle, EmptyDescription, EmptyContent } from "@/components/ui/empty";
 import { CreateTaskDialog } from "./create-task-dialog";
 import type { Category } from "@/lib/db/schema";
 
@@ -16,32 +17,39 @@ export function TaskEmptyState({
 }: TaskEmptyStateProps) {
   if (hasFilters) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
-        <Search className="mb-3 h-10 w-10 text-muted-foreground" />
-        <div className="space-y-2">
-          <h3 className="text-lg font-semibold">No tasks match your filters</h3>
-          <p className="text-muted-foreground">
+      <Empty>
+        <EmptyMedia variant="icon">
+          <Search className="size-4" />
+        </EmptyMedia>
+        <EmptyHeader>
+          <EmptyTitle>No tasks match your filters</EmptyTitle>
+          <EmptyDescription>
             Try adjusting your search or clearing your filters.
-          </p>
-          {onClearFilters && (
-            <Button variant="outline" size="sm" onClick={onClearFilters} className="mt-2">
+          </EmptyDescription>
+        </EmptyHeader>
+        {onClearFilters && (
+          <EmptyContent>
+            <Button variant="outline" size="sm" onClick={onClearFilters}>
               Clear All Filters
             </Button>
-          )}
-        </div>
-      </div>
+          </EmptyContent>
+        )}
+      </Empty>
     );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
-      <div className="space-y-2">
-        <h3 className="text-lg font-semibold">No tasks yet</h3>
-        <p className="text-muted-foreground">
+    <Empty>
+      <EmptyMedia variant="icon" />
+      <EmptyHeader>
+        <EmptyTitle>No tasks yet</EmptyTitle>
+        <EmptyDescription>
           Get started by creating your first task.
-        </p>
+        </EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
         <CreateTaskDialog categories={categories} />
-      </div>
-    </div>
+      </EmptyContent>
+    </Empty>
   );
 }

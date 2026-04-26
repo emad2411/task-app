@@ -1,6 +1,8 @@
 "use server";
 
 import { auth } from "@/lib/auth/auth";
+// TODO (post-MVP): Consider migrating revalidatePath to revalidateTag
+// for more granular cache invalidation as the app scales.
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";

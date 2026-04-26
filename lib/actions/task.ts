@@ -1,6 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+// TODO (post-MVP): Consider migrating revalidatePath to revalidateTag
+// for more granular cache invalidation as the app scales.
+// Example: revalidateTag(`user-${userId}-tasks`)
 import { db } from "@/lib/db";
 import { tasks } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";

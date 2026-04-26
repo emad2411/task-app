@@ -1,16 +1,30 @@
-# Current Feature
+# Current Feature: P3-F2 — Improve Empty, Loading, and Error States
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Systematically audit and improve every user-facing state: empty states, loading skeletons, error boundaries, not-found pages, Suspense fallbacks
+- Add missing `global-error.tsx` (root level) and `not-found.tsx` (global 404)
+- Add `loading.tsx` and `error.tsx` for the `(public)` route group
+- Standardize all error boundaries (AlertTriangle icon, retry button, consistent spacing)
+- Standardize all empty states using the `<Empty>` compound component
+- Replace bare `"Loading..."` Suspense fallbacks with proper skeletons/spinners
+- Fix minor inconsistencies (categories error.tsx missing icon, root error.tsx raw button, CategorySkeleton unnecessary "use client")
+- Audit cache invalidation patterns for completeness across all server actions
 
 ## Notes
 
-<!-- Add feature notes here -->
+- **Phase:** 3 - Preferences and Polish
+- **Feature ID:** P3-F2
+- **Spec:** `context/features/phase-3/02-improve-states/FEATURE.md`
+- All dependencies already installed (lucide-react, shadcn/ui Button/Card/Skeleton, `<Empty>` compound component)
+- Implementation order: global-error.tsx → not-found.tsx → Root loading/error → Public loading/error → Suspense fallbacks → Empty state standardization → Error boundary consistency → Skeleton cleanup → Cache invalidation review
+- Global error boundary must be self-contained (inline styles, cannot use ThemeProvider)
+- Not-found page can be a Server Component with auth-aware navigation links
+- No new unit tests required (UI-only changes)
 
 ## History
 

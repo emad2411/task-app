@@ -1,6 +1,9 @@
 "use server";
 
 import { headers } from "next/headers";
+// TODO (post-MVP): Consider migrating revalidatePath to revalidateTag
+// for more granular cache invalidation as the app scales.
+// Example: revalidateTag(`user-${userId}-settings`)
 import { auth } from "@/lib/auth/auth";
 import { requireUserId } from "@/lib/auth/session";
 import { db } from "@/lib/db";

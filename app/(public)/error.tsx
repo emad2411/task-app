@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function Error({
+export default function PublicError({
   error,
   reset,
 }: {
@@ -23,9 +23,9 @@ export default function Error({
         </div>
         <h2 className="text-lg font-semibold">Something went wrong</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          An error occurred while loading this page. Please try again.
+          An error occurred. Please try again.
         </p>
-        <div className="mt-6 flex gap-3 justify-center">
+        <div className="mt-6">
           <Button onClick={reset}>Try again</Button>
         </div>
       </div>
