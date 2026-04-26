@@ -1,31 +1,16 @@
-# Current Feature: P3-F3 - Responsive Refinements
+# Current Feature
 
 ## Status
 
-Complete
+Not Started
 
 ## Goals
 
-- Perform a comprehensive responsive audit and refinement pass across the entire application, ensuring excellent mobile experience (320px–768px), comfortable tablet experience (768px–1024px), and optimized desktop experience (1024px+)
-- Fix mobile navigation with a collapsible sidebar or bottom nav for authenticated pages
-- Improve task list and filter UX on small screens
-- Ensure all touch targets meet the minimum 44×44px accessibility standard
-- Fix horizontal overflow, text truncation, and layout breakage on narrow viewports
-- Ensure dialogs, sheets, and modals work correctly on mobile (proper sizing, scroll behavior)
-- Standardize responsive grid patterns across dashboard, tasks, categories, and settings
-- Ensure forms are comfortable to use on mobile (input heights, font sizes, button sizing)
-- Verify all tables/lists adapt gracefully to narrow screens
+<!-- Add feature goals here -->
 
 ## Notes
 
-- **Phase:** 3 – Preferences and Polish  
-- **Feature ID:** P3-F3  
-- **Date:** 2026-04-26  
-- **Scope:** Navigation/layout, dashboard, task list/detail, categories, settings, auth pages, dialogs/sheets, empty/error states, grid standardization, form standardization, touch-target audit, typography scaling, spacing audit  
-- **Out of scope:** New functionality, dark mode improvements, accessibility beyond touch targets, performance optimizations, new animations, offline support, PWA manifest  
-- **Breakpoint strategy:** Tailwind v4 defaults – mobile-first (`sm:` 640px, `md:` 768px, `lg:` 1024px, `xl:` 1280px)  
-- **Key new file:** `components/layout/mobile-nav.tsx`  
-- **Implementation order:** Mobile navigation → Dashboard → Task list → Task detail → Categories → Settings → Auth pages → Dialog audit → Touch target audit  
+<!-- Add feature notes here -->
 
 ## History
 
