@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import { connection } from "next/server";
 import { requireAuth } from "@/lib/auth/session";
 import { getDashboardData } from "@/lib/data/dashboard";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
@@ -28,9 +27,6 @@ import { EmptyState } from "@/components/dashboard/empty-state";
  * - Error state handled by error.tsx
  */
 export default async function DashboardPage() {
-  // Force dynamic rendering - prevents prerendering for auth-protected pages
-  await connection();
-
   // Verify user is authenticated - redirects to sign-in if not
   const { user } = await requireAuth();
 

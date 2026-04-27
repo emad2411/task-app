@@ -1,9 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-// TODO (post-MVP): Consider migrating revalidatePath to revalidateTag
-// for more granular cache invalidation as the app scales.
-// Example: revalidateTag(`user-${userId}-categories`)
+import { revalidateTag, revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { categories } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
@@ -41,6 +38,8 @@ export async function createCategoryAction(input: unknown): Promise<ActionResult
       userId,
     }).returning();
 
+    revalidateTag(`user-${userId}-categories`, "max");
+    revalidateTag(`user-${userId}-tasks`, "max");
     revalidatePath("/categories");
     revalidatePath("/tasks");
     revalidatePath("/dashboard");
@@ -87,6 +86,8 @@ export async function updateCategoryAction(input: unknown): Promise<ActionResult
       return { success: false, error: "Category not found" };
     }
 
+    revalidateTag(`user-${userId}-categories`, "max");
+    revalidateTag(`user-${userId}-tasks`, "max");
     revalidatePath("/categories");
     revalidatePath("/tasks");
     revalidatePath("/dashboard");
@@ -115,6 +116,8 @@ export async function deleteCategoryAction(
       return { success: false, error: "Category not found" };
     }
 
+    revalidateTag(`user-${userId}-categories`, "max");
+    revalidateTag(`user-${userId}-tasks`, "max");
     revalidatePath("/categories");
     revalidatePath("/tasks");
     revalidatePath("/dashboard");

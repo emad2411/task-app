@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import { connection } from "next/server";
 import { requireAuth } from "@/lib/auth/session";
 import { SettingsTabs } from "@/components/settings/settings-tabs";
 import { getUserPreferences, upsertUserPreferences } from "@/lib/data/preferences";
@@ -22,9 +21,6 @@ export const metadata: Metadata = {
  * @returns The settings page layout
  */
 export default async function SettingsPage() {
-  // Force dynamic rendering - prevents prerendering for auth-protected pages
-  await connection();
-
   const { user } = await requireAuth();
 
   // Ensure user has a preferences record with defaults

@@ -1,7 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+const mockRevalidateTag = vi.fn();
 const mockRevalidatePath = vi.fn();
 vi.mock("next/cache", () => ({
+  revalidateTag: (...args: unknown[]) => mockRevalidateTag(...args),
   revalidatePath: (...args: unknown[]) => mockRevalidatePath(...args),
 }));
 
@@ -132,6 +134,8 @@ describe("createTaskAction", () => {
 
     await createTaskAction({ title: "Task" });
 
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-1-tasks", "max");
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-1-dashboard", "max");
     expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard");
     expect(mockRevalidatePath).toHaveBeenCalledWith("/tasks");
   });
@@ -207,6 +211,10 @@ describe("updateTaskAction", () => {
 
     await updateTaskAction({ id: taskId, title: "Updated" });
 
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-1-tasks", "max");
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-1-dashboard", "max");
+    expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard");
+    expect(mockRevalidatePath).toHaveBeenCalledWith("/tasks");
     expect(mockRevalidatePath).toHaveBeenCalledWith(`/tasks/${taskId}`);
   });
 
@@ -263,6 +271,8 @@ describe("deleteTaskAction", () => {
 
     await deleteTaskAction("task-1");
 
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-1-tasks", "max");
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-1-dashboard", "max");
     expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard");
     expect(mockRevalidatePath).toHaveBeenCalledWith("/tasks");
   });
@@ -335,6 +345,10 @@ describe("toggleTaskCompletionAction", () => {
 
     await toggleTaskCompletionAction("task-1");
 
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-1-tasks", "max");
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-1-dashboard", "max");
+    expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard");
+    expect(mockRevalidatePath).toHaveBeenCalledWith("/tasks");
     expect(mockRevalidatePath).toHaveBeenCalledWith("/tasks/task-1");
   });
 
@@ -390,6 +404,10 @@ describe("archiveTaskAction", () => {
 
     await archiveTaskAction("task-1");
 
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-1-tasks", "max");
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-1-dashboard", "max");
+    expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard");
+    expect(mockRevalidatePath).toHaveBeenCalledWith("/tasks");
     expect(mockRevalidatePath).toHaveBeenCalledWith("/tasks/task-1");
   });
 

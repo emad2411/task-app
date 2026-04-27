@@ -1,5 +1,4 @@
-"use server";
-
+import { cacheTag, cacheLife } from "next/cache";
 import { eq, and, count, asc } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { categories, tasks } from "@/lib/db/schema";
@@ -15,6 +14,10 @@ export interface CategoryWithTaskCount {
 }
 
 export async function getCategories(userId: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(`user-${userId}-categories`);
+
   return db.query.categories.findMany({
     where: eq(categories.userId, userId),
     orderBy: asc(categories.name),
@@ -22,6 +25,10 @@ export async function getCategories(userId: string) {
 }
 
 export async function getCategoryById(userId: string, categoryId: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(`user-${userId}-categories`);
+
   const category = await db.query.categories.findFirst({
     where: and(eq(categories.id, categoryId), eq(categories.userId, userId)),
   });
@@ -32,6 +39,10 @@ export async function getCategoryByIdWithTaskCount(
   userId: string,
   categoryId: string
 ): Promise<CategoryWithTaskCount | null> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(`user-${userId}-categories`);
+
   const result = await db
     .select({
       id: categories.id,
@@ -56,6 +67,10 @@ export async function getCategoryByIdWithTaskCount(
 export async function getCategoriesWithTaskCount(
   userId: string
 ): Promise<CategoryWithTaskCount[]> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(`user-${userId}-categories`);
+
   const result = await db
     .select({
       id: categories.id,
@@ -79,6 +94,10 @@ export async function getCategoriesWithTaskCount(
 }
 
 export async function getCategoriesForUser(userId: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(`user-${userId}-categories`);
+
   return db.query.categories.findMany({
     where: eq(categories.userId, userId),
     orderBy: asc(categories.name),

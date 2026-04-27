@@ -1,5 +1,4 @@
-"use server";
-
+import { cacheTag, cacheLife } from "next/cache";
 import { eq, and, count, gte, lt, isNull, asc } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { tasks, userPreferences } from "@/lib/db/schema";
@@ -99,6 +98,10 @@ export interface DashboardData {
  * ```
  */
 export async function getDashboardData(userId: string): Promise<DashboardData> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(`user-${userId}-dashboard`);
+
   // ==========================================================================
   // STEP 1: Get user's timezone preference
   // ==========================================================================

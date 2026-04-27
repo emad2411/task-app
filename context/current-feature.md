@@ -1,16 +1,41 @@
-# Current Feature
+# Current Feature: Caching & Optimistic Filter UI (P3-F5)
 
 ## Status
 
-Not Started
+Complete
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Implement Next.js 16 `use cache` directive with user-level cache isolation for all data layer functions
+- Replace coarse `revalidatePath` with granular `revalidateTag` for per-user cache invalidation
+- Set cache lifetime to `hours` profile for all cached data
+- Fix TaskFilters component to use optimistic UI state so filter changes are reflected instantly without visual flicker
+- Ensure browser back/forward buttons work correctly with optimistic filter state
+- Remove unnecessary `await connection()` calls from all pages
 
 ## Notes
 
-<!-- Add feature notes here -->
+### Caching Infrastructure
+- Enable `cacheComponents` flag in `next.config.ts`
+- Wrap all data layer functions with `'use cache'` + `cacheTag` + `cacheLife('hours')`:
+  - `lib/data/task.ts`: getTasks, getTaskById, getTaskCount, getCategoriesForUser
+  - `lib/data/dashboard.ts`: getDashboardData
+  - `lib/data/category.ts`: getCategories, getCategoryById, getCategoryByIdWithTaskCount, getCategoriesWithTaskCount, getCategoriesForUser
+  - `lib/data/preferences.ts`: getUserPreferences
+
+### Server Action Cache Invalidation
+- Replace `revalidatePath` with `revalidateTag` in:
+  - `lib/actions/task.ts` (all 5 actions)
+  - `lib/actions/category.ts` (all 3 actions)
+  - `lib/actions/settings.ts` (both actions)
+
+### TaskFilters Optimistic UI Fix
+- Add optimistic state for all filter values (status, priority, category, dueDate, sort, order, groupBy)
+- Fix search input not clearing when Reset button pressed or browser back/forward navigated
+- Add useEffect to sync searchInput when q changes
+
+### Page Cleanup
+- Remove `await connection()` from all (app) pages: tasks, dashboard, categories, settings, tasks/[taskId]
 
 ## History
 

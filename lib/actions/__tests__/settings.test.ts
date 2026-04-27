@@ -1,7 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+const mockRevalidateTag = vi.fn();
 const mockRevalidatePath = vi.fn();
 vi.mock("next/cache", () => ({
+  revalidateTag: (...args: unknown[]) => mockRevalidateTag(...args),
   revalidatePath: (...args: unknown[]) => mockRevalidatePath(...args),
 }));
 
@@ -98,6 +100,8 @@ describe("updateProfileAction", () => {
 
     await updateProfileAction({ name: "John Doe" });
 
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-preferences", "max");
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-dashboard", "max");
     expect(mockRevalidatePath).toHaveBeenCalledWith("/settings");
     expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard");
   });
@@ -210,6 +214,9 @@ describe("updatePreferencesAction", () => {
 
     await updatePreferencesAction({ theme: "dark" });
 
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-preferences", "max");
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-dashboard", "max");
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-tasks", "max");
     expect(mockRevalidatePath).toHaveBeenCalledWith("/settings");
     expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard");
     expect(mockRevalidatePath).toHaveBeenCalledWith("/tasks");

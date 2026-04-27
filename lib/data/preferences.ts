@@ -1,3 +1,4 @@
+import { cacheTag, cacheLife } from "next/cache";
 import { db } from "@/lib/db";
 import { userPreferences } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
@@ -9,6 +10,10 @@ import { eq } from "drizzle-orm";
  * @returns The user's preferences record, or null if not found
  */
 export async function getUserPreferences(userId: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(`user-${userId}-preferences`);
+
   return db.query.userPreferences.findFirst({
     where: eq(userPreferences.userId, userId),
   });

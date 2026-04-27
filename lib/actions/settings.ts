@@ -1,15 +1,12 @@
 "use server";
 
 import { headers } from "next/headers";
-// TODO (post-MVP): Consider migrating revalidatePath to revalidateTag
-// for more granular cache invalidation as the app scales.
-// Example: revalidateTag(`user-${userId}-settings`)
+import { revalidateTag, revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth/auth";
 import { requireUserId } from "@/lib/auth/session";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
 import {
   updateProfileSchema,
   updatePreferencesSchema,
@@ -46,6 +43,8 @@ export async function updateProfileAction(input: UpdateProfileInput) {
       .set({ name: validated.name, updatedAt: new Date() })
       .where(eq(users.id, userId));
 
+    revalidateTag(`user-${userId}-preferences`, "max");
+    revalidateTag(`user-${userId}-dashboard`, "max");
     revalidatePath("/settings");
     revalidatePath("/dashboard");
 
@@ -72,6 +71,9 @@ export async function updatePreferencesAction(input: UpdatePreferencesInput) {
 
     await upsertUserPreferences(userId, validated);
 
+    revalidateTag(`user-${userId}-preferences`, "max");
+    revalidateTag(`user-${userId}-dashboard`, "max");
+    revalidateTag(`user-${userId}-tasks`, "max");
     revalidatePath("/settings");
     revalidatePath("/dashboard");
     revalidatePath("/tasks");

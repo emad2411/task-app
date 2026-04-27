@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import { connection } from "next/server";
 import { requireAuth } from "@/lib/auth/session";
 import { getTasks, getCategoriesForUser, getTaskCount } from "@/lib/data/task";
 import { getDashboardData } from "@/lib/data/dashboard";
@@ -15,7 +14,6 @@ interface TasksPageProps {
 }
 
 export default async function TasksPage({ searchParams }: TasksPageProps) {
-  await connection();
   const { user } = await requireAuth();
 
   if (!user) {

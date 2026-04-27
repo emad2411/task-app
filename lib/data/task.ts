@@ -1,3 +1,4 @@
+import { cacheTag, cacheLife } from "next/cache";
 import {
   eq,
   and,
@@ -40,6 +41,10 @@ export async function getTasks(
   options?: GetTasksOptions,
   timezone: string = "UTC"
 ) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(`user-${userId}-tasks`);
+
   const conditions = [eq(tasks.userId, userId)];
 
   // Status filter
@@ -162,6 +167,10 @@ export async function getTasks(
 }
 
 export async function getTaskById(userId: string, taskId: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(`user-${userId}-tasks`);
+
   const task = await db.query.tasks.findFirst({
     where: and(eq(tasks.id, taskId), eq(tasks.userId, userId)),
     with: { category: true },
@@ -170,6 +179,10 @@ export async function getTaskById(userId: string, taskId: string) {
 }
 
 export async function getTaskCount(userId: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(`user-${userId}-tasks`);
+
   const result = await db
     .select({ count: count() })
     .from(tasks)
@@ -178,6 +191,10 @@ export async function getTaskCount(userId: string) {
 }
 
 export async function getCategoriesForUser(userId: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(`user-${userId}-categories`);
+
   return db.query.categories.findMany({
     where: eq(categories.userId, userId),
     orderBy: asc(categories.name),

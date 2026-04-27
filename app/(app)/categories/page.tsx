@@ -1,4 +1,3 @@
-import { connection } from "next/server";
 import { requireAuth } from "@/lib/auth/session";
 import { getCategoriesWithTaskCount } from "@/lib/data/category";
 import { CategoryList } from "@/components/categories/category-list";
@@ -7,7 +6,6 @@ import { CategoryEmptyState } from "@/components/categories/category-empty-state
 import { Tags } from "lucide-react";
 
 export default async function CategoriesPage() {
-  await connection();
   const { user } = await requireAuth();
 
   if (!user) {

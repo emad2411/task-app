@@ -1,9 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-// TODO (post-MVP): Consider migrating revalidatePath to revalidateTag
-// for more granular cache invalidation as the app scales.
-// Example: revalidateTag(`user-${userId}-tasks`)
+import { revalidateTag, revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { tasks } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
@@ -32,6 +29,8 @@ export async function createTaskAction(input: unknown): Promise<ActionResult> {
       categoryId: validated.categoryId || null,
     }).returning();
     
+    revalidateTag(`user-${userId}-tasks`, "max");
+    revalidateTag(`user-${userId}-dashboard`, "max");
     revalidatePath("/dashboard");
     revalidatePath("/tasks");
     return { success: true, data: task };
@@ -65,6 +64,8 @@ export async function updateTaskAction(input: unknown): Promise<ActionResult> {
       return { success: false, error: "Task not found" };
     }
     
+    revalidateTag(`user-${userId}-tasks`, "max");
+    revalidateTag(`user-${userId}-dashboard`, "max");
     revalidatePath("/dashboard");
     revalidatePath("/tasks");
     revalidatePath(`/tasks/${id}`);
@@ -90,6 +91,8 @@ export async function deleteTaskAction(taskId: string): Promise<ActionResult> {
       return { success: false, error: "Task not found" };
     }
     
+    revalidateTag(`user-${userId}-tasks`, "max");
+    revalidateTag(`user-${userId}-dashboard`, "max");
     revalidatePath("/dashboard");
     revalidatePath("/tasks");
     return { success: true };
@@ -122,6 +125,8 @@ export async function toggleTaskCompletionAction(taskId: string): Promise<Action
       })
       .where(and(eq(tasks.id, taskId), eq(tasks.userId, userId)));
     
+    revalidateTag(`user-${userId}-tasks`, "max");
+    revalidateTag(`user-${userId}-dashboard`, "max");
     revalidatePath("/dashboard");
     revalidatePath("/tasks");
     revalidatePath(`/tasks/${taskId}`);
@@ -151,6 +156,8 @@ export async function archiveTaskAction(taskId: string): Promise<ActionResult> {
       return { success: false, error: "Task not found" };
     }
     
+    revalidateTag(`user-${userId}-tasks`, "max");
+    revalidateTag(`user-${userId}-dashboard`, "max");
     revalidatePath("/dashboard");
     revalidatePath("/tasks");
     revalidatePath(`/tasks/${taskId}`);
