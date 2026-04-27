@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, afterAll } from "vitest";
 import {
   isDueToday,
   isOverdue,
@@ -11,6 +11,10 @@ import {
   getEndOfTodayInTimezone,
   getUpcomingThreshold,
 } from "./date";
+
+afterAll(() => {
+  vi.useRealTimers();
+});
 
 describe("date utilities", () => {
   const UTC = "UTC";
@@ -85,9 +89,12 @@ describe("date utilities", () => {
     });
 
     it("should respect timezone boundaries", () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2026-04-22T00:00:00Z"));
       // 2026-04-21T23:00:00Z is April 22 in JST (UTC+9)
       const lateUtc = new Date("2026-04-21T23:00:00Z");
       expect(isDueToday(lateUtc, JST)).toBe(true);
+      vi.useRealTimers();
     });
   });
 
@@ -118,6 +125,8 @@ describe("date utilities", () => {
     });
 
     it("should handle timezone properly", () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2026-04-22T12:00:00Z"));
       // April 21 at 1am PST = April 21 at 8am UTC
       // Since "now" is April 22, this is overdue regardless of timezone
       const pstLate = new Date("2026-04-21T01:00:00-07:00");
@@ -126,6 +135,7 @@ describe("date utilities", () => {
       // A future date should not be overdue
       const pstFuture = new Date("2026-04-25T01:00:00-07:00");
       expect(isOverdue(pstFuture, PST)).toBe(false);
+      vi.useRealTimers();
     });
   });
 

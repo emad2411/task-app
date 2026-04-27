@@ -1,16 +1,29 @@
-# Current Feature
+# Current Feature: Test Coverage for Critical Flows (P3-F4)
 
 ## Status
 
-Not Started
+Complete
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Fix the 2 pre-existing date utility test failures
+- Achieve comprehensive test coverage across all critical user flows
+- Cover all validation schemas with unit tests
+- Cover all server actions with unit tests (mocked DB and auth)
+- Cover all utility functions with unit tests
+- Establish baseline test count target of 200+ passing tests
+- Ensure every critical flow has at least one positive and one negative test case
 
 ## Notes
 
-<!-- Add feature notes here -->
+Phase 3 feature focused on test coverage. Target coverage areas:
+- Category validation tests (~10 tests)
+- Category server action tests (~15 tests)
+- Settings server action tests (~15 tests)
+- Data layer tests: category, preferences, dashboard, task (~34 tests)
+- Fix 2 pre-existing date utility failures
+
+Expected: ~225+ passing tests (up from ~131 passing)
 
 ## History
 
@@ -28,3 +41,4 @@ Not Started
 - **User Settings & Preferences (P3-F1)** (2026-04-25) - Built comprehensive `/settings` page with tabbed navigation (Profile, Security, Appearance, Preferences). Implemented display name update via Better Auth API, theme persistence (light/dark/system) to user_preferences table, and preferences for timezone, date format, and default task sort order. Auto-creates user_preferences record on first visit. Added Zod validation schemas, preferences data layer, settings server actions, and settings UI components (profile-form, preferences-form, timezone-combobox, appearance-form, security-form). Wrote 21 validation tests for settings schemas. Build passes, 152 tests pass (1 pre-existing date utility failure).
 - **Improve Empty, Loading, and Error States (P3-F2)** (2026-04-26) - Created `app/global-error.tsx` (self-contained root error boundary with inline styles and dark mode CSS variables), `app/not-found.tsx` (auth-aware 404 with nav link), `app/(public)/loading.tsx` and `error.tsx` (auth page loading/error boundaries), `components/auth/auth-page-skeleton.tsx` (reusable auth skeleton), `components/categories/category-empty-state.tsx` (extracted from inline JSX). Updated `app/loading.tsx` (branded spinner + app name), `app/error.tsx` (shadcn Button + AlertTriangle icon + card wrapper), `app/(app)/categories/error.tsx` (added AlertTriangle icon and standardized layout), `app/(public)/reset-password/page.tsx` and `verify-email/page.tsx` (replaced "Loading..." Suspense fallbacks with AuthPageSkeleton), `components/categories/category-skeleton.tsx` (removed unused "use client"), `components/dashboard/empty-state.tsx` and `components/tasks/task-empty-state.tsx` (refactored to use `<Empty>` compound component). Added cache invalidation TODO comments to all 4 server action files for post-MVP `revalidateTag` migration. All error boundaries now consistent (AlertTriangle icon in bg-destructive/10 circle, retry button, min-h-[50vh]). All empty states now use `<Empty>` compound component. Build passes.
 - **Responsive Refinements (P3-F3)** (2026-04-26) - Comprehensive responsive audit across all pages. Mobile navigation: created `components/layout/top-bar.tsx` with hamburger Sheet trigger, app title, and user avatar; rebuilt `components/layout/mobile-nav.tsx` as left-side Sheet with nav links, user info, and sign-out; updated `components/layout/app-shell.tsx` to use `lg` breakpoint for sidebar/desktop split; updated `components/layout/sidebar.tsx` to `hidden lg:flex`. Dashboard: `components/dashboard/dashboard-header.tsx` hidden on mobile/tablet. Task list: `components/tasks/task-item.tsx` with mobile-first layout, enlarged checkbox tap area (44px), flex-wrap metadata, priority badge visible on mobile; `components/tasks/task-filters.tsx` with `h-11` mobile inputs/selects, enlarged clear button tap area, filter Sheet with `px-4` padding. Task detail: `components/tasks/task-detail-view.tsx` with responsive title (`text-xl lg:text-2xl`), action buttons `h-11 md:h-9`, back button enlarged. Categories: `components/categories/category-item.tsx` with `h-10 w-10` edit/delete buttons on mobile. Settings: `components/settings/settings-tabs.tsx` with `h-11` mobile tab buttons. Auth: `components/auth/auth-card.tsx` responsive title sizing. Page titles: Dashboard, Tasks, Categories, Settings all use `text-xl lg:text-2xl`. Build passes, 151/153 tests pass (2 pre-existing date utility failures).
+- **Test Coverage for Critical Flows (P3-F4)** (2026-04-27) - Fixed 2 pre-existing date utility test failures (timezone boundary tests now use `vi.useFakeTimers()` for deterministic dates). Created reusable test mocks (`lib/__mocks__/db.ts`, `lib/__mocks__/auth/session.ts`). Added 24 category validation tests, 20 category server action tests, 17 settings server action tests, 29 data layer tests (category, preferences, dashboard, task). Total: 243 passing tests across 13 test files (up from 131). Build and lint pass.
