@@ -1,29 +1,16 @@
-# Current Feature: Test Coverage for Critical Flows (P3-F4)
+# Current Feature
 
 ## Status
 
-Complete
+Not Started
 
 ## Goals
 
-- Fix the 2 pre-existing date utility test failures
-- Achieve comprehensive test coverage across all critical user flows
-- Cover all validation schemas with unit tests
-- Cover all server actions with unit tests (mocked DB and auth)
-- Cover all utility functions with unit tests
-- Establish baseline test count target of 200+ passing tests
-- Ensure every critical flow has at least one positive and one negative test case
+<!-- Add feature goals here -->
 
 ## Notes
 
-Phase 3 feature focused on test coverage. Target coverage areas:
-- Category validation tests (~10 tests)
-- Category server action tests (~15 tests)
-- Settings server action tests (~15 tests)
-- Data layer tests: category, preferences, dashboard, task (~34 tests)
-- Fix 2 pre-existing date utility failures
-
-Expected: ~225+ passing tests (up from ~131 passing)
+<!-- Add feature notes here -->
 
 ## History
 
