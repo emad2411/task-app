@@ -2,17 +2,14 @@ import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyMedia, EmptyHeader, EmptyTitle, EmptyDescription, EmptyContent } from "@/components/ui/empty";
 import { CreateTaskDialog } from "./create-task-dialog";
-import type { Category } from "@/lib/db/schema";
 
 interface TaskEmptyStateProps {
   hasFilters: boolean;
-  categories?: Category[];
   onClearFilters?: () => void;
 }
 
 export function TaskEmptyState({
   hasFilters,
-  categories = [],
   onClearFilters,
 }: TaskEmptyStateProps) {
   if (hasFilters) {
@@ -48,7 +45,7 @@ export function TaskEmptyState({
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <CreateTaskDialog categories={categories} />
+        <CreateTaskDialog />
       </EmptyContent>
     </Empty>
   );

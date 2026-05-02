@@ -7,6 +7,7 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
+  SheetDescription,
   SheetFooter,
   SheetClose,
 } from "@/components/ui/sheet";
@@ -54,6 +55,9 @@ export function MobileNav() {
     <SheetContent side="left" className="w-[280px] p-0 flex flex-col">
       <SheetHeader className="p-4 border-b">
         <SheetTitle className="text-lg font-semibold">TaskFlow</SheetTitle>
+        <SheetDescription className="sr-only">
+          Navigation menu for TaskFlow
+        </SheetDescription>
       </SheetHeader>
 
       {session?.user && (

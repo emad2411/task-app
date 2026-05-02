@@ -79,7 +79,7 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
                 : `Showing ${tasks.length} of ${totalTaskCount} task${totalTaskCount !== 1 ? "s" : ""}`}
             </p>
           </div>
-          <CreateTaskDialog categories={categories} />
+          <CreateTaskDialog />
         </div>
 
         <TaskFilters categories={categories} />
@@ -94,7 +94,6 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
         ) : (
           <TaskEmptyState
             hasFilters={hasFilters || hasSortOrGroup}
-            categories={categories}
           />
         )}
       </main>

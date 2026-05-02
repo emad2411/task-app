@@ -14,15 +14,15 @@ import {
 } from "@/components/ui/dialog";
 import { TaskForm } from "./task-form";
 import { createTaskAction } from "@/lib/actions/task";
-import type { Category } from "@/lib/db/schema";
+import { useCategories } from "@/lib/context/categories-context";
 
 interface CreateTaskDialogProps {
-  categories: Category[];
   children?: React.ReactNode;
 }
 
-export function CreateTaskDialog({ categories, children }: CreateTaskDialogProps) {
+export function CreateTaskDialog({ children }: CreateTaskDialogProps) {
   const [open, setOpen] = useState(false);
+  const categories = useCategories();
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

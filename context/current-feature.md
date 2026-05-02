@@ -1,16 +1,37 @@
 # Current Feature
 
+P3-F6 - App Shell Redesign
+
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Redesign the application layout to feature a persistent top header and a collapsible sidebar to improve desktop and tablet usability while maintaining a robust mobile-first experience.
+- Ensure no existing features or routes are broken.
+- Follow architectural guidelines from `context/coding-standards.md` and `context/PRD.md`.
+- Ensure a clean, production-ready, best-practice implementation using Tailwind CSS v4 and shadcn/ui.
 
 ## Notes
 
-<!-- Add feature notes here -->
+**Scope:**
+- **In Scope:**
+  - State Management: Manage `isSidebarCollapsed` state in `components/layout/app-shell.tsx`.
+  - Header Redesign (`TopBar`): Make header visible on all breakpoints, include sidebar toggle, logo, search bar (UI only), notification bell (UI only), "Create Task" quick action, and user avatar with dropdown (Profile, Settings, Sign out).
+  - Sidebar Redesign (`Sidebar`): Support expanded (`w-64`) and collapsed (`w-[72px]`) widths with smooth animation. Hide text labels when collapsed, center icons, and use shadcn/ui `Tooltip`. Adapt logo area. Remove redundant "New Task" button.
+  - Layout Adjustments: Dynamic main content left margin based on sidebar state. Add top padding for persistent header.
+  - Mobile Responsiveness: Hide desktop sidebar on screens < `lg`. Keep `Sheet`-based `MobileNav`. Ensure `TopBar` gracefully handles smaller viewports (hide/shrink search).
+- **Out of Scope:**
+  - Implementing search functionality (UI only).
+  - Implementing notifications functionality (UI only).
+  - Refactoring internal pages beyond layout margins.
+
+**Key Requirements:**
+- REQ-001: `AppShell` uses `useState` for `isSidebarCollapsed`.
+- REQ-002: `TopBar` visible on all screens, contains toggle, search, bell, create task, avatar dropdown.
+- REQ-003: Sidebar collapses smoothly, labels hidden, icons centered, tooltips on hover, active route indicated.
+- REQ-004: Sidebar hidden on mobile, `TopBar` uses hamburger menu, search adapts.
 
 ## History
 
@@ -30,3 +51,5 @@ Not Started
 - **Responsive Refinements (P3- F3)** (2026-04-26) - Comprehensive responsive audit across all pages. Mobile navigation: created `components/layout/top- bar. tsx` with hamburger Sheet trigger, app title, and user avatar; rebuilt `components/layout/mobile- nav. tsx` as left- side Sheet with nav links, user info, and sign- out; updated `components/layout/app- shell. tsx` to use `lg` breakpoint for sidebar/desktop split; updated `components/layout/sidebar. tsx` to `hidden lg:flex`. Dashboard: `components/dashboard/dashboard- header. tsx` hidden on mobile/tablet. Task list: `components/tasks/task- item. tsx` with mobile- first layout, enlarged checkbox tap area (44px), flex- wrap metadata, priority badge visible on mobile; `components/tasks/task- filters. tsx` with `h-11` mobile inputs/selects, enlarged clear button tap area, filter Sheet with `px-4` padding. Task detail: `components/tasks/task- detail- view. tsx` with responsive title (`text- xl lg:text-2xl`), action buttons `h-11 md:h-9`, back button enlarged. Categories: `components/categories/category- item. tsx` with `h-10 w-10` edit/delete buttons on mobile. Settings: `components/settings/settings- tabs. tsx` with `h-11` mobile tab buttons. Auth: `components/auth/auth- card. tsx` responsive title sizing. Page titles: Dashboard, Tasks, Categories, Settings all use `text- xl lg:text-2xl`. Build passes, 151/153 tests pass (2 pre- existing date utility failures).
 - **Test Coverage for Critical Flows (P3- F4)** (2026-04-27) - Fixed 2 pre- existing date utility test failures (timezone boundary tests now use `vi. useFakeTimers()` for deterministic dates). Created reusable test mocks (`lib/__mocks__/db. ts`, `lib/__mocks__/auth/session. ts`). Added 24 category validation tests, 20 category server action tests, 17 settings server action tests, 29 data layer tests (category, preferences, dashboard, task). Total: 243 passing tests across 13 test files (up from 131). Build and lint pass.
 - **Caching & Optimistic Filter UI (P3- F5)** (2026-04-28) - Added Next. js 16 `use cache` directive with user- level cache isolation to all data layer functions (task. ts, dashboard. ts, category. ts, preferences. ts). Replaced coarse `revalidatePath` with granular `revalidateTag` for per- user cache invalidation in all server actions. Set cache lifetime to `hours` profile. Fixed TaskFilters with optimistic UI state for instant filter changes without visual flicker. Fixed search race condition with useRef and 500ms debounce. Removed unnecessary `await connection()` calls from all pages. Build passes.
+
+(End of file - total 32 lines)
