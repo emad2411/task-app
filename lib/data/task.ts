@@ -20,6 +20,7 @@ import {
   getStartOfTodayInTimezone,
   getEndOfTodayInTimezone,
 } from "@/lib/utils/date";
+import { escapeLike } from "@/lib/utils/escape-like";
 
 export interface GetTasksOptions {
   status?: TaskStatus | TaskStatus[];
@@ -64,11 +65,12 @@ export async function getTasks(
     conditions.push(eq(tasks.categoryId, options.categoryId));
   }
 
-  // Search filter
+  // Search filter — escape LIKE wildcards to prevent injection
   if (options?.search) {
+    const safeSearch = escapeLike(options.search);
     const searchCondition = or(
-      ilike(tasks.title, `%${options.search}%`),
-      ilike(tasks.description, `%${options.search}%`)
+      ilike(tasks.title, `%${safeSearch}%`),
+      ilike(tasks.description, `%${safeSearch}%`)
     );
     if (searchCondition) {
       conditions.push(searchCondition);

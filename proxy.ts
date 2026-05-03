@@ -13,6 +13,8 @@ const AUTH_PATHS = [
   "/sign-in",
   "/sign-up",
   "/forgot-password",
+  "/reset-password",
+  "/verify-email",
 ];
 
 const STATIC_PATHS = [

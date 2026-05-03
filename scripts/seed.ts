@@ -4,8 +4,17 @@ import { eq } from "drizzle-orm";
 // Set DATABASE_URL env var before running this script
 // Example: $env:DATABASE_URL="postgresql://..."; npx tsx scripts/seed.ts
 
-// Target existing user ID - change this to your user ID
-const TARGET_USER_ID = "SVGfYh7sMn2443APsn1X8GBsqmqOaXLv";
+// Target existing user ID — set via SEED_USER_ID environment variable
+const seedUserId = process.env.SEED_USER_ID;
+if (!seedUserId) {
+  console.error(
+    "❌ SEED_USER_ID environment variable is required.\n" +
+    "   Set it to the ID of an existing user in your database.\n" +
+    '   Example: $env:SEED_USER_ID="your-user-id"; npx tsx scripts/seed.ts'
+  );
+  process.exit(1);
+}
+const TARGET_USER_ID: string = seedUserId;
 
 async function seed() {
   const { db } = await import("@/lib/db");

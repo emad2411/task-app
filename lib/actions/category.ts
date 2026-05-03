@@ -45,7 +45,15 @@ export async function createCategoryAction(input: unknown): Promise<ActionResult
     revalidatePath("/dashboard");
     return { success: true, data: category };
   } catch (error) {
-    if (error instanceof Error) return { success: false, error: error.message };
+    if (
+      error &&
+      typeof error === "object" &&
+      "code" in error &&
+      (error as { code: string }).code === "23505"
+    ) {
+      return { success: false, error: "A category with this name already exists" };
+    }
+    console.error("[createCategoryAction]", error);
     return { success: false, error: "Failed to create category" };
   }
 }
@@ -93,7 +101,15 @@ export async function updateCategoryAction(input: unknown): Promise<ActionResult
     revalidatePath("/dashboard");
     return { success: true, data: category };
   } catch (error) {
-    if (error instanceof Error) return { success: false, error: error.message };
+    if (
+      error &&
+      typeof error === "object" &&
+      "code" in error &&
+      (error as { code: string }).code === "23505"
+    ) {
+      return { success: false, error: "A category with this name already exists" };
+    }
+    console.error("[updateCategoryAction]", error);
     return { success: false, error: "Failed to update category" };
   }
 }
@@ -123,7 +139,7 @@ export async function deleteCategoryAction(
     revalidatePath("/dashboard");
     return { success: true };
   } catch (error) {
-    if (error instanceof Error) return { success: false, error: error.message };
+    console.error("[deleteCategoryAction]", error);
     return { success: false, error: "Failed to delete category" };
   }
 }

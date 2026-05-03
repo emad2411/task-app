@@ -1,16 +1,24 @@
-# Current Feature
+# Current Feature: P4-F1a — Input Sanitization & Data Integrity
 
 ## Status
 
-Not Started
+Complete
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Fix LIKE wildcard injection in task search (escape `%`, `_`, `\` in search strings)
+- Add database-level unique constraint on categories `(user_id, name)` to prevent TOCTOU race condition
+- Catch PostgreSQL unique violation error code 23505 in category actions with user-friendly messages
+- Move hardcoded seed user ID to `SEED_USER_ID` environment variable
+- Add `/reset-password` and `/verify-email` to `AUTH_PATHS` in proxy.ts
 
 ## Notes
 
-<!-- Additional context, constraints, or details -->
+- No new npm packages required — only code changes, DB migration, and tests
+- Migration removes regular `categories_user_id_name_idx` and replaces with unique `categories_user_id_name_unique`
+- App-level duplicate check kept for fast UX feedback; unique constraint is the safety net
+- Seed script exits with helpful error if `SEED_USER_ID` not set
+- Implementation order per spec: utility → tests → task search → schema → migration → categories → seed script → env → proxy
 
 ## History
 
@@ -31,5 +39,6 @@ Not Started
 - **Test Coverage for Critical Flows (P3- F4)** (2026-04-27) - Fixed 2 pre- existing date utility test failures (timezone boundary tests now use `vi. useFakeTimers()` for deterministic dates). Created reusable test mocks (`lib/__mocks__/db. ts`, `lib/__mocks__/auth/session. ts`). Added 24 category validation tests, 20 category server action tests, 17 settings server action tests, 29 data layer tests (category, preferences, dashboard, task). Total: 243 passing tests across 13 test files (up from 131). Build and lint pass.
 - **Caching & Optimistic Filter UI (P3- F5)** (2026-04-28) - Added Next. js 16 `use cache` directive with user- level cache isolation to all data layer functions (task. ts, dashboard. ts, category. ts, preferences. ts). Replaced coarse `revalidatePath` with granular `revalidateTag` for per- user cache invalidation in all server actions. Set cache lifetime to `hours` profile. Fixed TaskFilters with optimistic UI state for instant filter changes without visual flicker. Fixed search race condition with useRef and 500ms debounce. Removed unnecessary `await connection()` calls from all pages. Build passes.
 - **App Shell Redesign (P3- F6)** (2026-05-02) - Redesigned application layout with persistent top header and collapsible sidebar. AppShell manages `isSidebarCollapsed` state with dynamic main content margins. TopBar visible on all breakpoints with sidebar toggle, logo, search input (UI only), notification bell (UI only), Create Task button with functional dialog, user avatar dropdown (Profile, Settings, Sign out), and theme toggle. Sidebar supports expanded (`w-[260px]`) and collapsed (`w-[72px]`) states with smooth transitions, hidden labels, centered icons, shadcn/ui Tooltip on hover, and active route indication. Mobile: sidebar hidden, TopBar uses hamburger menu triggering Sheet-based MobileNav, search adapts. Added `SheetDescription` to MobileNav for accessibility compliance. Removed redundant DashboardHeader from dashboard page. Created `CategoriesProvider` Context for app-level category sharing; layout fetches categories once via cached `getCategoriesForUser`. Updated `CreateTaskDialog` to consume Context — zero network requests on open. Cleaned up category prop drilling across tasks page and empty state. Build passes.
+- **Input Sanitization & Data Integrity (P4-F1a)** (2026-05-03) - Fixed 4 security blockers: (1) Created `escapeLike()` utility to sanitize SQL LIKE wildcards (`%`, `_`, `\`) and applied it to task search in `lib/data/task.ts` (prevented wildcard injection attack). (2) Replaced regular index with `uniqueIndex` on categories `(user_id, name)` — generated and applied Drizzle migration; added PostgreSQL error code `23505` handling in all 3 category actions (`createCategoryAction`, `updateCategoryAction`, `deleteCategoryAction`) with user-friendly messages and `console.error` logging. (3) Moved hardcoded seed user ID from `scripts/seed.ts` to `SEED_USER_ID` environment variable with helpful error message on missing var; added it to `.env.example`. (4) Added `/reset-password` and `/verify-email` to `AUTH_PATHS` in `proxy.ts` so authenticated users are redirected to dashboard. Created 8 unit tests for `escapeLike()`. Updated 3 category action tests to match sanitized error messages. All 251 tests pass, build and lint pass.
 
 (End of file - total 32 lines)

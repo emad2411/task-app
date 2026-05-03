@@ -6,6 +6,7 @@ import {
   uuid,
   pgEnum,
   index,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -91,7 +92,7 @@ export const categories = pgTable(
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },
   (table) => [
-    index("categories_user_id_name_idx").on(table.userId, table.name),
+    uniqueIndex("categories_user_id_name_unique").on(table.userId, table.name),
   ]
 );
 
