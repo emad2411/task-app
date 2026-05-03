@@ -22,6 +22,7 @@ import {
   type UpdatePasswordInput,
   type VerifyEmailInput,
 } from "@/lib/validation/auth";
+import { handleActionError } from "@/lib/utils/action-error";
 
 export interface ActionResult<T = unknown> {
   success: boolean;
@@ -45,18 +46,19 @@ export async function signInAction(input: SignInInput): Promise<ActionResult> {
   } catch (error) {
     if (isAPIError(error)) {
       const apiError = error as unknown as APIError;
-      if (apiError.status === 401) {
+      // 401 = wrong credentials — safe to show
+      if (apiError.statusCode === 401) {
         return { success: false, error: "Invalid email or password" };
       }
-      if (apiError.status === 403) {
+      // 403 = email not verified — safe to show
+      if (apiError.statusCode === 403) {
         return { success: false, error: "Email not verified. Please check your email for a verification link." };
       }
-      return { success: false, error: apiError.message };
+      // All other API errors — log and return generic message
+      console.error("[signInAction] API error:", apiError.statusCode, apiError.body);
+      return { success: false, error: "An unexpected error occurred. Please try again." };
     }
-    if (error instanceof Error) {
-      return { success: false, error: error.message };
-    }
-    return { success: false, error: "An unexpected error occurred" };
+    return handleActionError("[signInAction]", error, "An unexpected error occurred");
   }
 }
 
@@ -89,25 +91,28 @@ export async function signUpAction(input: SignUpInput): Promise<ActionResult> {
   } catch (error) {
     if (isAPIError(error)) {
       const apiError = error as unknown as APIError;
-      if (apiError.status === 409) {
+      // 409 = duplicate email — safe to show
+      if (apiError.statusCode === 409) {
         return { success: false, error: "An account with this email already exists. Please sign in instead." };
       }
-      if (apiError.status === 422) {
+      // 422 = validation error — safe to show (generic message)
+      if (apiError.statusCode === 422) {
         return { success: false, error: "Invalid input. Please check your information and try again." };
       }
-      return { success: false, error: apiError.message };
+      // All other API errors — log and return generic message
+      console.error("[signUpAction] API error:", apiError.statusCode, apiError.body);
+      return { success: false, error: "An unexpected error occurred. Please try again." };
     }
+    // Check for duplicate user errors from non-API error paths
     if (error instanceof Error) {
-      // Check for common error patterns in error messages
-      const errorMessage = error.message.toLowerCase();
-      if (errorMessage.includes("user already exists") ||
-          errorMessage.includes("already registered") ||
-          errorMessage.includes("duplicate")) {
+      const msg = error.message.toLowerCase();
+      if (msg.includes("user already exists") ||
+          msg.includes("already registered") ||
+          msg.includes("duplicate")) {
         return { success: false, error: "An account with this email already exists. Please sign in instead." };
       }
-      return { success: false, error: error.message };
     }
-    return { success: false, error: "An unexpected error occurred" };
+    return handleActionError("[signUpAction]", error, "An unexpected error occurred");
   }
 }
 
@@ -126,7 +131,9 @@ export async function forgotPasswordAction(input: ForgotPasswordInput): Promise<
       success: true, 
       data: { message: "If an account exists with this email, you will receive a password reset link" } 
     };
-  } catch {
+  } catch (error) {
+    // Log the error but still return success to prevent email enumeration
+    console.error("[forgotPasswordAction]", error);
     return { 
       success: true, 
       data: { message: "If an account exists with this email, you will receive a password reset link" } 
@@ -147,10 +154,7 @@ export async function resetPasswordAction(input: ResetPasswordInput): Promise<Ac
 
     return { success: true, data: { message: "Password reset successfully" } };
   } catch (error) {
-    if (error instanceof Error) {
-      return { success: false, error: error.message };
-    }
-    return { success: false, error: "Failed to reset password" };
+    return handleActionError("[resetPasswordAction]", error, "Failed to reset password");
   }
 }
 
@@ -169,13 +173,11 @@ export async function updatePasswordAction(input: UpdatePasswordInput): Promise<
 
     return { success: true, data: { message: "Password updated successfully" } };
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes("current password")) {
-        return { success: false, error: "Current password is incorrect" };
-      }
-      return { success: false, error: error.message };
+    // Check for "wrong current password" error — safe to show
+    if (error instanceof Error && error.message.toLowerCase().includes("current password")) {
+      return { success: false, error: "Current password is incorrect" };
     }
-    return { success: false, error: "Failed to update password" };
+    return handleActionError("[updatePasswordAction]", error, "Failed to update password");
   }
 }
 
@@ -191,10 +193,7 @@ export async function verifyEmailAction(input: VerifyEmailInput): Promise<Action
 
     return { success: true, data: { message: "Email verified successfully" } };
   } catch (error) {
-    if (error instanceof Error) {
-      return { success: false, error: error.message };
-    }
-    return { success: false, error: "Failed to verify email" };
+    return handleActionError("[verifyEmailAction]", error, "Failed to verify email");
   }
 }
 
@@ -206,9 +205,6 @@ export async function signOutAction(): Promise<ActionResult> {
 
     return { success: true, data: { message: "Signed out successfully" } };
   } catch (error) {
-    if (error instanceof Error) {
-      return { success: false, error: error.message };
-    }
-    return { success: false, error: "Failed to sign out" };
+    return handleActionError("[signOutAction]", error, "Failed to sign out");
   }
 }

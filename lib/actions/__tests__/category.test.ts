@@ -121,7 +121,7 @@ describe("createCategoryAction", () => {
     const result = await createCategoryAction({ name: "Work" });
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("Failed to create category");
+    expect(result.error).toBe("Failed to create category. Please try again.");
   });
 });
 
@@ -223,7 +223,7 @@ describe("updateCategoryAction", () => {
     });
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("Failed to update category");
+    expect(result.error).toBe("Failed to update category. Please try again.");
   });
 });
 
@@ -290,6 +290,6 @@ describe("deleteCategoryAction", () => {
     const result = await deleteCategoryAction("cat-1");
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("Failed to delete category");
+    expect(result.error).toBe("Failed to delete category. Please try again.");
   });
 });

@@ -6,6 +6,7 @@ import { tasks } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { createTaskSchema, updateTaskSchema } from "@/lib/validation/task";
 import { getCurrentUserId } from "@/lib/auth/session";
+import { handleActionError } from "@/lib/utils/action-error";
 
 export interface ActionResult<T = unknown> {
   success: boolean;
@@ -35,8 +36,7 @@ export async function createTaskAction(input: unknown): Promise<ActionResult> {
     revalidatePath("/tasks");
     return { success: true, data: task };
   } catch (error) {
-    if (error instanceof Error) return { success: false, error: error.message };
-    return { success: false, error: "Failed to create task" };
+    return handleActionError("[createTaskAction]", error, "Failed to create task");
   }
 }
 
@@ -71,8 +71,7 @@ export async function updateTaskAction(input: unknown): Promise<ActionResult> {
     revalidatePath(`/tasks/${id}`);
     return { success: true, data: task };
   } catch (error) {
-    if (error instanceof Error) return { success: false, error: error.message };
-    return { success: false, error: "Failed to update task" };
+    return handleActionError("[updateTaskAction]", error, "Failed to update task");
   }
 }
 
@@ -97,8 +96,7 @@ export async function deleteTaskAction(taskId: string): Promise<ActionResult> {
     revalidatePath("/tasks");
     return { success: true };
   } catch (error) {
-    if (error instanceof Error) return { success: false, error: error.message };
-    return { success: false, error: "Failed to delete task" };
+    return handleActionError("[deleteTaskAction]", error, "Failed to delete task");
   }
 }
 
@@ -132,8 +130,7 @@ export async function toggleTaskCompletionAction(taskId: string): Promise<Action
     revalidatePath(`/tasks/${taskId}`);
     return { success: true };
   } catch (error) {
-    if (error instanceof Error) return { success: false, error: error.message };
-    return { success: false, error: "Failed to update task" };
+    return handleActionError("[toggleTaskCompletionAction]", error, "Failed to update task");
   }
 }
 
@@ -163,7 +160,6 @@ export async function archiveTaskAction(taskId: string): Promise<ActionResult> {
     revalidatePath(`/tasks/${taskId}`);
     return { success: true };
   } catch (error) {
-    if (error instanceof Error) return { success: false, error: error.message };
-    return { success: false, error: "Failed to archive task" };
+    return handleActionError("[archiveTaskAction]", error, "Failed to archive task");
   }
 }

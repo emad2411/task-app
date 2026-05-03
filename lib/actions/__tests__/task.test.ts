@@ -148,7 +148,7 @@ describe("createTaskAction", () => {
     const result = await createTaskAction({ title: "Task" });
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("DB connection failed");
+    expect(result.error).toBe("Failed to create task. Please try again.");
   });
 });
 
@@ -284,7 +284,7 @@ describe("deleteTaskAction", () => {
     const result = await deleteTaskAction("task-1");
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("DB error");
+    expect(result.error).toBe("Failed to delete task. Please try again.");
   });
 });
 
@@ -359,7 +359,7 @@ describe("toggleTaskCompletionAction", () => {
     const result = await toggleTaskCompletionAction("task-1");
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("Query failed");
+    expect(result.error).toBe("Failed to update task. Please try again.");
   });
 });
 
@@ -428,6 +428,6 @@ describe("archiveTaskAction", () => {
     const result = await archiveTaskAction("task-1");
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("Archive failed");
+    expect(result.error).toBe("Failed to archive task. Please try again.");
   });
 });

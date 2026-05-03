@@ -72,14 +72,14 @@ describe("updateProfileAction", () => {
     const result = await updateProfileAction({ name: "John Doe" });
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("Unauthorized");
+    expect(result.error).toBe("Failed to update profile. Please try again.");
   });
 
   it("should reject invalid name (< 2 chars)", async () => {
     const result = await updateProfileAction({ name: "A" });
 
     expect(result.success).toBe(false);
-    expect(result.error).toContain("at least 2 characters");
+    expect(result.error).toBe("Invalid input. Please check your data and try again.");
   });
 
   it("should reject empty name after trim", async () => {
@@ -112,7 +112,7 @@ describe("updateProfileAction", () => {
     const result = await updateProfileAction({ name: "John Doe" });
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("API error");
+    expect(result.error).toBe("Failed to update profile. Please try again.");
   });
 });
 
@@ -142,7 +142,7 @@ describe("updatePreferencesAction", () => {
     const result = await updatePreferencesAction({ theme: "dark" });
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("Unauthorized");
+    expect(result.error).toBe("Failed to update preferences. Please try again.");
   });
 
   it("should reject invalid theme value", async () => {
@@ -228,6 +228,6 @@ describe("updatePreferencesAction", () => {
     const result = await updatePreferencesAction({ theme: "dark" });
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("DB error");
+    expect(result.error).toBe("Failed to update preferences. Please try again.");
   });
 });

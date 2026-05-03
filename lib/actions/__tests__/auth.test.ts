@@ -70,7 +70,7 @@ describe("signInAction", () => {
     });
 
     expect(result.success).toBe(false);
-    expect(result.error?.toLowerCase()).toContain("email");
+    expect(result.error).toBe("Invalid input. Please check your data and try again.");
   });
 
   it("should return error for short password", async () => {
@@ -80,7 +80,7 @@ describe("signInAction", () => {
     });
 
     expect(result.success).toBe(false);
-    expect(result.error).toContain("8 characters");
+    expect(result.error).toBe("Invalid input. Please check your data and try again.");
   });
 
   it("should return error when auth fails", async () => {
@@ -92,7 +92,7 @@ describe("signInAction", () => {
     });
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("Invalid email or password");
+    expect(result.error).toBe("An unexpected error occurred. Please try again.");
   });
 
   it("should handle auth API errors", async () => {
@@ -104,7 +104,7 @@ describe("signInAction", () => {
     });
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("Network error");
+    expect(result.error).toBe("An unexpected error occurred. Please try again.");
   });
 });
 
@@ -140,7 +140,7 @@ describe("signUpAction", () => {
     });
 
     expect(result.success).toBe(false);
-    expect(result.error).toContain("Name");
+    expect(result.error).toBe("Invalid input. Please check your data and try again.");
   });
 
   it("should return error for long name", async () => {
@@ -151,7 +151,7 @@ describe("signUpAction", () => {
     });
 
     expect(result.success).toBe(false);
-    expect(result.error).toContain("100 characters");
+    expect(result.error).toBe("Invalid input. Please check your data and try again.");
   });
 
   it("should return success with null user when signup returns null", async () => {
@@ -252,7 +252,7 @@ describe("resetPasswordAction", () => {
     });
 
     expect(result.success).toBe(false);
-    expect(result.error?.toLowerCase()).toContain("token");
+    expect(result.error).toBe("Invalid input. Please check your data and try again.");
   });
 
   it("should return error for short password", async () => {
@@ -262,7 +262,7 @@ describe("resetPasswordAction", () => {
     });
 
     expect(result.success).toBe(false);
-    expect(result.error).toContain("8 characters");
+    expect(result.error).toBe("Invalid input. Please check your data and try again.");
   });
 
   it("should return error when reset fails", async () => {
@@ -274,7 +274,7 @@ describe("resetPasswordAction", () => {
     });
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("Invalid token");
+    expect(result.error).toBe("Failed to reset password. Please try again.");
   });
 });
 
@@ -320,7 +320,7 @@ describe("updatePasswordAction", () => {
     });
 
     expect(result.success).toBe(false);
-    expect(result.error).toContain("8 characters");
+    expect(result.error).toBe("Invalid input. Please check your data and try again.");
   });
 
   it("should return specific error for incorrect current password", async () => {
@@ -362,7 +362,7 @@ describe("verifyEmailAction", () => {
     });
 
     expect(result.success).toBe(false);
-    expect(result.error?.toLowerCase()).toContain("token");
+    expect(result.error).toBe("Invalid input. Please check your data and try again.");
   });
 
   it("should return error when verification fails", async () => {
@@ -373,7 +373,7 @@ describe("verifyEmailAction", () => {
     });
 
     expect(result.success).toBe(false);
-    expect(result.error).toBe("Invalid token");
+    expect(result.error).toBe("Failed to verify email. Please try again.");
   });
 });
 

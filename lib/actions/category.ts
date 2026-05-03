@@ -6,6 +6,7 @@ import { categories } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { createCategorySchema, updateCategorySchema } from "@/lib/validation/category";
 import { getCurrentUserId } from "@/lib/auth/session";
+import { handleActionError } from "@/lib/utils/action-error";
 
 export interface ActionResult<T = unknown> {
   success: boolean;
@@ -53,8 +54,7 @@ export async function createCategoryAction(input: unknown): Promise<ActionResult
     ) {
       return { success: false, error: "A category with this name already exists" };
     }
-    console.error("[createCategoryAction]", error);
-    return { success: false, error: "Failed to create category" };
+    return handleActionError("[createCategoryAction]", error, "Failed to create category");
   }
 }
 
@@ -109,8 +109,7 @@ export async function updateCategoryAction(input: unknown): Promise<ActionResult
     ) {
       return { success: false, error: "A category with this name already exists" };
     }
-    console.error("[updateCategoryAction]", error);
-    return { success: false, error: "Failed to update category" };
+    return handleActionError("[updateCategoryAction]", error, "Failed to update category");
   }
 }
 
@@ -139,8 +138,7 @@ export async function deleteCategoryAction(
     revalidatePath("/dashboard");
     return { success: true };
   } catch (error) {
-    console.error("[deleteCategoryAction]", error);
-    return { success: false, error: "Failed to delete category" };
+    return handleActionError("[deleteCategoryAction]", error, "Failed to delete category");
   }
 }
 

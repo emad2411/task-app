@@ -13,7 +13,8 @@ import {
   type UpdateProfileInput,
   type UpdatePreferencesInput,
 } from "@/lib/validation/settings";
-import { getUserPreferences, upsertUserPreferences } from "@/lib/data/preferences";
+import { upsertUserPreferences } from "@/lib/data/preferences";
+import { handleActionError } from "@/lib/utils/action-error";
 
 /**
  * Update the authenticated user's display name.
@@ -50,10 +51,7 @@ export async function updateProfileAction(input: UpdateProfileInput) {
 
     return { success: true, data: { message: "Profile updated" } };
   } catch (error) {
-    if (error instanceof Error) {
-      return { success: false, error: error.message };
-    }
-    return { success: false, error: "Failed to update profile" };
+    return handleActionError("[updateProfileAction]", error, "Failed to update profile");
   }
 }
 
@@ -80,9 +78,6 @@ export async function updatePreferencesAction(input: UpdatePreferencesInput) {
 
     return { success: true, data: { message: "Preferences updated" } };
   } catch (error) {
-    if (error instanceof Error) {
-      return { success: false, error: error.message };
-    }
-    return { success: false, error: "Failed to update preferences" };
+    return handleActionError("[updatePreferencesAction]", error, "Failed to update preferences");
   }
 }
