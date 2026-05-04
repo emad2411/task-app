@@ -15,6 +15,7 @@ import {
 } from "@/lib/validation/settings";
 import { upsertUserPreferences } from "@/lib/data/preferences";
 import { handleActionError } from "@/lib/utils/action-error";
+import { type ActionResult } from "@/lib/actions/auth";
 
 /**
  * Update the authenticated user's display name.
@@ -25,7 +26,7 @@ import { handleActionError } from "@/lib/utils/action-error";
  * @param input - The profile update input containing the new name
  * @returns Action result with success flag and optional data or error
  */
-export async function updateProfileAction(input: UpdateProfileInput) {
+export async function updateProfileAction(input: UpdateProfileInput): Promise<ActionResult> {
   try {
     const userId = await requireUserId();
     const validated = updateProfileSchema.parse(input);
@@ -62,7 +63,7 @@ export async function updateProfileAction(input: UpdateProfileInput) {
  * @param input - The preferences update input
  * @returns Action result with success flag and optional data or error
  */
-export async function updatePreferencesAction(input: UpdatePreferencesInput) {
+export async function updatePreferencesAction(input: UpdatePreferencesInput): Promise<ActionResult> {
   try {
     const userId = await requireUserId();
     const validated = updatePreferencesSchema.parse(input);

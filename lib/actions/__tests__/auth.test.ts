@@ -39,12 +39,19 @@ vi.mock("@/lib/db/schema", () => ({
   users: { email: "email" },
 }));
 
+vi.mock("@/lib/rate-limit", () => ({
+  authLimiter: { limit: vi.fn().mockResolvedValue({ success: true, limit: 5, reset: 0, remaining: 4 }) },
+  forgotPasswordLimiter: { limit: vi.fn().mockResolvedValue({ success: true, limit: 3, reset: 0, remaining: 2 }) },
+}));
+
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/lib/db";
+import { authLimiter, forgotPasswordLimiter } from "@/lib/rate-limit";
 
 describe("signInAction", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(authLimiter.limit).mockResolvedValue({ success: true, limit: 5, reset: 0, remaining: 4 });
   });
 
   it("should return success for valid credentials", async () => {
@@ -106,11 +113,25 @@ describe("signInAction", () => {
     expect(result.success).toBe(false);
     expect(result.error).toBe("An unexpected error occurred. Please try again.");
   });
+
+  it("should return rate limit error when authLimiter rejects", async () => {
+    vi.mocked(authLimiter.limit).mockResolvedValue({ success: false, limit: 5, reset: Date.now() + 60000, remaining: 0 });
+
+    const result = await signInAction({
+      email: "user@example.com",
+      password: "password123",
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe("Too many requests. Please try again later.");
+    expect(auth.api.signInEmail).not.toHaveBeenCalled();
+  });
 });
 
 describe("signUpAction", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(authLimiter.limit).mockResolvedValue({ success: true, limit: 5, reset: 0, remaining: 4 });
   });
 
   it("should return success for valid registration", async () => {
@@ -180,11 +201,27 @@ describe("signUpAction", () => {
     expect(result.success).toBe(false);
     expect(result.error).toContain("already exists");
   });
+
+  it("should return rate limit error when authLimiter rejects", async () => {
+    vi.mocked(authLimiter.limit).mockResolvedValue({ success: false, limit: 5, reset: Date.now() + 60000, remaining: 0 });
+    vi.mocked(db.query.users.findFirst).mockResolvedValue(null as any);
+
+    const result = await signUpAction({
+      name: "John Doe",
+      email: "user@example.com",
+      password: "password123",
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe("Too many requests. Please try again later.");
+    expect(auth.api.signUpEmail).not.toHaveBeenCalled();
+  });
 });
 
 describe("forgotPasswordAction", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(forgotPasswordLimiter.limit).mockResolvedValue({ success: true, limit: 3, reset: 0, remaining: 2 });
   });
 
   it("should return generic success message for valid email", async () => {
@@ -222,6 +259,18 @@ describe("forgotPasswordAction", () => {
 
     expect(result.success).toBe(true);
     expect((result.data as { message: string })?.message).toContain("If an account exists");
+  });
+
+  it("should return rate limit error when forgotPasswordLimiter rejects", async () => {
+    vi.mocked(forgotPasswordLimiter.limit).mockResolvedValue({ success: false, limit: 3, reset: Date.now() + 3600000, remaining: 0 });
+
+    const result = await forgotPasswordAction({
+      email: "user@example.com",
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe("Too many password reset requests. Please wait before trying again.");
+    expect(auth.api.requestPasswordReset).not.toHaveBeenCalled();
   });
 });
 
@@ -378,6 +427,11 @@ describe("verifyEmailAction", () => {
 });
 
 describe("ActionResult structure", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(authLimiter.limit).mockResolvedValue({ success: true, limit: 5, reset: 0, remaining: 4 });
+  });
+
   it("should return success structure with data", async () => {
     vi.mocked(auth.api.signInEmail).mockResolvedValue({ ok: true } as any);
 

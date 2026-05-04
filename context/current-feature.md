@@ -1,16 +1,31 @@
-# Current Feature
+# Current Feature: P4-F1c — Rate Limiting Infrastructure
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Implement three-layer rate limiting strategy to protect TaskFlow from brute-force attacks, credential stuffing, and email bombing
+- Layer 1: Enable Better Auth built-in rate limiting (100 req/60s per IP) with custom rule for sign-in (5 req/min)
+- Layer 2: Integrate Upstash Redis rate limiting via proxy.ts — general limiter (30 req/10s) and auth limiter (5 req/60s per IP)
+- Layer 3: Add per-email cooldown for forgot password (3 req/hour per email)
+- Create `lib/rate-limit.ts` utility with dev no-op fallback when Upstash credentials are missing
+- Update `proxy.ts` to be async, remove `/api` from STATIC_PATHS, and apply rate limiting before auth checks
+- Update `lib/actions/auth.ts` `forgotPasswordAction` to check per-email rate limit BEFORE calling Better Auth
+- Add `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` to `.env.example`
+- Generate and apply Better Auth `rateLimit` table migration
+- Ensure `npm run build`, `npm run lint`, and `npm run test` all pass
 
 ## Notes
 
-<!-- Additional context, constraints, or details -->
+- **Prerequisites:** P4-F1a (proxy.ts changes) and P4-F1b (auth action changes) must be completed first
+- **Critical Architecture Gap:** Current `proxy.ts` has `/api` in `STATIC_PATHS`, which means Layer 2 rate limiting won't apply to `/api/auth/*`. Solution: remove `/api` from STATIC_PATHS and handle API routes within rate limiting logic.
+- **Dependencies:** `@upstash/ratelimit`, `@upstash/redis` (new npm packages), Upstash Redis account (free tier)
+- **No-op fallback:** If Upstash credentials are missing (local dev), all limiters are replaced with pass-throughs that always allow requests, with a console warning.
+- **Database schema update:** Better Auth `storage: "database"` requires a `rateLimit` table. Run `npx @better-auth/cli generate`, then `drizzle-kit generate`, then `drizzle-kit migrate`.
+- **IP extraction:** Use first value of `x-forwarded-for` header (comma-separated).
+- **Risk mitigation:** Consider wrapping `limiter.limit()` in try/catch for production resilience if Upstash is unavailable.
 
 ## History
 

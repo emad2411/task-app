@@ -7,6 +7,7 @@ import {
   pgEnum,
   index,
   uniqueIndex,
+  integer,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -77,6 +78,13 @@ export const verifications = pgTable("verifications", {
   expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const rateLimit = pgTable("rateLimit", {
+  id: text("id").primaryKey(),
+  key: text("key").notNull().unique(),
+  count: integer("count").notNull(),
+  lastRequest: timestamp("last_request").notNull(),
 });
 
 export const categories = pgTable(
@@ -199,6 +207,9 @@ export type NewSession = typeof sessions.$inferInsert;
 
 export type Account = typeof accounts.$inferSelect;
 export type NewAccount = typeof accounts.$inferInsert;
+
+export type RateLimit = typeof rateLimit.$inferSelect;
+export type NewRateLimit = typeof rateLimit.$inferInsert;
 
 export type Category = typeof categories.$inferSelect;
 export type NewCategory = typeof categories.$inferInsert;

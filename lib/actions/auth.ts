@@ -23,6 +23,7 @@ import {
   type VerifyEmailInput,
 } from "@/lib/validation/auth";
 import { handleActionError } from "@/lib/utils/action-error";
+import { authLimiter, forgotPasswordLimiter } from "@/lib/rate-limit";
 
 export interface ActionResult<T = unknown> {
   success: boolean;
@@ -30,9 +31,26 @@ export interface ActionResult<T = unknown> {
   error?: string;
 }
 
+/**
+ * Extracts the client IP from the incoming request headers.
+ * Uses `x-forwarded-for` (first value) and falls back to "unknown".
+ */
+async function getClientIp(): Promise<string> {
+  const headersList = await headers();
+  const forwardedFor = headersList.get("x-forwarded-for");
+  return forwardedFor?.split(",")[0]?.trim() ?? "unknown";
+}
+
 export async function signInAction(input: SignInInput): Promise<ActionResult> {
   try {
     const validated = signInSchema.parse(input);
+
+    // Layer 2 rate limit: strict limit for auth attempts (5 req / 60s per IP)
+    const ip = await getClientIp();
+    const { success: withinLimit } = await authLimiter.limit(ip);
+    if (!withinLimit) {
+      return { success: false, error: "Too many requests. Please try again later." };
+    }
 
     await auth.api.signInEmail({
       headers: await headers(),
@@ -65,6 +83,13 @@ export async function signInAction(input: SignInInput): Promise<ActionResult> {
 export async function signUpAction(input: SignUpInput): Promise<ActionResult> {
   try {
     const validated = signUpSchema.parse(input);
+
+    // Layer 2 rate limit: strict limit for auth attempts (5 req / 60s per IP)
+    const ip = await getClientIp();
+    const { success: withinLimit } = await authLimiter.limit(ip);
+    if (!withinLimit) {
+      return { success: false, error: "Too many requests. Please try again later." };
+    }
 
     // Bypass Better Auth's email enumeration protection so the UI can show the error
     const existingUser = await db.query.users.findFirst({
@@ -119,7 +144,17 @@ export async function signUpAction(input: SignUpInput): Promise<ActionResult> {
 export async function forgotPasswordAction(input: ForgotPasswordInput): Promise<ActionResult> {
   try {
     const validated = forgotPasswordSchema.parse(input);
-    
+
+    // Per-email rate limit — max 3 requests per hour per email address
+    // Checked BEFORE calling Better Auth to prevent unnecessary email sends
+    const { success: withinLimit } = await forgotPasswordLimiter.limit(validated.email);
+    if (!withinLimit) {
+      return {
+        success: false,
+        error: "Too many password reset requests. Please wait before trying again.",
+      };
+    }
+
     await auth.api.requestPasswordReset({
       body: {
         email: validated.email,

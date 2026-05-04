@@ -45,6 +45,7 @@ export const auth = betterAuth({
       });
     },
   },
+
   emailVerification: {
     sendOnSignUp: true,
     autoSignInAfterVerification: true,

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
+import { generalLimiter, authLimiter } from "@/lib/rate-limit";
 
 const PUBLIC_PATHS = [
   "/sign-in",
@@ -17,8 +18,8 @@ const AUTH_PATHS = [
   "/verify-email",
 ];
 
+/** Paths that skip ALL proxy logic (no rate limiting, no auth checks) */
 const STATIC_PATHS = [
-  "/api",
   "/_next",
   "/favicon.ico",
   "/icons",
@@ -26,13 +27,50 @@ const STATIC_PATHS = [
   "/fonts",
 ];
 
-export function proxy(request: NextRequest) {
+/**
+ * Next.js 16 proxy function — handles rate limiting and route protection.
+ *
+ * Request flow:
+ * 1. Skip static assets entirely
+ * 2. Rate limit all other requests (stricter for /api/auth/*)
+ * 3. Redirect authenticated users away from auth pages
+ * 4. Redirect unauthenticated users away from protected pages
+ */
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // 1. Skip static assets — no rate limiting, no auth check
   if (STATIC_PATHS.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
   }
 
+  // 2. Rate limiting
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const isAuthApi = pathname.startsWith("/api/auth");
+  const limiter = isAuthApi ? authLimiter : generalLimiter;
+  const { success, limit, reset, remaining } = await limiter.limit(ip);
+
+  if (!success) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      {
+        status: 429,
+        headers: {
+          "X-RateLimit-Limit": limit.toString(),
+          "X-RateLimit-Remaining": remaining.toString(),
+          "X-RateLimit-Reset": reset.toString(),
+          "Retry-After": Math.ceil((reset - Date.now()) / 1000).toString(),
+        },
+      }
+    );
+  }
+
+  // 3. Skip auth checks for API routes (they handle their own auth)
+  if (pathname.startsWith("/api")) {
+    return NextResponse.next();
+  }
+
+  // 4. Session-based route protection (pages only)
   const sessionCookie = getSessionCookie(request);
   const hasSession = !!sessionCookie;
   const isPublicPath = PUBLIC_PATHS.some((path) => pathname.startsWith(path));
@@ -52,5 +90,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|favicon|icons|images|fonts).*)"],
+  matcher: ["/((?!_next|favicon|icons|images|fonts).*)"],
 };

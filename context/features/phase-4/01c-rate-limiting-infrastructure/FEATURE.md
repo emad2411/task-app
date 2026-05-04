@@ -187,9 +187,15 @@ Add the `rateLimit` configuration to the `betterAuth()` call:
    },
 +  rateLimit: {
 +    enabled: true,
-+    window: 60,          // 60-second sliding window
-+    max: 100,            // max 100 requests per window per IP
 +    storage: "database", // persists across serverless cold starts
++    window: 60,          // 60-second sliding window for general auth
++    max: 100,            // max 100 requests per window per IP
++    customRules: {
++      "/sign-in/email": {
++        window: 60,
++        max: 5,          // Max 5 attempts per minute (Protects against brute force!)
++      }
++    }
 +  },
    emailVerification: {
      // ... existing config
@@ -198,7 +204,19 @@ Add the `rateLimit` configuration to the `betterAuth()` call:
 
 Insert the `rateLimit` block **after `emailAndPassword`** and **before `emailVerification`**.
 
-**What this does:** Better Auth will automatically reject requests to `/api/auth/*` with HTTP 429 when an IP exceeds 100 requests in 60 seconds. This is Layer 1 — a broad safety net. Layer 2 (Upstash in proxy.ts) provides stricter, more granular control.
+> **🎓 JUNIOR ENGINEER TIP: Why `/sign-in/email`?**
+> You might wonder why we use `/sign-in/email` here when your frontend form is at `/sign-in`.
+> `/sign-in` is your Next.js frontend webpage. However, when the form is submitted, Better Auth's client makes a POST request to its internal backend API at `.../api/auth/sign-in/email`. 
+> Better Auth's rate limiter only monitors these internal API paths, dropping the `/api/auth` prefix. So to protect your sign-in form, you target the API endpoint it uses!
+
+> **⚠️ CRITICAL: Database Schema Update**
+> Because we set `storage: "database"`, Better Auth requires a `rateLimit` table in your database to track requests. **You do not need to write this table by hand!**
+> After saving `lib/auth/auth.ts`, run these commands in your terminal to automatically generate and apply the schema:
+> 1. `npx @better-auth/cli generate` *(Reads auth.ts and updates your Drizzle schema)*
+> 2. `npx drizzle-kit generate` *(Creates the SQL migration file)*
+> 3. `npx drizzle-kit migrate` *(Applies the SQL to your Neon database)*
+
+**What this does:** Better Auth will automatically reject requests to `/api/auth/*` with HTTP 429 when an IP exceeds 100 requests in 60 seconds (Layer 1 safety net). Furthermore, it heavily limits the sign-in endpoint to just 5 attempts per minute to block brute-forcing. Layer 2 (Upstash in proxy.ts) provides stricter, more granular control for the rest of the app.
 
 ---
 
@@ -432,8 +450,10 @@ export async function forgotPasswordAction(input: ForgotPasswordInput): Promise<
 
 | Layer | Check | Status |
 |-------|-------|--------|
-| 1 | Better Auth `rateLimit` config present in `lib/auth/auth.ts` | ☐ |
-| 1 | Auth endpoints return 429 when Better Auth rate limit exceeded | ☐ |
+| 1 | Better Auth `rateLimit` config present in `lib/auth/auth.ts` with custom rules | ☐ |
+| 1 | `rateLimit` table exists in database and schema files | ☐ |
+| 1 | Sign-in endpoint restricted to 5 requests per minute | ☐ |
+| 1 | General auth endpoints return 429 when Better Auth rate limit exceeded | ☐ |
 | 2 | `lib/rate-limit.ts` exports 3 limiters | ☐ |
 | 2 | Dev mode: no crash when Upstash credentials missing | ☐ |
 | 2 | Dev mode: warning logged to console | ☐ |
@@ -461,11 +481,12 @@ export async function forgotPasswordAction(input: ForgotPasswordInput): Promise<
 | 1 | Terminal | 2 min | `npm install @upstash/ratelimit @upstash/redis` |
 | 2 | `.env.example` + `.env` | 5 min | Add Upstash env vars, set values from Upstash dashboard |
 | 3 | `lib/rate-limit.ts` | 15 min | Create rate limiter utility with dev fallback |
-| 4 | `lib/auth/auth.ts` | 5 min | Add `rateLimit` config block |
-| 5 | `proxy.ts` | 20 min | Full rewrite with async + rate limiting |
-| 6 | `lib/actions/auth.ts` | 10 min | Add per-email cooldown to `forgotPasswordAction` |
-| 7 | Manual testing | 15 min | Test rate limiting in dev (with and without Upstash creds) |
-| 8 | Build + lint + test | 5 min | `npm run build && npm run lint && npm run test` |
+| 4 | `lib/auth/auth.ts` | 5 min | Add `rateLimit` config block with `customRules` |
+| 5 | Terminal | 5 min | Run `npx @better-auth/cli generate` then `drizzle-kit generate` and `migrate` |
+| 6 | `proxy.ts` | 20 min | Full rewrite with async + rate limiting |
+| 7 | `lib/actions/auth.ts` | 10 min | Add per-email cooldown to `forgotPasswordAction` |
+| 8 | Manual testing | 15 min | Test rate limiting in dev (with and without Upstash creds) |
+| 9 | Build + lint + test | 5 min | `npm run build && npm run lint && npm run test` |
 
 ---
 
