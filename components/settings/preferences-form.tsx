@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -24,8 +24,6 @@ import {
 import {
   updatePreferencesSchema,
   type UpdatePreferencesInput,
-  dateFormatValues,
-  defaultSortValues,
 } from "@/lib/validation/settings";
 import { updatePreferencesAction } from "@/lib/actions/settings";
 import { TimezoneCombobox } from "./timezone-combobox";

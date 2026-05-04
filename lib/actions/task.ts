@@ -7,12 +7,7 @@ import { eq, and } from "drizzle-orm";
 import { createTaskSchema, updateTaskSchema } from "@/lib/validation/task";
 import { getCurrentUserId } from "@/lib/auth/session";
 import { handleActionError } from "@/lib/utils/action-error";
-
-export interface ActionResult<T = unknown> {
-  success: boolean;
-  data?: T;
-  error?: string;
-}
+import { type ActionResult } from "@/lib/actions/types";
 
 export async function createTaskAction(input: unknown): Promise<ActionResult> {
   try {

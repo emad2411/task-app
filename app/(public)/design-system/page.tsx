@@ -10,16 +10,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  CheckCircle2,
-  Circle,
-  Copy,
-  Moon,
-  Sun,
   Palette,
   Type,
   LayoutGrid,
   MousePointer,
-  Search,
 } from "lucide-react";
 
 export default function DesignSystemPage() {

@@ -16,6 +16,29 @@ if (!seedUserId) {
 }
 const TARGET_USER_ID: string = seedUserId;
 
+/** Shape of category entries in mock-data.json */
+interface MockCategory {
+  id: string;
+  name: string;
+  color: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Shape of task entries in mock-data.json */
+interface MockTask {
+  id: string;
+  categoryId: string | null;
+  title: string;
+  description: string | null;
+  status: string;
+  priority: string;
+  dueDate: string | null;
+  completedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 async function seed() {
   const { db } = await import("@/lib/db");
   const { users, categories, tasks, userPreferences } = await import("@/lib/db/schema");
@@ -44,7 +67,7 @@ async function seed() {
   }
 
   // Insert categories with proper UUIDs for target user
-  const categoriesToInsert = mockData.categories.map((cat: any) => ({
+  const categoriesToInsert = mockData.categories.map((cat: MockCategory) => ({
     id: categoryIdMap.get(cat.id)!,
     userId: TARGET_USER_ID,
     name: cat.name,
@@ -59,7 +82,7 @@ async function seed() {
   }
 
   // Insert tasks with proper UUIDs and mapped category IDs for target user
-  const tasksToInsert = mockData.tasks.map((task: any) => ({
+  const tasksToInsert = mockData.tasks.map((task: MockTask) => ({
     id: randomUUID(),
     userId: TARGET_USER_ID,
     categoryId: task.categoryId ? categoryIdMap.get(task.categoryId) ?? null : null,

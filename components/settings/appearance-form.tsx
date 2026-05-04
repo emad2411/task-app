@@ -5,7 +5,6 @@ import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { Sun, Moon, Monitor, Loader2, Palette } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { updatePreferencesAction } from "@/lib/actions/settings";

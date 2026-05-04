@@ -15,7 +15,7 @@ import {
 } from "@/lib/validation/settings";
 import { upsertUserPreferences } from "@/lib/data/preferences";
 import { handleActionError } from "@/lib/utils/action-error";
-import { type ActionResult } from "@/lib/actions/auth";
+import { type ActionResult } from "@/lib/actions/types";
 
 /**
  * Update the authenticated user's display name.

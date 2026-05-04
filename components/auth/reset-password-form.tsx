@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/field";
 import {
   resetPasswordSchema,
-  type ResetPasswordInput,
 } from "@/lib/validation/auth";
 import { resetPasswordAction } from "@/lib/actions/auth";
 import { SuccessCard } from "./auth-card";

@@ -55,7 +55,7 @@ describe("signInAction", () => {
   });
 
   it("should return success for valid credentials", async () => {
-    vi.mocked(auth.api.signInEmail).mockResolvedValue({} as any);
+    vi.mocked(auth.api.signInEmail).mockResolvedValue({} as unknown);
 
     const result = await signInAction({
       email: "user@example.com",
@@ -136,8 +136,8 @@ describe("signUpAction", () => {
 
   it("should return success for valid registration", async () => {
     const mockUser = { id: "user-123", email: "user@example.com", name: "John Doe" };
-    vi.mocked(db.query.users.findFirst).mockResolvedValue(null as any);
-    vi.mocked(auth.api.signUpEmail).mockResolvedValue(mockUser as any);
+    vi.mocked(db.query.users.findFirst).mockResolvedValue(null);
+    vi.mocked(auth.api.signUpEmail).mockResolvedValue(mockUser as unknown);
 
     const result = await signUpAction({
       name: "John Doe",
@@ -176,8 +176,8 @@ describe("signUpAction", () => {
   });
 
   it("should return success with null user when signup returns null", async () => {
-    vi.mocked(db.query.users.findFirst).mockResolvedValue(null as any);
-    vi.mocked(auth.api.signUpEmail).mockResolvedValue(null as any);
+    vi.mocked(db.query.users.findFirst).mockResolvedValue(null);
+    vi.mocked(auth.api.signUpEmail).mockResolvedValue(null);
 
     const result = await signUpAction({
       name: "John Doe",
@@ -190,7 +190,7 @@ describe("signUpAction", () => {
   });
 
   it("should return error when user already exists", async () => {
-    vi.mocked(db.query.users.findFirst).mockResolvedValue({ id: "existing-user" } as any);
+    vi.mocked(db.query.users.findFirst).mockResolvedValue({ id: "existing-user" } as unknown);
 
     const result = await signUpAction({
       name: "John Doe",
@@ -204,7 +204,7 @@ describe("signUpAction", () => {
 
   it("should return rate limit error when authLimiter rejects", async () => {
     vi.mocked(authLimiter.limit).mockResolvedValue({ success: false, limit: 5, reset: Date.now() + 60000, remaining: 0 });
-    vi.mocked(db.query.users.findFirst).mockResolvedValue(null as any);
+    vi.mocked(db.query.users.findFirst).mockResolvedValue(null);
 
     const result = await signUpAction({
       name: "John Doe",
@@ -225,7 +225,7 @@ describe("forgotPasswordAction", () => {
   });
 
   it("should return generic success message for valid email", async () => {
-    vi.mocked(auth.api.requestPasswordReset).mockResolvedValue(undefined as any);
+    vi.mocked(auth.api.requestPasswordReset).mockResolvedValue(undefined);
 
     const result = await forgotPasswordAction({
       email: "user@example.com",
@@ -280,7 +280,7 @@ describe("resetPasswordAction", () => {
   });
 
   it("should return success for valid token and password", async () => {
-    vi.mocked(auth.api.resetPassword).mockResolvedValue(undefined as any);
+    vi.mocked(auth.api.resetPassword).mockResolvedValue(undefined);
 
     const result = await resetPasswordAction({
       token: "valid-reset-token",
@@ -333,7 +333,7 @@ describe("updatePasswordAction", () => {
   });
 
   it("should return success for valid password change", async () => {
-    vi.mocked(auth.api.changePassword).mockResolvedValue(undefined as any);
+    vi.mocked(auth.api.changePassword).mockResolvedValue(undefined);
 
     const result = await updatePasswordAction({
       currentPassword: "oldpassword123",
@@ -392,7 +392,7 @@ describe("verifyEmailAction", () => {
   });
 
   it("should return success for valid token", async () => {
-    vi.mocked(auth.api.verifyEmail).mockResolvedValue(undefined as any);
+    vi.mocked(auth.api.verifyEmail).mockResolvedValue(undefined);
 
     const result = await verifyEmailAction({
       token: "valid-verification-token",
@@ -433,7 +433,7 @@ describe("ActionResult structure", () => {
   });
 
   it("should return success structure with data", async () => {
-    vi.mocked(auth.api.signInEmail).mockResolvedValue({ ok: true } as any);
+    vi.mocked(auth.api.signInEmail).mockResolvedValue({ ok: true } as unknown);
 
     const result = await signInAction({
       email: "user@example.com",

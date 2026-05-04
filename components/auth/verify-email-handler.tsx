@@ -19,9 +19,7 @@ import {
   FieldGroup,
 } from "@/components/ui/field";
 import {
-  verifyEmailSchema,
   forgotPasswordSchema,
-  type VerifyEmailInput,
   type ForgotPasswordInput,
 } from "@/lib/validation/auth";
 import { verifyEmailAction } from "@/lib/actions/auth";

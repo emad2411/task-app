@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-      cacheComponents: true,
+  skipProxyUrlNormalize: true,
+  cacheComponents: true,
 
   experimental: {
     serverActions: {

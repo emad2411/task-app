@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/field";
 import {
   signUpSchema,
-  type SignUpInput,
 } from "@/lib/validation/auth";
 import { signUpAction } from "@/lib/actions/auth";
 import { SuccessCard } from "./auth-card";

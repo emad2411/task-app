@@ -24,12 +24,7 @@ import {
 } from "@/lib/validation/auth";
 import { handleActionError } from "@/lib/utils/action-error";
 import { authLimiter, forgotPasswordLimiter } from "@/lib/rate-limit";
-
-export interface ActionResult<T = unknown> {
-  success: boolean;
-  data?: T;
-  error?: string;
-}
+import { type ActionResult } from "@/lib/actions/types";
 
 /**
  * Extracts the client IP from the incoming request headers.
