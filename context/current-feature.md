@@ -1,29 +1,16 @@
-# Current Feature: P4-F2a — Type Consolidation, Import Cleanup & Config
+# Current Feature
 
 ## Status
 
-Complete
+Not Started
 
 ## Goals
 
-- Extract duplicated `ActionResult` interface from `auth.ts`, `task.ts`, and `category.ts` into a shared `lib/actions/types.ts` file
-- Remove unused `neonConfig` import from `lib/db/index.ts`
-- Remove unused imports across 7 component files (`reset-password-form.tsx`, `sign-up-form.tsx`, `verify-email-handler.tsx`, `appearance-form.tsx`, `preferences-form.tsx`, `profile-form.tsx`)
-- Add `skipProxyUrlNormalize: true` to `next.config.ts`
-- Replace 12 `as any` casts in `lib/actions/__tests__/auth.test.ts` with `as unknown` or remove unnecessary casts
-- Add `MockCategory` and `MockTask` interfaces to `scripts/seed.ts` and replace 2 `any` parameter types
-- Pass build, lint, and test gates with zero warnings and all existing tests passing
-- Introduce no runtime behavior changes and no new `any` types
+<!-- Feature goals go here -->
 
 ## Notes
 
-- **Risk level:** Low — mechanical, isolated changes that don't affect runtime behavior
-- **Dependencies:** None (no new npm packages required)
-- **Prerequisites:** P4-F1a, P4-F1b, P4-F1c should be completed first
-- **Branch:** `feature/P4-F2a-type-cleanup-config`
-- `settings.ts` currently imports `ActionResult` from `@/lib/actions/auth`; it must be updated to import from `@/lib/actions/types`
-- `skipProxyUrlNormalize` is the Next.js 16 equivalent of `skipMiddlewareUrlNormalize` for `proxy.ts`
-- All changes are purely refactor/cleanup; no new features or bug fixes
+<!-- Feature notes and constraints go here -->
 
 ## History
 
@@ -47,5 +34,6 @@ Complete
 - **Input Sanitization & Data Integrity (P4-F1a)** (2026-05-03) - Fixed 4 security blockers: (1) Created `escapeLike()` utility to sanitize SQL LIKE wildcards (`%`, `_`, `\`) and applied it to task search in `lib/data/task.ts` (prevented wildcard injection attack). (2) Replaced regular index with `uniqueIndex` on categories `(user_id, name)` — generated and applied Drizzle migration; added PostgreSQL error code `23505` handling in all 3 category actions (`createCategoryAction`, `updateCategoryAction`, `deleteCategoryAction`) with user-friendly messages and `console.error` logging. (3) Moved hardcoded seed user ID from `scripts/seed.ts` to `SEED_USER_ID` environment variable with helpful error message on missing var; added it to `.env.example`. (4) Added `/reset-password` and `/verify-email` to `AUTH_PATHS` in `proxy.ts` so authenticated users are redirected to dashboard. Created 8 unit tests for `escapeLike()`. Updated 3 category action tests to match sanitized error messages. All 251 tests pass, build and lint pass.
 - **Error Sanitization & Server-Side Logging (P4-F1b)** (2026-05-03) - Created `lib/utils/action-error.ts` with `handleActionError` utility to centralize error logging and sanitization across all server actions. Fixed 17 catch blocks in `auth.ts` (7), `task.ts` (5), `category.ts` (3), and `settings.ts` (2) to prevent `error.message` leakage. Updated Better Auth error handling to use `statusCode` (numeric) instead of `status` (string like "UNAUTHORIZED") for HTTP status code comparisons. Zod validation errors now return generic message instead of schema paths. Added `console.error` logging for `forgotPasswordAction` while preserving success response to prevent email enumeration. Created 6 unit tests for `handleActionError` and updated 19 existing tests to expect sanitized error messages. All 257 tests pass, build and lint pass.
 - **Rate Limiting Infrastructure (P4-F1c)** (2026-05-04) - Implemented three-layer rate limiting strategy to protect TaskFlow from brute-force attacks, credential stuffing, and email bombing. Layer 1: Enabled Better Auth built-in rate limiting (100 req/60s per IP) with custom rule for sign-in (5 req/min). Layer 2: Integrated Upstash Redis rate limiting via `proxy.ts` with general limiter (30 req/10s) and auth limiter (5 req/60s per IP). Layer 3: Added per-email cooldown for forgot password (3 req/hour per email). Created `lib/rate-limit.ts` utility with dev no-op fallback when Upstash credentials are missing. Updated `proxy.ts` to be async, removed `/api` from STATIC_PATHS, and applied rate limiting before auth checks. Updated `lib/actions/auth.ts` `forgotPasswordAction` to check per-email rate limit before calling Better Auth. Added `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` to `.env.example`. Generated and applied Better Auth `rateLimit` table migration. Build passes, all 260 tests pass.
+- **Type Consolidation, Import Cleanup & Config (P4-F2a)** (2026-05-04) - Extracted duplicated `ActionResult` interface from `auth.ts`, `task.ts`, and `category.ts` into shared `lib/actions/types.ts`. Removed unused `neonConfig` import from `lib/db/index.ts`. Removed unused imports across 8 component files (`reset-password-form.tsx`, `sign-up-form.tsx`, `verify-email-handler.tsx`, `appearance-form.tsx`, `preferences-form.tsx`, `profile-form.tsx`, `design-system/page.tsx`). Added `skipProxyUrlNormalize: true` to `next.config.ts`. Replaced 12 `as any` casts in `lib/actions/__tests__/auth.test.ts` with `as unknown` or removed unnecessary casts. Added `MockCategory` and `MockTask` interfaces to `scripts/seed.ts` and replaced 2 `any` parameter types. Build passes, all 260 tests pass.
 
 (End of file - total 36 lines)
