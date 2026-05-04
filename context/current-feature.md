@@ -1,31 +1,16 @@
-# Current Feature: P4-F1c — Rate Limiting Infrastructure
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Implement three-layer rate limiting strategy to protect TaskFlow from brute-force attacks, credential stuffing, and email bombing
-- Layer 1: Enable Better Auth built-in rate limiting (100 req/60s per IP) with custom rule for sign-in (5 req/min)
-- Layer 2: Integrate Upstash Redis rate limiting via proxy.ts — general limiter (30 req/10s) and auth limiter (5 req/60s per IP)
-- Layer 3: Add per-email cooldown for forgot password (3 req/hour per email)
-- Create `lib/rate-limit.ts` utility with dev no-op fallback when Upstash credentials are missing
-- Update `proxy.ts` to be async, remove `/api` from STATIC_PATHS, and apply rate limiting before auth checks
-- Update `lib/actions/auth.ts` `forgotPasswordAction` to check per-email rate limit BEFORE calling Better Auth
-- Add `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` to `.env.example`
-- Generate and apply Better Auth `rateLimit` table migration
-- Ensure `npm run build`, `npm run lint`, and `npm run test` all pass
+<!-- Feature goals go here -->
 
 ## Notes
 
-- **Prerequisites:** P4-F1a (proxy.ts changes) and P4-F1b (auth action changes) must be completed first
-- **Critical Architecture Gap:** Current `proxy.ts` has `/api` in `STATIC_PATHS`, which means Layer 2 rate limiting won't apply to `/api/auth/*`. Solution: remove `/api` from STATIC_PATHS and handle API routes within rate limiting logic.
-- **Dependencies:** `@upstash/ratelimit`, `@upstash/redis` (new npm packages), Upstash Redis account (free tier)
-- **No-op fallback:** If Upstash credentials are missing (local dev), all limiters are replaced with pass-throughs that always allow requests, with a console warning.
-- **Database schema update:** Better Auth `storage: "database"` requires a `rateLimit` table. Run `npx @better-auth/cli generate`, then `drizzle-kit generate`, then `drizzle-kit migrate`.
-- **IP extraction:** Use first value of `x-forwarded-for` header (comma-separated).
-- **Risk mitigation:** Consider wrapping `limiter.limit()` in try/catch for production resilience if Upstash is unavailable.
+<!-- Feature notes and constraints go here -->
 
 ## History
 
@@ -48,3 +33,4 @@ In Progress
 - **App Shell Redesign (P3- F6)** (2026-05-02) - Redesigned application layout with persistent top header and collapsible sidebar. AppShell manages `isSidebarCollapsed` state with dynamic main content margins. TopBar visible on all breakpoints with sidebar toggle, logo, search input (UI only), notification bell (UI only), Create Task button with functional dialog, user avatar dropdown (Profile, Settings, Sign out), and theme toggle. Sidebar supports expanded (`w-[260px]`) and collapsed (`w-[72px]`) states with smooth transitions, hidden labels, centered icons, shadcn/ui Tooltip on hover, and active route indication. Mobile: sidebar hidden, TopBar uses hamburger menu triggering Sheet-based MobileNav, search adapts. Added `SheetDescription` to MobileNav for accessibility compliance. Removed redundant DashboardHeader from dashboard page. Created `CategoriesProvider` Context for app-level category sharing; layout fetches categories once via cached `getCategoriesForUser`. Updated `CreateTaskDialog` to consume Context — zero network requests on open. Cleaned up category prop drilling across tasks page and empty state. Build passes.
 - **Input Sanitization & Data Integrity (P4-F1a)** (2026-05-03) - Fixed 4 security blockers: (1) Created `escapeLike()` utility to sanitize SQL LIKE wildcards (`%`, `_`, `\`) and applied it to task search in `lib/data/task.ts` (prevented wildcard injection attack). (2) Replaced regular index with `uniqueIndex` on categories `(user_id, name)` — generated and applied Drizzle migration; added PostgreSQL error code `23505` handling in all 3 category actions (`createCategoryAction`, `updateCategoryAction`, `deleteCategoryAction`) with user-friendly messages and `console.error` logging. (3) Moved hardcoded seed user ID from `scripts/seed.ts` to `SEED_USER_ID` environment variable with helpful error message on missing var; added it to `.env.example`. (4) Added `/reset-password` and `/verify-email` to `AUTH_PATHS` in `proxy.ts` so authenticated users are redirected to dashboard. Created 8 unit tests for `escapeLike()`. Updated 3 category action tests to match sanitized error messages. All 251 tests pass, build and lint pass.
 - **Error Sanitization & Server-Side Logging (P4-F1b)** (2026-05-03) - Created `lib/utils/action-error.ts` with `handleActionError` utility to centralize error logging and sanitization across all server actions. Fixed 17 catch blocks in `auth.ts` (7), `task.ts` (5), `category.ts` (3), and `settings.ts` (2) to prevent `error.message` leakage. Updated Better Auth error handling to use `statusCode` (numeric) instead of `status` (string like "UNAUTHORIZED") for HTTP status code comparisons. Zod validation errors now return generic message instead of schema paths. Added `console.error` logging for `forgotPasswordAction` while preserving success response to prevent email enumeration. Created 6 unit tests for `handleActionError` and updated 19 existing tests to expect sanitized error messages. All 257 tests pass, build and lint pass.
+- **Rate Limiting Infrastructure (P4-F1c)** (2026-05-04) - Implemented three-layer rate limiting strategy to protect TaskFlow from brute-force attacks, credential stuffing, and email bombing. Layer 1: Enabled Better Auth built-in rate limiting (100 req/60s per IP) with custom rule for sign-in (5 req/min). Layer 2: Integrated Upstash Redis rate limiting via `proxy.ts` with general limiter (30 req/10s) and auth limiter (5 req/60s per IP). Layer 3: Added per-email cooldown for forgot password (3 req/hour per email). Created `lib/rate-limit.ts` utility with dev no-op fallback when Upstash credentials are missing. Updated `proxy.ts` to be async, removed `/api` from STATIC_PATHS, and applied rate limiting before auth checks. Updated `lib/actions/auth.ts` `forgotPasswordAction` to check per-email rate limit before calling Better Auth. Added `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` to `.env.example`. Generated and applied Better Auth `rateLimit` table migration. Build passes, all 260 tests pass.
