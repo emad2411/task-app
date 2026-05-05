@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/auth/session";
 import { getTasks, getCategoriesForUser, getTaskCount } from "@/lib/data/task";
-import { getDashboardData } from "@/lib/data/dashboard";
+import { getUserTimezone } from "@/lib/data/preferences";
 import { TaskList } from "@/components/tasks/task-list";
 import { TaskFilters } from "@/components/tasks/task-filters";
 import { FilterChips } from "@/components/tasks/filter-chips";
@@ -35,8 +35,8 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
   const sortOrder = query.order;
   const groupBy = query.groupBy ?? "none";
 
-  // Get timezone first (needed for due date filtering)
-  const { timezone } = await getDashboardData(user.id);
+  // Get timezone (lightweight query — only reads userPreferences)
+  const timezone = await getUserTimezone(user.id);
 
   // Fetch tasks, categories, and total count in parallel
   const [tasks, categories, totalTaskCount] = await Promise.all([

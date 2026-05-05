@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidateTag, revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { db } from "@/lib/db";
 import { categories } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
@@ -34,11 +34,8 @@ export async function createCategoryAction(input: unknown): Promise<ActionResult
       userId,
     }).returning();
 
-    revalidateTag(`user-${userId}-categories`, "max");
-    revalidateTag(`user-${userId}-tasks`, "max");
-    revalidatePath("/categories");
-    revalidatePath("/tasks");
-    revalidatePath("/dashboard");
+    revalidateTag(`user-${userId}-categories`, { expire: 0 });
+    revalidateTag(`user-${userId}-tasks`, { expire: 0 });
     return { success: true, data: category };
   } catch (error) {
     if (
@@ -89,11 +86,8 @@ export async function updateCategoryAction(input: unknown): Promise<ActionResult
       return { success: false, error: "Category not found" };
     }
 
-    revalidateTag(`user-${userId}-categories`, "max");
-    revalidateTag(`user-${userId}-tasks`, "max");
-    revalidatePath("/categories");
-    revalidatePath("/tasks");
-    revalidatePath("/dashboard");
+    revalidateTag(`user-${userId}-categories`, { expire: 0 });
+    revalidateTag(`user-${userId}-tasks`, { expire: 0 });
     return { success: true, data: category };
   } catch (error) {
     if (
@@ -126,11 +120,8 @@ export async function deleteCategoryAction(
       return { success: false, error: "Category not found" };
     }
 
-    revalidateTag(`user-${userId}-categories`, "max");
-    revalidateTag(`user-${userId}-tasks`, "max");
-    revalidatePath("/categories");
-    revalidatePath("/tasks");
-    revalidatePath("/dashboard");
+    revalidateTag(`user-${userId}-categories`, { expire: 0 });
+    revalidateTag(`user-${userId}-tasks`, { expire: 0 });
     return { success: true };
   } catch (error) {
     return handleActionError("[deleteCategoryAction]", error, "Failed to delete category");

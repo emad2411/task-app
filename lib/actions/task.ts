@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidateTag, revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { db } from "@/lib/db";
 import { tasks } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
@@ -25,10 +25,8 @@ export async function createTaskAction(input: unknown): Promise<ActionResult> {
       categoryId: validated.categoryId || null,
     }).returning();
     
-    revalidateTag(`user-${userId}-tasks`, "max");
-    revalidateTag(`user-${userId}-dashboard`, "max");
-    revalidatePath("/dashboard");
-    revalidatePath("/tasks");
+    revalidateTag(`user-${userId}-tasks`, { expire: 0 });
+    revalidateTag(`user-${userId}-dashboard`, { expire: 0 });
     return { success: true, data: task };
   } catch (error) {
     return handleActionError("[createTaskAction]", error, "Failed to create task");
@@ -59,11 +57,8 @@ export async function updateTaskAction(input: unknown): Promise<ActionResult> {
       return { success: false, error: "Task not found" };
     }
     
-    revalidateTag(`user-${userId}-tasks`, "max");
-    revalidateTag(`user-${userId}-dashboard`, "max");
-    revalidatePath("/dashboard");
-    revalidatePath("/tasks");
-    revalidatePath(`/tasks/${id}`);
+    revalidateTag(`user-${userId}-tasks`, { expire: 0 });
+    revalidateTag(`user-${userId}-dashboard`, { expire: 0 });
     return { success: true, data: task };
   } catch (error) {
     return handleActionError("[updateTaskAction]", error, "Failed to update task");
@@ -85,10 +80,8 @@ export async function deleteTaskAction(taskId: string): Promise<ActionResult> {
       return { success: false, error: "Task not found" };
     }
     
-    revalidateTag(`user-${userId}-tasks`, "max");
-    revalidateTag(`user-${userId}-dashboard`, "max");
-    revalidatePath("/dashboard");
-    revalidatePath("/tasks");
+    revalidateTag(`user-${userId}-tasks`, { expire: 0 });
+    revalidateTag(`user-${userId}-dashboard`, { expire: 0 });
     return { success: true };
   } catch (error) {
     return handleActionError("[deleteTaskAction]", error, "Failed to delete task");
@@ -118,11 +111,8 @@ export async function toggleTaskCompletionAction(taskId: string): Promise<Action
       })
       .where(and(eq(tasks.id, taskId), eq(tasks.userId, userId)));
     
-    revalidateTag(`user-${userId}-tasks`, "max");
-    revalidateTag(`user-${userId}-dashboard`, "max");
-    revalidatePath("/dashboard");
-    revalidatePath("/tasks");
-    revalidatePath(`/tasks/${taskId}`);
+    revalidateTag(`user-${userId}-tasks`, { expire: 0 });
+    revalidateTag(`user-${userId}-dashboard`, { expire: 0 });
     return { success: true };
   } catch (error) {
     return handleActionError("[toggleTaskCompletionAction]", error, "Failed to update task");
@@ -148,11 +138,8 @@ export async function archiveTaskAction(taskId: string): Promise<ActionResult> {
       return { success: false, error: "Task not found" };
     }
     
-    revalidateTag(`user-${userId}-tasks`, "max");
-    revalidateTag(`user-${userId}-dashboard`, "max");
-    revalidatePath("/dashboard");
-    revalidatePath("/tasks");
-    revalidatePath(`/tasks/${taskId}`);
+    revalidateTag(`user-${userId}-tasks`, { expire: 0 });
+    revalidateTag(`user-${userId}-dashboard`, { expire: 0 });
     return { success: true };
   } catch (error) {
     return handleActionError("[archiveTaskAction]", error, "Failed to archive task");

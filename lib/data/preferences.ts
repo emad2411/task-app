@@ -35,18 +35,7 @@ export async function upsertUserPreferences(
     defaultTaskSort: string;
   }>
 ) {
-  const existing = await getUserPreferences(userId);
-
-  if (existing) {
-    const [updated] = await db
-      .update(userPreferences)
-      .set({ ...data, updatedAt: new Date() })
-      .where(eq(userPreferences.userId, userId))
-      .returning();
-    return updated;
-  }
-
-  const [created] = await db
+  const [result] = await db
     .insert(userPreferences)
     .values({
       userId,
@@ -54,7 +43,37 @@ export async function upsertUserPreferences(
       timezone: data.timezone ?? "UTC",
       dateFormat: data.dateFormat ?? "MM/dd/yyyy",
       defaultTaskSort: data.defaultTaskSort ?? "due_date_asc",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .onConflictDoUpdate({
+      target: userPreferences.userId,
+      set: {
+        ...data,
+        updatedAt: new Date(),
+      },
     })
     .returning();
-  return created;
+  return result;
+}
+
+/**
+ * Get just the user's timezone preference.
+ *
+ * This is a lightweight alternative to getDashboardData() when you
+ * only need the timezone string (e.g., for the tasks page).
+ *
+ * @param userId - The authenticated user's ID
+ * @returns The user's timezone string, defaults to "UTC"
+ */
+export async function getUserTimezone(userId: string): Promise<string> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(`user-${userId}-preferences`);
+
+  const prefs = await db.query.userPreferences.findFirst({
+    where: eq(userPreferences.userId, userId),
+    columns: { timezone: true },
+  });
+  return prefs?.timezone ?? "UTC";
 }

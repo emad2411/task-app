@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const mockFindFirst = vi.fn();
 const mockReturning = vi.fn();
-const mockValues = vi.fn(() => ({ returning: mockReturning }));
-const mockSet = vi.fn(() => ({ where: vi.fn(() => ({ returning: mockReturning })) }));
+const mockOnConflictDoUpdate = vi.fn(() => ({ returning: mockReturning }));
+const mockValues = vi.fn(() => ({ onConflictDoUpdate: mockOnConflictDoUpdate }));
 
 vi.mock("@/lib/db", () => ({
   db: {
@@ -13,7 +13,6 @@ vi.mock("@/lib/db", () => ({
       },
     },
     insert: vi.fn(() => ({ values: mockValues })),
-    update: vi.fn(() => ({ set: mockSet })),
   },
 }));
 
@@ -55,11 +54,10 @@ describe("upsertUserPreferences", () => {
     vi.clearAllMocks();
   });
 
-  it("should create new preferences record when none exists", async () => {
-    mockFindFirst.mockResolvedValue(undefined);
+  it("should insert preferences with onConflictDoUpdate", async () => {
     const createdPrefs = {
       userId: "user-123",
-      theme: "system",
+      theme: "dark",
       timezone: "UTC",
     };
     mockReturning.mockResolvedValue([createdPrefs]);
@@ -69,31 +67,24 @@ describe("upsertUserPreferences", () => {
     });
 
     expect(result).toEqual(createdPrefs);
-  });
-
-  it("should update existing preferences record", async () => {
-    const existingPrefs = {
-      userId: "user-123",
-      theme: "light",
-      timezone: "UTC",
-    };
-    mockFindFirst.mockResolvedValue(existingPrefs);
-    const updatedPrefs = {
-      userId: "user-123",
-      theme: "dark",
-      timezone: "UTC",
-    };
-    mockReturning.mockResolvedValue([updatedPrefs]);
-
-    const result = await upsertUserPreferences("user-123", {
-      theme: "dark",
-    });
-
-    expect(result).toEqual(updatedPrefs);
+    expect(mockValues).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userId: "user-123",
+        theme: "dark",
+        timezone: "UTC",
+        dateFormat: "MM/dd/yyyy",
+        defaultTaskSort: "due_date_asc",
+      })
+    );
+    expect(mockOnConflictDoUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        target: expect.anything(),
+        set: expect.objectContaining({ theme: "dark" }),
+      })
+    );
   });
 
   it("should use defaults when creating with empty data", async () => {
-    mockFindFirst.mockResolvedValue(undefined);
     mockReturning.mockResolvedValue([
       {
         userId: "user-123",
@@ -107,5 +98,14 @@ describe("upsertUserPreferences", () => {
     const result = await upsertUserPreferences("user-123", {});
 
     expect(result).toBeDefined();
+    expect(mockValues).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userId: "user-123",
+        theme: "system",
+        timezone: "UTC",
+        dateFormat: "MM/dd/yyyy",
+        defaultTaskSort: "due_date_asc",
+      })
+    );
   });
 });

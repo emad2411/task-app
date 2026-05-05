@@ -1,10 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const mockRevalidateTag = vi.fn();
-const mockRevalidatePath = vi.fn();
 vi.mock("next/cache", () => ({
   revalidateTag: (...args: unknown[]) => mockRevalidateTag(...args),
-  revalidatePath: (...args: unknown[]) => mockRevalidatePath(...args),
 }));
 
 vi.mock("next/headers", () => ({
@@ -27,18 +25,7 @@ vi.mock("@/lib/auth/auth", () => ({
   },
 }));
 
-const mockReturning = vi.fn();
-const mockSet = vi.fn(() => ({ where: vi.fn(() => ({ returning: mockReturning })) }));
 
-vi.mock("@/lib/db", () => ({
-  db: {
-    update: vi.fn(() => ({ set: mockSet })),
-  },
-}));
-
-vi.mock("@/lib/db/schema", () => ({
-  users: { id: "id" },
-}));
 
 const mockUpsertUserPreferences = vi.fn();
 vi.mock("@/lib/data/preferences", () => ({
@@ -55,7 +42,6 @@ describe("updateProfileAction", () => {
 
   it("should update user name", async () => {
     mockUpdateUser.mockResolvedValue({ user: { id: "user-123", name: "John" } });
-    mockReturning.mockResolvedValue([{ id: "user-123" }]);
 
     const result = await updateProfileAction({ name: "John Doe" });
 
@@ -94,16 +80,13 @@ describe("updateProfileAction", () => {
     expect(result.success).toBe(false);
   });
 
-  it("should revalidate paths on success", async () => {
+  it("should revalidate tags on success", async () => {
     mockUpdateUser.mockResolvedValue({ user: { id: "user-123" } });
-    mockReturning.mockResolvedValue([{ id: "user-123" }]);
 
     await updateProfileAction({ name: "John Doe" });
 
-    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-preferences", "max");
-    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-dashboard", "max");
-    expect(mockRevalidatePath).toHaveBeenCalledWith("/settings");
-    expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard");
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-preferences", { expire: 0 });
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-dashboard", { expire: 0 });
   });
 
   it("should handle API errors", async () => {
@@ -209,17 +192,14 @@ describe("updatePreferencesAction", () => {
     expect(result.success).toBe(true);
   });
 
-  it("should revalidate paths on success", async () => {
+  it("should revalidate tags on success", async () => {
     mockUpsertUserPreferences.mockResolvedValue({ userId: "user-123" });
 
     await updatePreferencesAction({ theme: "dark" });
 
-    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-preferences", "max");
-    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-dashboard", "max");
-    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-tasks", "max");
-    expect(mockRevalidatePath).toHaveBeenCalledWith("/settings");
-    expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard");
-    expect(mockRevalidatePath).toHaveBeenCalledWith("/tasks");
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-preferences", { expire: 0 });
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-dashboard", { expire: 0 });
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-tasks", { expire: 0 });
   });
 
   it("should handle upsert failures", async () => {

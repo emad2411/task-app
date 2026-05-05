@@ -1,10 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const mockRevalidateTag = vi.fn();
-const mockRevalidatePath = vi.fn();
 vi.mock("next/cache", () => ({
   revalidateTag: (...args: unknown[]) => mockRevalidateTag(...args),
-  revalidatePath: (...args: unknown[]) => mockRevalidatePath(...args),
 }));
 
 const mockGetCurrentUserId = vi.fn();
@@ -106,11 +104,8 @@ describe("createCategoryAction", () => {
 
     await createCategoryAction({ name: "Work" });
 
-    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-categories", "max");
-    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-tasks", "max");
-    expect(mockRevalidatePath).toHaveBeenCalledWith("/categories");
-    expect(mockRevalidatePath).toHaveBeenCalledWith("/tasks");
-    expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard");
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-categories", { expire: 0 });
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-tasks", { expire: 0 });
   });
 
   it("should handle unexpected errors", async () => {
@@ -205,11 +200,8 @@ describe("updateCategoryAction", () => {
 
     await updateCategoryAction({ id: validUuid, name: "Updated" });
 
-    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-categories", "max");
-    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-tasks", "max");
-    expect(mockRevalidatePath).toHaveBeenCalledWith("/categories");
-    expect(mockRevalidatePath).toHaveBeenCalledWith("/tasks");
-    expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard");
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-categories", { expire: 0 });
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-tasks", { expire: 0 });
   });
 
   it("should handle unexpected errors", async () => {
@@ -276,11 +268,8 @@ describe("deleteCategoryAction", () => {
 
     await deleteCategoryAction("cat-1");
 
-    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-categories", "max");
-    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-tasks", "max");
-    expect(mockRevalidatePath).toHaveBeenCalledWith("/categories");
-    expect(mockRevalidatePath).toHaveBeenCalledWith("/tasks");
-    expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard");
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-categories", { expire: 0 });
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-tasks", { expire: 0 });
   });
 
   it("should handle unexpected errors", async () => {

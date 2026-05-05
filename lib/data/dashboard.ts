@@ -1,5 +1,5 @@
 import { cacheTag, cacheLife } from "next/cache";
-import { eq, and, count, gte, lt, isNull, asc } from "drizzle-orm";
+import { eq, and, count, gte, lt, asc, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { tasks, userPreferences } from "@/lib/db/schema";
 import { TaskPriority, TaskStatus } from "@/lib/db/schema";
@@ -131,62 +131,18 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
   // Each query counts tasks matching specific criteria.
   // All queries are scoped to the authenticated user and use indexed columns.
   
-  // --- Stat 1: Tasks due today ---
-  // Count of active tasks (todo status) where dueDate falls within today
-  // Uses the tasks_user_id_due_date_idx index
-  const [dueTodayResult] = await db
-    .select({ count: count() })
+  // --- All 4 stats in a single query using conditional aggregation ---
+  // Each CASE expression counts rows matching specific criteria.
+  // This reduces 4 database round trips to 1.
+  const [statsResult] = await db
+    .select({
+      dueToday: sql<number>`coalesce(sum(case when ${tasks.status} = 'todo' and ${tasks.dueDate} >= ${todayStart} and ${tasks.dueDate} < ${todayEnd} then 1 else 0 end), 0)`.mapWith(Number),
+      overdue: sql<number>`coalesce(sum(case when ${tasks.status} = 'todo' and ${tasks.dueDate} < ${todayStart} and ${tasks.completedAt} is null then 1 else 0 end), 0)`.mapWith(Number),
+      completedToday: sql<number>`coalesce(sum(case when ${tasks.completedAt} >= ${todayStart} and ${tasks.completedAt} < ${todayEnd} then 1 else 0 end), 0)`.mapWith(Number),
+      totalActive: sql<number>`coalesce(sum(case when ${tasks.status} = 'todo' then 1 else 0 end), 0)`.mapWith(Number),
+    })
     .from(tasks)
-    .where(
-      and(
-        eq(tasks.userId, userId),      // Security: scope to user
-        eq(tasks.status, "todo"),      // Only active tasks
-        gte(tasks.dueDate, todayStart), // Due date >= start of today
-        lt(tasks.dueDate, todayEnd)     // Due date < end of today
-      )
-    );
-
-  // --- Stat 2: Overdue tasks ---
-  // Count of active tasks where dueDate is before today and not completed
-  // Uses the tasks_user_id_due_date_idx index
-  const [overdueResult] = await db
-    .select({ count: count() })
-    .from(tasks)
-    .where(
-      and(
-        eq(tasks.userId, userId),
-        eq(tasks.status, "todo"),
-        lt(tasks.dueDate, todayStart), // Due date < start of today
-        isNull(tasks.completedAt)       // Not yet completed
-      )
-    );
-
-  // --- Stat 3: Tasks completed today ---
-  // Count of tasks where completedAt timestamp falls within today
-  // Note: status could be "done" or "archived" - we count both
-  const [completedTodayResult] = await db
-    .select({ count: count() })
-    .from(tasks)
-    .where(
-      and(
-        eq(tasks.userId, userId),
-        gte(tasks.completedAt, todayStart), // Completed >= start of today
-        lt(tasks.completedAt, todayEnd)      // Completed < end of today
-      )
-    );
-
-  // --- Stat 4: Total active tasks ---
-  // Count of all tasks with "todo" status (not done, not archived)
-  // Uses the tasks_user_id_status_idx index
-  const [totalActiveResult] = await db
-    .select({ count: count() })
-    .from(tasks)
-    .where(
-      and(
-        eq(tasks.userId, userId),
-        eq(tasks.status, "todo")
-      )
-    );
+    .where(eq(tasks.userId, userId));
 
   // ==========================================================================
   // STEP 4: Fetch priority distribution
@@ -258,10 +214,10 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
   
   return {
     stats: {
-      dueToday: dueTodayResult?.count ?? 0,
-      overdue: overdueResult?.count ?? 0,
-      completedToday: completedTodayResult?.count ?? 0,
-      totalActive: totalActiveResult?.count ?? 0,
+      dueToday: statsResult?.dueToday ?? 0,
+      overdue: statsResult?.overdue ?? 0,
+      completedToday: statsResult?.completedToday ?? 0,
+      totalActive: statsResult?.totalActive ?? 0,
     },
     priorityDistribution,
     upcomingTasks,

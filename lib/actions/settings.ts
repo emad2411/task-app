@@ -1,12 +1,10 @@
 "use server";
 
 import { headers } from "next/headers";
-import { revalidateTag, revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { auth } from "@/lib/auth/auth";
 import { requireUserId } from "@/lib/auth/session";
-import { db } from "@/lib/db";
-import { users } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+
 import {
   updateProfileSchema,
   updatePreferencesSchema,
@@ -31,7 +29,7 @@ export async function updateProfileAction(input: UpdateProfileInput): Promise<Ac
     const userId = await requireUserId();
     const validated = updateProfileSchema.parse(input);
 
-    // Update via Better Auth to ensure session is refreshed
+    // Update via Better Auth — it updates the users table and refreshes the session
     await auth.api.updateUser({
       headers: await headers(),
       body: {
@@ -39,16 +37,8 @@ export async function updateProfileAction(input: UpdateProfileInput): Promise<Ac
       },
     });
 
-    // Also update directly via Drizzle as fallback/synchronization
-    await db
-      .update(users)
-      .set({ name: validated.name, updatedAt: new Date() })
-      .where(eq(users.id, userId));
-
-    revalidateTag(`user-${userId}-preferences`, "max");
-    revalidateTag(`user-${userId}-dashboard`, "max");
-    revalidatePath("/settings");
-    revalidatePath("/dashboard");
+    revalidateTag(`user-${userId}-preferences`, { expire: 0 });
+    revalidateTag(`user-${userId}-dashboard`, { expire: 0 });
 
     return { success: true, data: { message: "Profile updated" } };
   } catch (error) {
@@ -70,12 +60,9 @@ export async function updatePreferencesAction(input: UpdatePreferencesInput): Pr
 
     await upsertUserPreferences(userId, validated);
 
-    revalidateTag(`user-${userId}-preferences`, "max");
-    revalidateTag(`user-${userId}-dashboard`, "max");
-    revalidateTag(`user-${userId}-tasks`, "max");
-    revalidatePath("/settings");
-    revalidatePath("/dashboard");
-    revalidatePath("/tasks");
+    revalidateTag(`user-${userId}-preferences`, { expire: 0 });
+    revalidateTag(`user-${userId}-dashboard`, { expire: 0 });
+    revalidateTag(`user-${userId}-tasks`, { expire: 0 });
 
     return { success: true, data: { message: "Preferences updated" } };
   } catch (error) {
