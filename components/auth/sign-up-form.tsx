@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { z } from "zod";
@@ -39,8 +40,11 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
   const [isPending, startTransition] = useTransition();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [registeredEmail, setRegisteredEmail] = useState("");
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const isSuccess = searchParams.get("success") === "true";
+  const registeredEmail = searchParams.get("email") || "";
 
   const form = useForm<SignUpFormInput>({
     resolver: zodResolver(signUpFormSchema),
@@ -61,8 +65,10 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
       });
 
       if (result.success) {
-        setRegisteredEmail(data.email);
-        setIsSuccess(true);
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("success", "true");
+        params.set("email", data.email);
+        router.replace(`?${params.toString()}`);
         if (onSuccess) {
           onSuccess(data.email);
         }

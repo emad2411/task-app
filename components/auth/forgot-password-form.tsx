@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
@@ -24,7 +25,10 @@ import { SuccessCard } from "./auth-card";
 
 export function ForgotPasswordForm() {
   const [isPending, startTransition] = useTransition();
-  const [isSuccess, setIsSuccess] = useState(false);
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const isSuccess = searchParams.get("success") === "true";
 
   const form = useForm<ForgotPasswordInput>({
     resolver: zodResolver(forgotPasswordSchema),
@@ -38,7 +42,9 @@ export function ForgotPasswordForm() {
       const result = await forgotPasswordAction(data);
 
       if (result.success) {
-        setIsSuccess(true);
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("success", "true");
+        router.replace(`?${params.toString()}`);
       } else {
         toast.error(result.error || "Failed to send reset link");
       }

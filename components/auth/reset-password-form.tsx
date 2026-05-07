@@ -3,7 +3,7 @@
 import { useState, useTransition, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Eye, EyeOff, Loader2, FolderOpen } from "lucide-react";
@@ -37,13 +37,15 @@ const resetPasswordFormSchema = resetPasswordSchema
 type ResetPasswordFormInput = z.infer<typeof resetPasswordFormSchema>;
 
 export function ResetPasswordForm() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const [isPending, startTransition] = useTransition();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
   const [tokenError, setTokenError] = useState("");
+
+  const isSuccess = searchParams.get("success") === "true";
 
   const form = useForm<ResetPasswordFormInput>({
     resolver: zodResolver(resetPasswordFormSchema),
@@ -75,7 +77,9 @@ export function ResetPasswordForm() {
       });
 
       if (result.success) {
-        setIsSuccess(true);
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("success", "true");
+        router.replace(`?${params.toString()}`);
       } else {
         toast.error(result.error || "Failed to reset password");
       }
