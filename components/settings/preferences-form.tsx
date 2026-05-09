@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Loader2, Settings } from "lucide-react";
@@ -106,8 +106,12 @@ export function PreferencesForm({ defaultValues }: PreferencesFormProps) {
     defaultValues: defaultValues as UpdatePreferencesInput,
   });
 
-  const selectedDateFormat = form.watch("dateFormat") ?? defaultValues.dateFormat;
-  const todayPreview = formatDatePreview(new Date(), selectedDateFormat);
+  const selectedDateFormat = useWatch<UpdatePreferencesInput>({
+    control: form.control,
+    name: "dateFormat",
+    defaultValue: defaultValues.dateFormat,
+  });
+  const todayPreview = formatDatePreview(new Date(), selectedDateFormat ?? defaultValues.dateFormat);
 
   /**
    * Handles form submission for preferences update.

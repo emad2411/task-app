@@ -58,7 +58,7 @@ export function VerifyEmailHandler() {
     }
   }, [token]);
 
-  function handleResend(data: ForgotPasswordInput) {
+  function handleResend(_data: ForgotPasswordInput) {
     toast.info("Resend functionality coming soon");
   }
 

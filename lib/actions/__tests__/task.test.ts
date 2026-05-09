@@ -15,7 +15,7 @@ const mockValues = vi.fn(() => ({ returning: mockReturning }));
 let mockWhereResolveValue: unknown = undefined;
 const mockWhere = vi.fn(() => {
   const p = Promise.resolve(mockWhereResolveValue);
-  (p as any).returning = mockReturning;
+  (p as { returning: typeof mockReturning }).returning = mockReturning;
   return p;
 });
 const mockSet = vi.fn(() => ({ where: mockWhere }));

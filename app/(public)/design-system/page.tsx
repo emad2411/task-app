@@ -115,16 +115,16 @@ export default function DesignSystemPage() {
                 <TypeSample size="16px" weight={400} label="Body" />
                 <TypeSample size="15px" weight={500} label="Button" />
                 <TypeSample size="14px" weight={500} label="Link" />
-                <TypeSample size="13px" weight={500} tracking="0.65px" label="Label Uppercase" isUppercase />
+                <TypeSample size="13px" weight={500} tracking="0.65px" label="Label Uppercase" />
               </div>
             </section>
 
             <section className="space-y-4">
               <h2 className="text-xl font-semibold">Monospace</h2>
               <div className="space-y-6 font-mono">
-                <TypeSample size="12px" weight={500} tracking="0.6px" label="Mono Code" isMono isUppercase />
-                <TypeSample size="12px" weight={600} tracking="0.6px" label="Mono Badge" isMono isUppercase />
-                <TypeSample size="10px" weight={500} label="Mono Micro" isMono isUppercase />
+                <TypeSample size="12px" weight={500} tracking="0.6px" label="Mono Code" isMono />
+                <TypeSample size="12px" weight={600} tracking="0.6px" label="Mono Badge" isMono />
+                <TypeSample size="10px" weight={500} label="Mono Micro" isMono />
               </div>
             </section>
           </TabsContent>
@@ -379,14 +379,12 @@ function TypeSample({
   weight,
   tracking,
   label,
-  isUppercase,
   isMono,
 }: {
   size: string;
   weight: number;
   tracking?: string;
   label: string;
-  isUppercase?: boolean;
   isMono?: boolean;
 }) {
   return (

@@ -5,8 +5,10 @@ export type Session = Awaited<ReturnType<typeof auth.api.getSession>>;
 
 export async function getSession(): Promise<Session> {
   try {
+    const headersList = await headers().catch(() => null);
+    if (!headersList) return null;
     const session = await auth.api.getSession({
-      headers: await headers(),
+      headers: headersList,
     });
     return session;
   } catch (error) {
