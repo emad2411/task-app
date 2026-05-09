@@ -97,7 +97,7 @@ describe("createCategoryAction", () => {
     expect(result.success).toBe(false);
   });
 
-  it("should revalidate paths on success", async () => {
+  it("should revalidate tags on success", async () => {
     mockGetCurrentUserId.mockResolvedValue("user-123");
     mockFindFirst.mockResolvedValue(null);
     mockReturning.mockResolvedValue([{ id: "cat-1" }]);
@@ -106,6 +106,7 @@ describe("createCategoryAction", () => {
 
     expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-categories", { expire: 0 });
     expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-tasks", { expire: 0 });
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-dashboard", { expire: 0 });
   });
 
   it("should handle unexpected errors", async () => {
@@ -193,7 +194,7 @@ describe("updateCategoryAction", () => {
     expect(result.success).toBe(false);
   });
 
-  it("should revalidate paths on success", async () => {
+  it("should revalidate tags on success", async () => {
     mockGetCurrentUserId.mockResolvedValue("user-123");
     mockFindFirst.mockResolvedValue(null);
     mockReturning.mockResolvedValue([{ id: validUuid }]);
@@ -202,6 +203,7 @@ describe("updateCategoryAction", () => {
 
     expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-categories", { expire: 0 });
     expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-tasks", { expire: 0 });
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-dashboard", { expire: 0 });
   });
 
   it("should handle unexpected errors", async () => {
@@ -262,7 +264,7 @@ describe("deleteCategoryAction", () => {
     expect(result.error).toBe("Category not found");
   });
 
-  it("should revalidate paths on success", async () => {
+  it("should revalidate tags on success", async () => {
     mockGetCurrentUserId.mockResolvedValue("user-123");
     mockReturning.mockResolvedValue([{ id: "cat-1" }]);
 
@@ -270,6 +272,7 @@ describe("deleteCategoryAction", () => {
 
     expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-categories", { expire: 0 });
     expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-tasks", { expire: 0 });
+    expect(mockRevalidateTag).toHaveBeenCalledWith("user-user-123-dashboard", { expire: 0 });
   });
 
   it("should handle unexpected errors", async () => {

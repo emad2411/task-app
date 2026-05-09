@@ -36,6 +36,7 @@ export async function createCategoryAction(input: unknown): Promise<ActionResult
 
     revalidateTag(`user-${userId}-categories`, { expire: 0 });
     revalidateTag(`user-${userId}-tasks`, { expire: 0 });
+    revalidateTag(`user-${userId}-dashboard`, { expire: 0 });
     return { success: true, data: category };
   } catch (error) {
     if (
@@ -88,6 +89,7 @@ export async function updateCategoryAction(input: unknown): Promise<ActionResult
 
     revalidateTag(`user-${userId}-categories`, { expire: 0 });
     revalidateTag(`user-${userId}-tasks`, { expire: 0 });
+    revalidateTag(`user-${userId}-dashboard`, { expire: 0 });
     return { success: true, data: category };
   } catch (error) {
     if (
@@ -122,6 +124,7 @@ export async function deleteCategoryAction(
 
     revalidateTag(`user-${userId}-categories`, { expire: 0 });
     revalidateTag(`user-${userId}-tasks`, { expire: 0 });
+    revalidateTag(`user-${userId}-dashboard`, { expire: 0 });
     return { success: true };
   } catch (error) {
     return handleActionError("[deleteCategoryAction]", error, "Failed to delete category");
