@@ -1,16 +1,23 @@
-# Current Feature
+# Current Feature: P4-F2c — Auth Security & React Pattern Fixes
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- Feature goals go here -->
+- Remove email enumeration check from `signUpAction` (bypasses Better Auth protection)
+- Await email sending in auth callbacks with try/catch (instead of void + .catch())
+- Fix setState in useEffect in `reset-password-form.tsx` and `verify-email-handler.tsx`
+- Move ref assignment into useEffect in `task-filters.tsx`
 
 ## Notes
 
-<!-- Additional context, constraints, or details from spec -->
+- Part of Phase 4 Hardening
+- No new npm packages required
+- Prerequisites: P4-F2a and P4-F2b already completed
+- Branch: `feature/P4-F2c-auth-react-fixes`
+- Spec: `context/features/phase-4/02c-auth-security-react-fixes/FEATURE.md`
 
 ## History
 

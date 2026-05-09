@@ -36,13 +36,16 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: true,
     sendResetPassword: async ({ user, url, token }, request) => {
-      void sendPasswordResetEmail({
-        to: user.email,
-        userName: user.name || user.email,
-        resetUrl: url,
-      }).catch((error) => {
+      try {
+        await sendPasswordResetEmail({
+          to: user.email,
+          userName: user.name || user.email,
+          resetUrl: url,
+        });
+      } catch (error) {
         console.error("Failed to send password reset email:", error);
-      });
+        // Continue — don't block auth flow on email failure
+      }
     },
   },
 
@@ -51,13 +54,16 @@ export const auth = betterAuth({
     autoSignInAfterVerification: true,
     expiresIn: 3600,
     sendVerificationEmail: async ({ user, url, token }, request) => {
-      void sendVerificationEmail({
-        to: user.email,
-        userName: user.name || user.email,
-        verificationUrl: url,
-      }).catch((error) => {
+      try {
+        await sendVerificationEmail({
+          to: user.email,
+          userName: user.name || user.email,
+          verificationUrl: url,
+        });
+      } catch (error) {
         console.error("Failed to send verification email:", error);
-      });
+        // Continue — don't block auth flow on email failure
+      }
     },
   },
   session: {

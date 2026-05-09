@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
+import { useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -43,7 +43,10 @@ export function ResetPasswordForm() {
   const [isPending, startTransition] = useTransition();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [tokenError, setTokenError] = useState("");
+
+  const tokenError = !token
+    ? "Invalid or missing reset token. Please request a new password reset link."
+    : "";
 
   const isSuccess = searchParams.get("success") === "true";
 
@@ -56,17 +59,8 @@ export function ResetPasswordForm() {
     },
   });
 
-  useEffect(() => {
-    if (!token) {
-      setTokenError("Invalid or missing reset token. Please request a new password reset link.");
-    } else {
-      form.setValue("token", token);
-    }
-  }, [token, form]);
-
   function onSubmit(data: ResetPasswordFormInput) {
     if (!token) {
-      setTokenError("Invalid or missing reset token. Please request a new password reset link.");
       return;
     }
 

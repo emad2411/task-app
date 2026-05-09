@@ -27,25 +27,12 @@ vi.mock("next/headers", () => ({
   headers: vi.fn(() => Promise.resolve(new Headers())),
 }));
 
-vi.mock("@/lib/db", () => ({
-  db: {
-    query: {
-      users: { findFirst: vi.fn() },
-    },
-  },
-}));
-
-vi.mock("@/lib/db/schema", () => ({
-  users: { email: "email" },
-}));
-
 vi.mock("@/lib/rate-limit", () => ({
   authLimiter: { limit: vi.fn().mockResolvedValue({ success: true, limit: 5, reset: 0, remaining: 4 }) },
   forgotPasswordLimiter: { limit: vi.fn().mockResolvedValue({ success: true, limit: 3, reset: 0, remaining: 2 }) },
 }));
 
 import { auth } from "@/lib/auth/auth";
-import { db } from "@/lib/db";
 import { authLimiter, forgotPasswordLimiter } from "@/lib/rate-limit";
 
 describe("signInAction", () => {
@@ -136,7 +123,6 @@ describe("signUpAction", () => {
 
   it("should return success for valid registration", async () => {
     const mockUser = { id: "user-123", email: "user@example.com", name: "John Doe" };
-    vi.mocked(db.query.users.findFirst).mockResolvedValue(null);
     vi.mocked(auth.api.signUpEmail).mockResolvedValue(mockUser as unknown);
 
     const result = await signUpAction({
@@ -176,7 +162,6 @@ describe("signUpAction", () => {
   });
 
   it("should return success with null user when signup returns null", async () => {
-    vi.mocked(db.query.users.findFirst).mockResolvedValue(null);
     vi.mocked(auth.api.signUpEmail).mockResolvedValue(null);
 
     const result = await signUpAction({
@@ -189,8 +174,9 @@ describe("signUpAction", () => {
     expect(result.data).toEqual({ user: null });
   });
 
-  it("should return error when user already exists", async () => {
-    vi.mocked(db.query.users.findFirst).mockResolvedValue({ id: "existing-user" } as unknown);
+  it("should return error when user already exists (via Better Auth 409)", async () => {
+    const apiError = { statusCode: 409, body: { message: "User already exists" }, name: "APIError" };
+    vi.mocked(auth.api.signUpEmail).mockRejectedValue(apiError);
 
     const result = await signUpAction({
       name: "John Doe",
@@ -204,7 +190,6 @@ describe("signUpAction", () => {
 
   it("should return rate limit error when authLimiter rejects", async () => {
     vi.mocked(authLimiter.limit).mockResolvedValue({ success: false, limit: 5, reset: Date.now() + 60000, remaining: 0 });
-    vi.mocked(db.query.users.findFirst).mockResolvedValue(null);
 
     const result = await signUpAction({
       name: "John Doe",

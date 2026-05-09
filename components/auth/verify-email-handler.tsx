@@ -28,10 +28,13 @@ import { SuccessCard } from "./auth-card";
 export function VerifyEmailHandler() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
+  const hasToken = !!token;
   const [isPending, startTransition] = useTransition();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(hasToken);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [error, setError] = useState("");
+  const [apiError, setApiError] = useState("");
+
+  const error = !hasToken ? "No verification token provided" : apiError;
 
   const resendForm = useForm<ForgotPasswordInput>({
     resolver: zodResolver(forgotPasswordSchema),
@@ -49,12 +52,9 @@ export function VerifyEmailHandler() {
         if (result.success) {
           setIsSuccess(true);
         } else {
-          setError(result.error || "Failed to verify email");
+          setApiError(result.error || "Failed to verify email");
         }
       });
-    } else {
-      setIsLoading(false);
-      setError("No verification token provided");
     }
   }, [token]);
 

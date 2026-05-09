@@ -1,11 +1,6 @@
 "use server";
 
 import { auth } from "@/lib/auth/auth";
-// TODO (post-MVP): Consider migrating revalidatePath to revalidateTag
-// for more granular cache invalidation as the app scales.
-import { db } from "@/lib/db";
-import { users } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
 import { APIError, isAPIError } from "better-auth/api";
 import { headers } from "next/headers";
 import {
@@ -84,18 +79,6 @@ export async function signUpAction(input: SignUpInput): Promise<ActionResult> {
     const { success: withinLimit } = await authLimiter.limit(ip);
     if (!withinLimit) {
       return { success: false, error: "Too many requests. Please try again later." };
-    }
-
-    // Bypass Better Auth's email enumeration protection so the UI can show the error
-    const existingUser = await db.query.users.findFirst({
-      where: eq(users.email, validated.email.toLowerCase()),
-    });
-
-    if (existingUser) {
-      return { 
-        success: false, 
-        error: "An account with this email already exists. Please sign in instead." 
-      };
     }
 
     const result = await auth.api.signUpEmail({

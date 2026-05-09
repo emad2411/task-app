@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, startTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, X, ArrowUpDown, Group, SlidersHorizontal } from "lucide-react";
 
@@ -107,7 +107,9 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
 
   // Use a ref to always read latest searchParams without triggering effect re-runs
   const searchParamsRef = useRef(searchParams);
-  searchParamsRef.current = searchParams;
+  useEffect(() => {
+    searchParamsRef.current = searchParams;
+  }, [searchParams]);
 
   // Track the last q value we pushed to the URL so we don't sync it back and overwrite typing
   const lastPushedQ = useRef<string | null>(null);
@@ -119,18 +121,22 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
       lastPushedQ.current = null;
       return;
     }
-    setSearchInput(q);
+    startTransition(() => {
+      setSearchInput(q);
+    });
   }, [q]);
 
   // Sync optimistic state when URL changes (browser back/forward)
   useEffect(() => {
-    setOptimisticStatus(searchParams.get("status") || "all");
-    setOptimisticPriority(searchParams.get("priority") || "all");
-    setOptimisticCategory(searchParams.get("category") || "all");
-    setOptimisticDueDate(searchParams.get("dueDate") || "all");
-    setOptimisticSort(searchParams.get("sort") || "dueDate");
-    setOptimisticOrder(searchParams.get("order") || "asc");
-    setOptimisticGroupBy(searchParams.get("groupBy") || "none");
+    startTransition(() => {
+      setOptimisticStatus(searchParams.get("status") || "all");
+      setOptimisticPriority(searchParams.get("priority") || "all");
+      setOptimisticCategory(searchParams.get("category") || "all");
+      setOptimisticDueDate(searchParams.get("dueDate") || "all");
+      setOptimisticSort(searchParams.get("sort") || "dueDate");
+      setOptimisticOrder(searchParams.get("order") || "asc");
+      setOptimisticGroupBy(searchParams.get("groupBy") || "none");
+    });
   }, [searchParams]);
 
   // Update URL when debounced search changes

@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { requireAuth } from "@/lib/auth/session";
 import { getTasks, getCategoriesForUser, getTaskCount } from "@/lib/data/task";
 import { getUserTimezone } from "@/lib/data/preferences";
@@ -82,8 +83,10 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
           <CreateTaskDialog />
         </div>
 
-        <TaskFilters categories={categories} />
-        <FilterChips categories={categories} />
+        <Suspense fallback={<div className="h-11" />}>
+          <TaskFilters categories={categories} />
+          <FilterChips categories={categories} />
+        </Suspense>
 
         {tasks.length > 0 ? (
           <TaskList
