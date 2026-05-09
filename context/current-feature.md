@@ -3,26 +3,14 @@
 ## Status
 
 <!-- Not Started | In Progress | Complete -->
-Complete
 
 ## Goals
 
-- Create `TaskListLoader` server component that fetches `getTasks()` + `getTaskCount()` and renders `TaskList` or `TaskEmptyState`
-- Wrap `TaskListLoader` in `<Suspense key={JSON.stringify(query)}>` with skeleton fallback
-- Remove `getTasks()`, `getTaskCount()`, `TaskList`, `TaskEmptyState` imports and logic from `tasks/page.tsx`
-- Page shell (header, filters, create button) renders immediately while task list streams in
-- All existing filter/search/sort/group/reset flows continue to work correctly
+<!-- Bullet points of what success looks like -->
 
 ## Notes
 
-- Phase 4 — Hardening, Feature ID: P4-F3
-- Branch: `feature/P4-F3-streaming-suspense`
-- Estimated effort: 30–45 minutes
-- Prerequisites: P4-F2c completed (task-filters.tsx has `startTransition` fixes)
-- No new npm packages required
-- `TaskListLoader` is a Server Component (no `"use client"`)
-- The `key={JSON.stringify(query)}` ensures React resets the Suspense boundary on every filter change
-- Task count message ("Showing X of Y tasks") moves inside the Suspense boundary
+<!-- Additional context, constraints, or details from spec -->
 
 ## History
 
