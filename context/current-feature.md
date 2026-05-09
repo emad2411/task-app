@@ -1,23 +1,16 @@
-# Current Feature: P4-F2c — Auth Security & React Pattern Fixes
+# Current Feature
 
 ## Status
 
-In Progress
+<!-- Not Started | In Progress | Complete -->
 
 ## Goals
 
-- Remove email enumeration check from `signUpAction` (bypasses Better Auth protection)
-- Await email sending in auth callbacks with try/catch (instead of void + .catch())
-- Fix setState in useEffect in `reset-password-form.tsx` and `verify-email-handler.tsx`
-- Move ref assignment into useEffect in `task-filters.tsx`
+<!-- Bullet points of what success looks like -->
 
 ## Notes
 
-- Part of Phase 4 Hardening
-- No new npm packages required
-- Prerequisites: P4-F2a and P4-F2b already completed
-- Branch: `feature/P4-F2c-auth-react-fixes`
-- Spec: `context/features/phase-4/02c-auth-security-react-fixes/FEATURE.md`
+<!-- Additional context, constraints, or details from spec -->
 
 ## History
 
@@ -44,3 +37,4 @@ In Progress
 - **Type Consolidation, Import Cleanup & Config (P4-F2a)** (2026-05-04) - Extracted duplicated `ActionResult` interface from `auth.ts`, `task.ts`, and `category.ts` into shared `lib/actions/types.ts`. Removed unused `neonConfig` import from `lib/db/index.ts`. Removed unused imports across 8 component files (`reset-password-form.tsx`, `sign-up-form.tsx`, `verify-email-handler.tsx`, `appearance-form.tsx`, `preferences-form.tsx`, `profile-form.tsx`, `design-system/page.tsx`). Added `skipProxyUrlNormalize: true` to `next.config.ts`. Replaced 12 `as any` casts in `lib/actions/__tests__/auth.test.ts` with `as unknown` or removed unnecessary casts. Added `MockCategory` and `MockTask` interfaces to `scripts/seed.ts` and replaced 2 `any` parameter types. Build passes, all 260 tests pass.
 - **Data Layer & Action Cleanup (P4-F2b)** (2026-05-05) - Consolidated 4 separate dashboard stat `count()` queries into 1 conditional aggregation query using `CASE` + `coalesce`, reducing dashboard queries from 6 to 3. Added lightweight `getUserTimezone()` to `lib/data/preferences.ts` with `use cache` for efficient timezone-only fetches; updated `/tasks` page to use it instead of `getDashboardData`. Changed `revalidateTag` profile from `"max"` (stale-while-revalidate) to `{ expire: 0 }` (immediate expiry) in `lib/actions/task.ts`, `category.ts`, and `settings.ts` to fix tasks not appearing in the UI immediately after creation. Fixed preferences upsert race condition by replacing read-then-write pattern with atomic `insert().onConflictDoUpdate()`. Removed double user name update in `updateProfileAction` — now only uses `auth.api.updateUser()` without the redundant `db.update(users)`. Updated all affected tests. Build passes, 259 tests pass.
 - **Auth Form Success State in URL Params** (2026-05-07) - Moved success state management from React `useState` to URL search params for auth forms (`sign-up-form.tsx`, `forgot-password-form.tsx`, `reset-password-form.tsx`). On successful submission, forms now update the URL with `?success=true` (and `email` for sign-up) via `router.replace()`, making the success screen persist on page refresh, shareable, and bookmarkable. Removed `useState` for `isSuccess` and `registeredEmail` in sign-up form. Added `useSearchParams` and `useRouter` hooks to read and update URL state. Build passes.
+- **Auth Security & React Pattern Fixes (P4-F2c)** (2026-05-09) - Fixed 4 security and React pattern issues: (1) Removed email enumeration bypass in `signUpAction` by deleting the explicit `db.query.users.findFirst` check and unused imports (`db`, `users`, `eq`), letting Better Auth's 409 response handle duplicate detection. (2) Replaced `void`+`.catch()` fire-and-forget pattern with `await`+`try/catch` for both `sendResetPassword` and `sendVerificationEmail` auth callbacks in `lib/auth/auth.ts` for more predictable error handling. (3) Fixed setState-in-useEffect anti-patterns in `reset-password-form.tsx` and `verify-email-handler.tsx` by deriving token directly from `searchParams` instead of syncing via useEffect. (4) Fixed ref-updated-during-render in `task-filters.tsx` by moving `searchParamsRef.current = searchParams` into a useEffect. Updated auth tests to mock Better Auth's 409 response instead of database queries. Build passes, 259 tests pass.
