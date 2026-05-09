@@ -4,6 +4,19 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
+## Documentation Rule (Mandatory)
+
+**Always check the latest documentation before writing code or fixing errors.**
+
+When encountering build errors, type errors, lint warnings, or API uncertainty:
+
+1. Use the **Context7 MCP** (`context7-mcp` skill) to query the latest library/framework documentation — do NOT rely on training data for API details.
+2. For Neon-specific questions, use the **Neon MCP** tools or `Neon_list_docs_resources` / `Neon_get_doc_resource`.
+3. For Next.js-specific issues, check `node_modules/next/dist/docs/` or the official Next.js docs.
+4. Only after consulting documentation should you propose or apply a fix.
+
+This applies to ALL libraries in the stack: Next.js, React, Tailwind CSS, shadcn/ui, Drizzle ORM, Better Auth, React Hook Form, Zod, Resend, and any other dependency.
+
 ## Project Summary
 
 **TaskFlow** — A responsive task management web application for individual users. Built with Next.js 16 App Router, React 19, Tailwind CSS v4, shadcn/ui, Neon PostgreSQL, Drizzle ORM, Better Auth, Resend, and Zod v4.
@@ -17,7 +30,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - User settings (theme, timezone, preferences)
 
 ### Current Status
-Phase 1 complete (partial): Project scaffolded with Next.js 16, Tailwind v4, shadcn/ui, route groups, ThemeProvider, proxy.ts for auth protection, and env configuration. Better Auth core setup and Resend email integration pending (P1-F4, P1-F5).
+MVP complete. All 4 phases implemented (Foundation, Core Product, Preferences & Polish, Hardening). 259 tests passing across 13 test files. Build and lint pass with zero errors and zero warnings. Remaining: `/` root page still shows default Next.js template (cosmetic — app works via `/sign-in` or `/dashboard`). Post-MVP features (shared tasks, notifications, recurring tasks, calendar sync, integrations) are explicitly deferred per PRD.
 
 ---
 
@@ -26,7 +39,7 @@ Phase 1 complete (partial): Project scaffolded with Next.js 16, Tailwind v4, sha
 - `npm run dev` — Start dev server
 - `npm run lint` — Run ESLint
 - `npm run build` — Production build
-- No `typecheck` or `test` scripts yet (Vitest planned)
+- `npx vitest` — Run test suite (259 tests across 13 files)
 
 ---
 

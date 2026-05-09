@@ -6,7 +6,7 @@
 **Primary platform:** Responsive web application  
 **Target stack:** Next.js 16 App Router, React 19, Tailwind CSS v4, shadcn/ui, Neon PostgreSQL, Drizzle ORM, Better Auth, Resend, React Hook Form, Zod v4  
 **Version validation date:** 2026-04-16  
-**Status:** Draft v1.0 (implementation-ready)
+**Status:** Complete (MVP shipped)
 
 ---
 
@@ -1013,42 +1013,42 @@ npm install @react-email/components @react-email/render
 ## 22) QA and Acceptance Checklist
 
 ### Authentication
-- [ ] Sign up works with valid input.
-- [ ] Sign in works with valid credentials.
-- [ ] Invalid credentials show proper errors.
-- [ ] Password reset request works.
-- [ ] Password reset completion works.
-- [ ] Change password works for authenticated users.
-- [ ] Protected routes block unauthenticated access.
+- [x] Sign up works with valid input.
+- [x] Sign in works with valid credentials.
+- [x] Invalid credentials show proper errors.
+- [x] Password reset request works.
+- [x] Password reset completion works.
+- [x] Change password works for authenticated users.
+- [x] Protected routes block unauthenticated access.
 
 ### Dashboard
-- [ ] Dashboard loads user-specific summaries.
-- [ ] Empty state displays correctly for new users.
-- [ ] Stats update after task changes.
+- [x] Dashboard loads user-specific summaries.
+- [x] Empty state displays correctly for new users.
+- [x] Stats update after task changes.
 
 ### Tasks
-- [ ] Create/edit/delete flows work.
-- [ ] Status updates work.
-- [ ] Due dates render correctly.
-- [ ] Priority badges render correctly.
-- [ ] User cannot access another user’s task.
+- [x] Create/edit/delete flows work.
+- [x] Status updates work.
+- [x] Due dates render correctly.
+- [x] Priority badges render correctly.
+- [x] User cannot access another user's task.
 
 ### Categories
-- [ ] Create/update/delete category works.
-- [ ] Duplicate names are blocked per user.
-- [ ] Category deletion does not delete tasks.
+- [x] Create/update/delete category works.
+- [x] Duplicate names are blocked per user.
+- [x] Category deletion does not delete tasks.
 
 ### Settings
-- [ ] Profile update works.
-- [ ] Theme preference persists.
-- [ ] Timezone/date format preference persists.
+- [x] Profile update works.
+- [x] Theme preference persists.
+- [x] Timezone/date format preference persists.
 
 ### Technical
-- [ ] Database migrations run cleanly.
-- [ ] `proxy.ts` is used instead of `middleware.ts`.
-- [ ] Any parallel route slots include required `default.tsx` files.
-- [ ] Tailwind v4 setup uses `@import "tailwindcss";`.
-- [ ] Zod v4 schema style is used in new code.
+- [x] Database migrations run cleanly.
+- [x] `proxy.ts` is used instead of `middleware.ts`.
+- [x] Any parallel route slots include required `default.tsx` files.
+- [x] Tailwind v4 setup uses `@import "tailwindcss";`.
+- [x] Zod v4 schema style is used in new code.
 
 ---
 

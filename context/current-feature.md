@@ -3,14 +3,26 @@
 ## Status
 
 <!-- Not Started | In Progress | Complete -->
+Complete
 
 ## Goals
 
-<!-- Bullet points of what success looks like -->
+- Create `TaskListLoader` server component that fetches `getTasks()` + `getTaskCount()` and renders `TaskList` or `TaskEmptyState`
+- Wrap `TaskListLoader` in `<Suspense key={JSON.stringify(query)}>` with skeleton fallback
+- Remove `getTasks()`, `getTaskCount()`, `TaskList`, `TaskEmptyState` imports and logic from `tasks/page.tsx`
+- Page shell (header, filters, create button) renders immediately while task list streams in
+- All existing filter/search/sort/group/reset flows continue to work correctly
 
 ## Notes
 
-<!-- Additional context, constraints, or details from spec -->
+- Phase 4 — Hardening, Feature ID: P4-F3
+- Branch: `feature/P4-F3-streaming-suspense`
+- Estimated effort: 30–45 minutes
+- Prerequisites: P4-F2c completed (task-filters.tsx has `startTransition` fixes)
+- No new npm packages required
+- `TaskListLoader` is a Server Component (no `"use client"`)
+- The `key={JSON.stringify(query)}` ensures React resets the Suspense boundary on every filter change
+- Task count message ("Showing X of Y tasks") moves inside the Suspense boundary
 
 ## History
 
@@ -39,3 +51,4 @@
 - **Auth Form Success State in URL Params** (2026-05-07) - Moved success state management from React `useState` to URL search params for auth forms (`sign-up-form.tsx`, `forgot-password-form.tsx`, `reset-password-form.tsx`). On successful submission, forms now update the URL with `?success=true` (and `email` for sign-up) via `router.replace()`, making the success screen persist on page refresh, shareable, and bookmarkable. Removed `useState` for `isSuccess` and `registeredEmail` in sign-up form. Added `useSearchParams` and `useRouter` hooks to read and update URL state. Build passes.
 - **Auth Security & React Pattern Fixes (P4-F2c)** (2026-05-09) - Fixed 4 security and React pattern issues: (1) Removed email enumeration bypass in `signUpAction` by deleting the explicit `db.query.users.findFirst` check and unused imports (`db`, `users`, `eq`), letting Better Auth's 409 response handle duplicate detection. (2) Replaced `void`+`.catch()` fire-and-forget pattern with `await`+`try/catch` for both `sendResetPassword` and `sendVerificationEmail` auth callbacks in `lib/auth/auth.ts` for more predictable error handling. (3) Fixed setState-in-useEffect anti-patterns in `reset-password-form.tsx` and `verify-email-handler.tsx` by deriving token directly from `searchParams` instead of syncing via useEffect. (4) Fixed ref-updated-during-render in `task-filters.tsx` by moving `searchParamsRef.current = searchParams` into a useEffect. Updated auth tests to mock Better Auth's 409 response instead of database queries. Build passes, 259 tests pass.
 - **Fix All Build Errors & Warnings** (2026-05-09) - Resolved all remaining build errors and lint warnings: (1) Fixed `headers()` HANGING_PROMISE_REJECTION during prerendering in `lib/auth/session.ts` by adding `.catch(() => null)` guard. (2) Removed unused `isUppercase` prop from `TypeSample` component in `app/(public)/design-system/page.tsx` and all 4 usages. (3) Fixed unused `data` param in `verify-email-handler.tsx` by prefixing with underscore. (4) Replaced `as any` cast in `task.test.ts` with typed cast. (5) Renamed unused `token`/`request` params to `_token`/`_request` in `lib/auth/auth.ts`. (6) Replaced incompatible `form.watch()` with `useWatch` hook in `preferences-form.tsx` for React Compiler compatibility. (7) Added `argsIgnorePattern`/`varsIgnorePattern` ESLint rules for underscore-prefixed unused vars. Build passes with zero errors and zero warnings.
+- **Streaming & Suspense Performance (P4-F3)** (2026-05-09) - Refactored `/tasks` page to use Next.js 16 streaming with `<Suspense>` boundaries. Created `TaskListLoader` server component that fetches `getTasks()` + `getTaskCount()` and renders `TaskList` or `TaskEmptyState`. Wrapped loader in `<Suspense key={JSON.stringify(query)}>` with `<TaskSkeleton />` fallback for realistic multi-card loading animation. Removed task fetching logic from page — page shell (header, filters, create button) now renders immediately while task list streams in. Filter changes show skeleton placeholder instantly. Deleted unused `/design-system` route. Build passes, 259 tests pass.
