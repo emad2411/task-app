@@ -1,65 +1,16 @@
 # Current Feature
 
-P5-F1 — Marketing Landing Page
-
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Replace the default Next.js template on `/` with a production-grade marketing landing page
-- Communicate TaskFlow's value clearly within 5 seconds of landing
-- Show the actual app dashboard as the hero visual (product IS the pitch)
-- Convert visitors to `/sign-up` with a single, confident primary CTA
-- Stay on brand: dark (`#0d0d0d`), sharp, motivational, Raycast-influenced
-- Achieve WCAG AAA accessibility targets
-- Ensure pixel-perfect rendering on mobile (375px) and desktop (1440px)
-- Pass all quality gates: build, lint, TypeScript, Lighthouse accessibility ≥ 90
-- Remove all default Next.js content from the root route
+<!-- Feature goals go here -->
 
 ## Notes
 
-**Phase:** 5 — Public Presence  
-**Feature ID:** P5-F1  
-**Branch:** `feature/P5-F1-landing-page`  
-**Estimated Effort:** 2–3 days  
-**Dependencies:** None (no new npm packages required)
-
-### Design Context (from FEATURE.md)
-- Background: `#0d0d0d` (dark-first always)
-- Accent: `#18E299` (only color with chroma, use sparingly ≤10%)
-- Primary font: Inter (already loaded), used at extreme weight/scale
-- Hero H1 weight: 900 (Black)
-- Hero image: App dashboard screenshot
-- Anti-patterns to avoid: gradient text, rounded icon headings, identical card grids, hero-metric blocks, side-stripe borders, generic "boost productivity" copy, any light background
-
-### Page Architecture
-- Route: `app/(public)/page.tsx` (public, no auth required)
-- Layout: `app/(public)/layout.tsx` (marketing shell with Navbar + Footer)
-- Must verify `proxy.ts` does not protect `/` or auto-redirect it
-
-### Sections to Build
-1. **Navbar** — sticky, blur on scroll, mobile hamburger drawer
-2. **Hero** — eyebrow, H1 (clamp 3rem–7rem), subhead, 2 CTAs, dashboard preview
-3. **Features** — 3 rows alternating left/right (Capture, Organize, Focus)
-4. **CTA Section** — single conversion message, primary button
-5. **Footer** — logo, tagline, links, copyright
-
-### Accessibility Requirements
-- Single `<h1>`
-- Proper heading hierarchy (H1 → H2 → H3)
-- Descriptive `alt` text on all images
-- Keyboard-navigable interactive elements
-- Focus rings: `2px solid #18E299`, `outline-offset: 2px`
-- Skip-to-content link
-- `aria-expanded` / `aria-controls` on mobile menu
-- `prefers-reduced-motion` guard on all animations
-- Color contrast: body ≥7:1, large ≥4.5:1
-
-### SEO
-- Metadata title: "TaskFlow — Task Management That Gets Out of Your Way"
-- OG image: `/og-image.png` (1200×630px dark branded)
+<!-- Feature notes, constraints, or details go here -->
 
 ## History
 
@@ -71,7 +22,7 @@ In Progress
 - **Resend Email Integration** (2026-04-20) - Installed `resend`, `@react-email/components`, and `react-email` packages. Created email infrastructure: `lib/email/resend. ts` (Resend client with dev mode fallback), `lib/email/index. ts` (public exports for sendPasswordResetEmail/sendVerificationEmail), email templates with shared components (email- layout. tsx, button. tsx), password- reset. tsx and email- verification. tsx templates. Updated `lib/auth/auth. ts` to enable `requireEmailVerification: true` and wire up Better Auth email callbacks using fire- and- forget pattern (void) to prevent timing attacks. Updated `. env. example` with Resend configuration. Build passes successfully.
 - **Auth Pages UI** (2026-04-21) - Implemented complete authentication UI: sign- in, sign- up, forgot- password, reset- password, verify- email pages. Created reusable auth- card and success- card components. Fixed Better Auth error handling using isAPIError() function to properly catch and display error messages (invalid password, existing user). Added loading states, inline validation with React Hook Form + Zod, and toast notifications. Implemented mobile- first responsive design with Tailwind CSS v4 and shadcn/ui components.
 - **Dashboard Overview** (2026-04-21) - Built personalized dashboard with stats cards (Due Today, Overdue, Completed Today, Total Active), priority distribution summary, upcoming tasks list (7 days), quick actions, and empty state for new users. Created date utilities with timezone support in lib/utils/date. ts, dashboard data layer in lib/data/dashboard. ts, and all UI components (stats- cards, priority- summary, upcoming- tasks, quick- actions, empty- state, dashboard- header). Added loading skeleton and error boundary. 22 date utility tests passing. Build passes successfully.
-- **Task Management (CRUD)** (2026-04-22) - Implemented complete task lifecycle management: create, read, update, delete, toggle completion, and archive. Added Zod v4 validation schemas (lib/validation/task. ts), task data layer with Drizzle ORM queries (lib/data/task. ts), and server actions (lib/actions/task. ts) returning { success, data?, error? }. Built reusable TaskForm component with React Hook Form, plus CreateTaskDialog, EditTaskDialog, DeleteTaskDialog, and ArchiveTaskDialog. Created TaskList, TaskItem with completion checkbox, TaskFilters with URL param state, and TaskDetailView with full CRUD actions. Implemented /tasks page with status/priority filtering and /tasks/[taskId] detail page with not- found handling, loading skeletons, and error boundaries. Updated task- card. tsx to link to /tasks/[taskId]. Build passes successfully.
+- **Task Management (CRUD)** (2026-04-22) - Implemented complete task lifecycle management: create, read, update, delete, toggle completion, and archive. Added Zod v4 validation schemas (lib/validation/task. ts), task data layer with Drizzle ORM queries (lib/data/task. ts), and server actions (lib/actions/task. ts) returning { success, data?, error? }. Built reusable TaskForm component with React Hook Form, plus CreateTaskDialog, EditTaskDialog, DeleteTaskDialog, and ArchiveTaskDialog. Created TaskList, TaskItem with completion checkbox, TaskDetailView with full CRUD actions. Implemented /tasks page with status/priority filtering and /tasks/[taskId] detail page with not- found handling, loading skeletons, and error boundaries. Updated task- card. tsx to link to /tasks/[taskId]. Build passes successfully.
 - **Category Management (P2- F4)** (2026-04-22) - Implemented complete category management with /categories page for CRUD operations, integrated category dropdown in TaskForm, added category filter in TaskFilters, and display category badges on TaskItem/TaskDetailView/Dashboard components. Created Zod validation (lib/validation/category. ts), data layer (lib/data/category. ts), and server actions (lib/actions/category. ts). Built reusable CategoryForm, ColorPicker with 12 preset colors, CategoryBadge, and dialogs (create/edit/delete). All data strictly scoped to authenticated user. Build passes, 113 tests pass.
 - **Task Filters, Sorting, and Grouping (P2- F5)** (2026-04-22) - Enhanced `/tasks` page with full- text search (debounced 300ms, ILIKE on title/description), due date state filters (today/upcoming/overdue/none, timezone- aware), multi- field sorting (dueDate/createdAt/updatedAt/priority/title with asc/desc), and optional grouping (status/category/dueDate). All state persisted in URL query params via `router. replace` for shareability and back- button support. Updated data layer (`lib/data/task. ts`) with typed `GetTasksOptions` supporting filters and sort, using Drizzle `and()`/`or()`/`inArray()` composition and dynamic `orderBy` with SQL CASE expressions for priority and null- due- date handling. Created grouping utility (`lib/utils/task- grouping. ts`), FilterChips component, TaskGroupHeader with collapse toggle, and responsive TaskFilters with mobile sheet drawer. Added dedicated filtered empty state. Wrote 15 new tests for validation schemas and grouping logic. Build passes, 130 tests pass (1 pre- existing date utility failure unrelated to this feature).
 - **User Settings & Preferences (P3- F1)** (2026-04-25) - Built comprehensive `/settings` page with tabbed navigation (Profile, Security, Appearance, Preferences). Implemented display name update via Better Auth API, theme persistence (light/dark/system) to user_ preferences table, and preferences for timezone, date format, and default task sort order. Auto- creates user_ preferences record on first visit. Added Zod validation schemas, preferences data layer, settings server actions, and settings UI components (profile- form, preferences- form, timezone- combobox, appearance- form, security- form). Wrote 21 validation tests for settings schemas. Build passes, 152 tests pass (1 pre- existing date utility failure).
@@ -89,3 +40,4 @@ In Progress
 - **Auth Security & React Pattern Fixes (P4-F2c)** (2026-05-09) - Fixed 4 security and React pattern issues: (1) Removed email enumeration bypass in `signUpAction` by deleting the explicit `db.query.users.findFirst` check and unused imports (`db`, `users`, `eq`), letting Better Auth's 409 response handle duplicate detection. (2) Replaced `void`+`.catch()` fire-and-forget pattern with `await`+`try/catch` for both `sendResetPassword` and `sendVerificationEmail` auth callbacks in `lib/auth/auth.ts` for more predictable error handling. (3) Fixed setState-in-useEffect anti-patterns in `reset-password-form.tsx` and `verify-email-handler.tsx` by deriving token directly from `searchParams` instead of syncing via useEffect. (4) Fixed ref-updated-during-render in `task-filters.tsx` by moving `searchParamsRef.current = searchParams` into a useEffect. Updated auth tests to mock Better Auth's 409 response instead of database queries. Build passes, 259 tests pass.
 - **Fix All Build Errors & Warnings** (2026-05-09) - Resolved all remaining build errors and lint warnings: (1) Fixed `headers()` HANGING_PROMISE_REJECTION during prerendering in `lib/auth/session.ts` by adding `.catch(() => null)` guard. (2) Removed unused `isUppercase` prop from `TypeSample` component in `app/(public)/design-system/page.tsx` and all 4 usages. (3) Fixed unused `data` param in `verify-email-handler.tsx` by prefixing with underscore. (4) Replaced `as any` cast in `task.test.ts` with typed cast. (5) Renamed unused `token`/`request` params to `_token`/`_request` in `lib/auth/auth.ts`. (6) Replaced incompatible `form.watch()` with `useWatch` hook in `preferences-form.tsx` for React Compiler compatibility. (7) Added `argsIgnorePattern`/`varsIgnorePattern` ESLint rules for underscore-prefixed unused vars. Build passes with zero errors and zero warnings.
 - **Streaming & Suspense Performance (P4-F3)** (2026-05-09) - Refactored `/tasks` page to use Next.js 16 streaming with `<Suspense>` boundaries. Created `TaskListLoader` server component that fetches `getTasks()` + `getTaskCount()` and renders `TaskList` or `TaskEmptyState`. Wrapped loader in `<Suspense key={JSON.stringify(query)}>` with `<TaskSkeleton />` fallback for realistic multi-card loading animation. Removed task fetching logic from page — page shell (header, filters, create button) now renders immediately while task list streams in. Filter changes show skeleton placeholder instantly. Deleted unused `/design-system` route. Build passes, 259 tests pass.
+- **Marketing Landing Page (P5-F1)** (2026-05-10) - Replaced default Next.js template on `/` with production-grade marketing landing page. Built marketing components: sticky Navbar with scroll blur and animated mobile Sheet drawer, Hero section with H1 (clamp 3rem–7rem, weight 900), Features section with 3 alternating rows (Capture, Organize, Focus), CTA section, and Footer. Added `useScrollReveal` hook with `IntersectionObserver` and `prefers-reduced-motion` guard. Added CSS animations for Sheet (slide, item stagger, logo pulse, backdrop fade). Updated `proxy.ts` so `/` is public and authenticated users are redirected to `/dashboard`. Updated `layout.tsx` metadata with OG/Twitter cards. Replaced all hardcoded hex colors with theme tokens (`bg-background`, `text-brand`, etc.). Generated OG image (1200×630 dark branded). Build passes, lint passes with zero errors, 259 tests pass.
