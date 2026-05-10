@@ -1,29 +1,18 @@
-# Current Feature: P5-F2 — Public Pages
+# Current Feature
 
 ## Status
 
-Complete
+Not Started
 
 ## Goals
 
-- [x] Create `components/marketing/legal-layout.tsx` (shared wrapper with sticky TOC)
-- [x] Add `.prose-legal` styles to `app/globals.css`
-- [x] Build `/terms` page with 11 sections and TOC
-- [x] Build `/privacy` page with 11 sections and TOC
-- [x] Build `/cookies` page with cookie table
-- [x] Build `/about` page with brand narrative
-- [x] Build `/contact` page with contact form + email sections
-- [x] Update footer with links to all new pages
-- [x] Verify proxy.ts allows public access to new routes
-- [x] All pages use dark brand shell (navbar + footer)
-- [x] Build and lint pass with zero errors
+<!-- Define feature goals as checklist items -->
+- [ ] 
 
 ## Notes
 
-- Dependencies: P5-F1 (marketing navbar, footer) existed
-- Pages use `app/(marketing)/` route group with dark brand shell, not auth-centered `(public)/layout.tsx`
-- Legal content: plain English, scannable, honest about current state
-- Contact form: shadcn Button + React Hook Form + Zod, simulated success with brand green styling
+<!-- Add constraints, dependencies, and context -->
+-
 
 ## History
 
