@@ -131,3 +131,164 @@
     @apply font-sans;
   }
 }
+
+/* Marketing landing page focus rings */
+.landing-focus:focus-visible {
+  outline: 2px solid #18E299;
+  outline-offset: 2px;
+}
+
+/* Entrance animations (disabled when prefers-reduced-motion) */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeUpScale {
+    from {
+      opacity: 0;
+      transform: translateY(32px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes fadeUpReveal {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-up {
+    animation: fadeUp 400ms cubic-bezier(0.25, 1, 0.5, 1) both;
+  }
+
+  .animate-fade-up-scale {
+    animation: fadeUpScale 600ms cubic-bezier(0.25, 1, 0.5, 1) both;
+  }
+
+  .animate-fade-up-reveal {
+    animation: fadeUpReveal 500ms cubic-bezier(0.25, 1, 0.5, 1) both;
+  }
+}
+
+/* Reduced motion: elements visible immediately */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up,
+  .animate-fade-up-scale,
+  .animate-fade-up-reveal {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Scroll reveal base state */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 500ms cubic-bezier(0.25, 1, 0.5, 1),
+    transform 500ms cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Mobile sheet animations */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes sheetSlideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes sheetItemSlideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes sheetBackdropFade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes sheetLogoPulse {
+    0% {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    60% {
+      transform: scale(1.02);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .animate-sheet-slide {
+    animation: sheetSlideIn 350ms cubic-bezier(0.32, 0.72, 0, 1) both;
+  }
+
+  .animate-sheet-item {
+    animation: sheetItemSlideIn 400ms cubic-bezier(0.25, 1, 0.5, 1) both;
+    animation-delay: var(--sheet-item-delay, 0ms);
+  }
+
+  .animate-sheet-backdrop {
+    animation: sheetBackdropFade 250ms ease-out both;
+  }
+
+  .animate-sheet-logo {
+    animation: sheetLogoPulse 500ms cubic-bezier(0.25, 1, 0.5, 1) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-sheet-slide,
+  .animate-sheet-item,
+  .animate-sheet-backdrop,
+  .animate-sheet-logo {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

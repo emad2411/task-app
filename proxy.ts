@@ -3,6 +3,7 @@ import { getSessionCookie } from "better-auth/cookies";
 import { generalLimiter, authLimiter } from "@/lib/rate-limit";
 
 const PUBLIC_PATHS = [
+  "/",
   "/sign-in",
   "/sign-up",
   "/forgot-password",
@@ -75,6 +76,11 @@ export async function proxy(request: NextRequest) {
   const hasSession = !!sessionCookie;
   const isPublicPath = PUBLIC_PATHS.some((path) => pathname.startsWith(path));
   const isAuthPath = AUTH_PATHS.some((path) => pathname.startsWith(path));
+
+  // Redirect authenticated users from landing page to dashboard
+  if (hasSession && pathname === "/") {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
 
   if (hasSession && isAuthPath) {
     return NextResponse.redirect(new URL("/dashboard", request.url));

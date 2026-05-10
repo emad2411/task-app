@@ -1,16 +1,65 @@
 # Current Feature
 
+P5-F1 — Marketing Landing Page
+
 ## Status
 
-<!-- Not Started | In Progress | Complete -->
+In Progress
 
 ## Goals
 
-<!-- Bullet points of what success looks like -->
+- Replace the default Next.js template on `/` with a production-grade marketing landing page
+- Communicate TaskFlow's value clearly within 5 seconds of landing
+- Show the actual app dashboard as the hero visual (product IS the pitch)
+- Convert visitors to `/sign-up` with a single, confident primary CTA
+- Stay on brand: dark (`#0d0d0d`), sharp, motivational, Raycast-influenced
+- Achieve WCAG AAA accessibility targets
+- Ensure pixel-perfect rendering on mobile (375px) and desktop (1440px)
+- Pass all quality gates: build, lint, TypeScript, Lighthouse accessibility ≥ 90
+- Remove all default Next.js content from the root route
 
 ## Notes
 
-<!-- Additional context, constraints, or details from spec -->
+**Phase:** 5 — Public Presence  
+**Feature ID:** P5-F1  
+**Branch:** `feature/P5-F1-landing-page`  
+**Estimated Effort:** 2–3 days  
+**Dependencies:** None (no new npm packages required)
+
+### Design Context (from FEATURE.md)
+- Background: `#0d0d0d` (dark-first always)
+- Accent: `#18E299` (only color with chroma, use sparingly ≤10%)
+- Primary font: Inter (already loaded), used at extreme weight/scale
+- Hero H1 weight: 900 (Black)
+- Hero image: App dashboard screenshot
+- Anti-patterns to avoid: gradient text, rounded icon headings, identical card grids, hero-metric blocks, side-stripe borders, generic "boost productivity" copy, any light background
+
+### Page Architecture
+- Route: `app/(public)/page.tsx` (public, no auth required)
+- Layout: `app/(public)/layout.tsx` (marketing shell with Navbar + Footer)
+- Must verify `proxy.ts` does not protect `/` or auto-redirect it
+
+### Sections to Build
+1. **Navbar** — sticky, blur on scroll, mobile hamburger drawer
+2. **Hero** — eyebrow, H1 (clamp 3rem–7rem), subhead, 2 CTAs, dashboard preview
+3. **Features** — 3 rows alternating left/right (Capture, Organize, Focus)
+4. **CTA Section** — single conversion message, primary button
+5. **Footer** — logo, tagline, links, copyright
+
+### Accessibility Requirements
+- Single `<h1>`
+- Proper heading hierarchy (H1 → H2 → H3)
+- Descriptive `alt` text on all images
+- Keyboard-navigable interactive elements
+- Focus rings: `2px solid #18E299`, `outline-offset: 2px`
+- Skip-to-content link
+- `aria-expanded` / `aria-controls` on mobile menu
+- `prefers-reduced-motion` guard on all animations
+- Color contrast: body ≥7:1, large ≥4.5:1
+
+### SEO
+- Metadata title: "TaskFlow — Task Management That Gets Out of Your Way"
+- OG image: `/og-image.png` (1200×630px dark branded)
 
 ## History
 

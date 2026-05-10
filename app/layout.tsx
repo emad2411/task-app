@@ -15,8 +15,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TaskFlow",
-  description: "TaskFlow - Manage your tasks efficiently",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+  ),
+  title: "TaskFlow — Task Management That Gets Out of Your Way",
+  description:
+    "TaskFlow helps individuals create, organize, and complete tasks with zero friction. Free to use. No credit card required.",
+  openGraph: {
+    title: "TaskFlow — Task Management That Gets Out of Your Way",
+    description:
+      "Create tasks, set priorities, track what matters — from any device, without the noise.",
+    type: "website",
+    images: ["/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TaskFlow",
+    description: "Task management that gets out of your way.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({
