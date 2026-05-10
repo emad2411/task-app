@@ -33,7 +33,6 @@ export function Navbar() {
 
   return (
     <header
-      role="navigation"
       aria-label="Main navigation"
       className={cn(
         "sticky top-0 z-50 h-16 transition-all duration-200",

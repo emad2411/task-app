@@ -3,6 +3,8 @@
 export function DashboardPreview() {
   return (
     <div
+      role="img"
+      aria-label="TaskFlow dashboard preview"
       className="relative mx-auto w-full max-w-5xl"
       style={{
         perspective: "1200px",

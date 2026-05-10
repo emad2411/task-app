@@ -23,9 +23,9 @@ function FeatureRow({ eyebrow, title, body, visual, reversed }: FeatureRowProps)
       )}
     >
       <div className={cn("flex flex-col gap-4", reversed && "lg:order-2")}>
-        <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">
           {eyebrow}
-        </h3>
+        </p>
         <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-extrabold leading-tight tracking-[-0.02em] text-foreground">
           {title}
         </h2>

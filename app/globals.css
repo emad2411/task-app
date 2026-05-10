@@ -98,7 +98,7 @@
   --secondary: #262626;
   --secondary-foreground: #ededed;
   --muted: #262626;
-  --muted-foreground: #a0a0a0;
+  --muted-foreground: #a8a8a8;
   --accent: #262626;
   --accent-foreground: #ededed;
   --destructive: #d45656;
@@ -204,6 +204,14 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .scroll-reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* No-JS fallback: ensure content is visible when scripts are disabled */
+@media (scripting: none) {
   .scroll-reveal {
     opacity: 1;
     transform: none;

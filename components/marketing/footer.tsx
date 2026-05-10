@@ -40,7 +40,7 @@ export function Footer() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm text-muted-foreground/60 transition-colors duration-150 hover:text-muted-foreground landing-focus rounded-md px-1 py-0.5"
+                className="text-sm text-muted-foreground transition-colors duration-150 hover:text-foreground landing-focus rounded-md px-1 py-0.5"
               >
                 {link.label}
               </Link>
@@ -51,7 +51,7 @@ export function Footer() {
         {/* Copyright */}
         <div className="mt-10 text-center">
           <p className="text-xs text-muted-foreground/40">
-            &copy; {new Date().getFullYear()} TaskFlow. Built for focus.
+            &copy; {new Date().getFullYear()} TaskFlow. All rights reserved.
           </p>
         </div>
       </div>

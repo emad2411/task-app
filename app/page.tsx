@@ -7,6 +7,14 @@ import { Footer } from "@/components/marketing/footer";
 export default function LandingPage() {
   return (
     <div className="dark bg-background">
+      {/* No-JS fallback: ensure scroll-reveal content is visible */}
+      <noscript
+        dangerouslySetInnerHTML={{
+          __html:
+            "<style>.scroll-reveal { opacity: 1 !important; transform: none !important; }</style>",
+        }}
+      />
+
       {/* Skip to content link */}
       <a
         href="#main-content"
