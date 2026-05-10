@@ -1,32 +1,18 @@
 # Current Feature
 
-P5-F3: Auth Pages Redesign
-
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- [ ] Create `SplitAuthLayout` component (split-screen grid, responsive, animations)
-- [ ] Create `BrandPane`, `DashboardPreview`, `GoogleAuthButton`, `DividerWithText`, `SuccessState`, `BackToSignInLink` components
-- [ ] Modify `SignInForm`, `SignUpForm`, `ForgotPasswordForm`, `ResetPasswordForm`, `VerifyEmailHandler` — remove AuthCard wrapper, add Google button + divider to sign-in/sign-up
-- [ ] Delete `AuthCard` component
-- [ ] Update `PublicLayout` — remove fixed footer (moved to SplitAuthLayout)
-- [ ] Update all 5 auth pages to use `SplitAuthLayout`
-- [ ] Add staggered entrance animations with CSS keyframes + `prefers-reduced-motion` guard
-- [ ] Ensure responsive: stacked column on mobile, 45/55 split on desktop
-- [ ] Build passes, all 259 tests pass
+<!-- Define feature goals as checklist items -->
+- [ ] 
 
 ## Notes
 
-- Pure frontend redesign — no backend/auth logic changes
-- Dashboard preview is pure CSS/HTML mockup (no images, no next/image)
-- Google button is non-functional (toast on click)
-- AuthCard deleted — SuccessCard becomes standalone `SuccessState` component
-- Legal footer moves from PublicLayout into SplitAuthLayout
-- Animations via CSS `@keyframes fade-up` + arbitrary delay utilities (no framer-motion)
-- Brand pane tagline is the `h1` on all pages
+<!-- Add constraints, dependencies, and context -->
+-
 
 
 ## History
@@ -59,3 +45,4 @@ In Progress
 - **Streaming & Suspense Performance (P4-F3)** (2026-05-09) - Refactored `/tasks` page to use Next.js 16 streaming with `<Suspense>` boundaries. Created `TaskListLoader` server component that fetches `getTasks()` + `getTaskCount()` and renders `TaskList` or `TaskEmptyState`. Wrapped loader in `<Suspense key={JSON.stringify(query)}>` with `<TaskSkeleton />` fallback for realistic multi-card loading animation. Removed task fetching logic from page — page shell (header, filters, create button) now renders immediately while task list streams in. Filter changes show skeleton placeholder instantly. Deleted unused `/design-system` route. Build passes, 259 tests pass.
 - **Marketing Landing Page (P5-F1)** (2026-05-10) - Replaced default Next.js template on `/` with production-grade marketing landing page. Built marketing components: sticky Navbar with scroll blur and animated mobile Sheet drawer, Hero section with H1 (clamp 3rem–7rem, weight 900), Features section with 3 alternating rows (Capture, Organize, Focus), CTA section, and Footer. Added `useScrollReveal` hook with `IntersectionObserver` and `prefers-reduced-motion` guard. Added CSS animations for Sheet (slide, item stagger, logo pulse, backdrop fade). Updated `proxy.ts` so `/` is public and authenticated users are redirected to `/dashboard`. Updated `layout.tsx` metadata with OG/Twitter cards. Replaced all hardcoded hex colors with theme tokens (`bg-background`, `text-brand`, etc.). Generated OG image (1200×630 dark branded). Post-build accessibility hardening: fixed heading hierarchy (eyebrow `<h3>` → `<p>`), restored navbar `banner` landmark (removed `role="navigation"` from `<header>`), fixed footer link/copyright contrast (removed opacity overrides), added dashboard preview ARIA (`role="img"`), added no-JS fallback for scroll-reveal (`<noscript>` + `@media (scripting: none)`), and bumped `--muted-foreground` to `#a8a8a8` for WCAG AAA on card surfaces. Build passes, lint passes with zero errors, 259 tests pass.
 - **Public Pages (P5-F2)** (2026-05-10) - Built 5 public pages under `app/(marketing)/` route group with dark brand shell: Terms of Service, Privacy Policy, Cookie Policy, About, and Contact. Created `legal-layout.tsx` with conditional sticky TOC sidebar and `.prose-legal` styles. Built contact form with shadcn Button (brand green), React Hook Form + Zod validation, simulated success. Updated footer and navbar with links. Added routes to proxy.ts PUBLIC_PATHS. Build and lint pass with zero errors, 259 tests pass. Built marketing components: sticky Navbar with scroll blur and animated mobile Sheet drawer, Hero section with H1 (clamp 3rem–7rem, weight 900), Features section with 3 alternating rows (Capture, Organize, Focus), CTA section, and Footer. Added `useScrollReveal` hook with `IntersectionObserver` and `prefers-reduced-motion` guard. Added CSS animations for Sheet (slide, item stagger, logo pulse, backdrop fade). Updated `proxy.ts` so `/` is public and authenticated users are redirected to `/dashboard`. Updated `layout.tsx` metadata with OG/Twitter cards. Replaced all hardcoded hex colors with theme tokens (`bg-background`, `text-brand`, etc.). Generated OG image (1200×630 dark branded). Post-build accessibility hardening: fixed heading hierarchy (eyebrow `<h3>` → `<p>`), restored navbar `banner` landmark (removed `role="navigation"` from `<header>`), fixed footer link/copyright contrast (removed opacity overrides), added dashboard preview ARIA (`role="img"`), added no-JS fallback for scroll-reveal (`<noscript>` + `@media (scripting: none)`), and bumped `--muted-foreground` to `#a8a8a8` for WCAG AAA on card surfaces. Build passes, lint passes with zero errors, 259 tests pass.
+- **Auth Pages Redesign (P5-F3)** (2026-05-11) - Redesigned all 5 public auth pages from centered-card layout to brand-first split-screen experience. Created `SplitAuthLayout`, `BrandPane`, `DashboardPreview`, `GoogleAuthButton`, `DividerWithText`, `SuccessState`, `BackToSignInLink` components. Modified all auth forms to remove `AuthCard` wrapper, use brand-colored submit buttons (`bg-brand text-background hover:bg-brand-deep`), and added Google OAuth button + divider to sign-in/sign-up. Deleted `AuthCard` component. Updated `PublicLayout` to minimal flex container. Added staggered entrance animations with CSS keyframes and `prefers-reduced-motion` guard. Responsive: stacked column on mobile, 45/55 split on desktop. Logo uses `CheckSquare` matching landing page brand. Build passes, lint zero errors, 259 tests pass.
