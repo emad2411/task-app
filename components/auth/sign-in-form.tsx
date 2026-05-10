@@ -21,6 +21,8 @@ import {
   type SignInInput,
 } from "@/lib/validation/auth";
 import { signInAction } from "@/lib/actions/auth";
+import { GoogleAuthButton } from "./google-auth-button";
+import { DividerWithText } from "./divider-with-text";
 
 export function SignInForm() {
   const router = useRouter();
@@ -52,108 +54,116 @@ export function SignInForm() {
   }
 
   return (
-    <form
-      id="sign-in-form"
-      onSubmit={form.handleSubmit(onSubmit)}
-      className="space-y-4"
-    >
-      {form.formState.errors.root && (
-        <div className="p-3 text-sm font-medium bg-destructive/15 text-destructive rounded-md">
-          {form.formState.errors.root.message}
-        </div>
-      )}
-      <FieldGroup>
-        <Controller
-          name="email"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="sign-in-email">Email</FieldLabel>
-              <Input
-                {...field}
-                id="sign-in-email"
-                type="email"
-                placeholder="you@example.com"
-                autoCapitalize="none"
-                autoComplete="email"
-                autoCorrect="off"
-                disabled={isPending}
-                aria-invalid={fieldState.invalid}
-              />
-              {fieldState.invalid && (
-                <FieldError errors={[fieldState.error]} />
-              )}
-            </Field>
-          )}
-        />
+    <div className="space-y-6">
+      <GoogleAuthButton disabled={isPending} />
 
-        <Controller
-          name="password"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <div className="flex items-center justify-between">
-                <FieldLabel htmlFor="sign-in-password">Password</FieldLabel>
-                <Link
-                  href="/forgot-password"
-                  className="text-sm text-muted-foreground hover:text-primary underline-offset-4 hover:underline"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-              <div className="relative">
+      <DividerWithText />
+
+      <form
+        id="sign-in-form"
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-4"
+      >
+        {form.formState.errors.root && (
+          <div className="p-3 text-sm font-medium bg-destructive/10 border border-destructive/20 text-destructive rounded-md" role="alert">
+            {form.formState.errors.root.message}
+          </div>
+        )}
+        <FieldGroup>
+          <Controller
+            name="email"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="sign-in-email">Email</FieldLabel>
                 <Input
                   {...field}
-                  id="sign-in-password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  autoComplete="current-password"
+                  id="sign-in-email"
+                  type="email"
+                  placeholder="you@example.com"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  autoCorrect="off"
                   disabled={isPending}
                   aria-invalid={fieldState.invalid}
-                  className="pr-10"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  tabIndex={-1}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-              {fieldState.invalid && (
-                <FieldError errors={[fieldState.error]} />
-              )}
-            </Field>
-          )}
-        />
-      </FieldGroup>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
 
-      <Button
-        type="submit"
-        form="sign-in-form"
-        className="w-full"
-        disabled={isPending}
-      >
-        {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        Sign In
-      </Button>
+          <Controller
+            name="password"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <div className="flex items-center justify-between">
+                  <FieldLabel htmlFor="sign-in-password">Password</FieldLabel>
+                  <Link
+                    href="/forgot-password"
+                    className="text-sm text-muted-foreground hover:text-foreground underline-offset-4 hover:underline transition-colors"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+                <div className="relative">
+                  <Input
+                    {...field}
+                    id="sign-in-password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    autoComplete="current-password"
+                    disabled={isPending}
+                    aria-invalid={fieldState.invalid}
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    tabIndex={-1}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+        </FieldGroup>
+
+        <Button
+          type="submit"
+          form="sign-in-form"
+          className="w-full bg-brand text-background hover:bg-brand-deep"
+          disabled={isPending}
+          aria-busy={isPending}
+        >
+          {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          Sign In
+        </Button>
+      </form>
 
       <div className="text-center">
         <p className="text-sm text-muted-foreground">
           Don&apos;t have an account?{" "}
           <Link
             href="/sign-up"
-            className="text-primary hover:underline underline-offset-4 font-medium"
+            className="text-foreground hover:underline underline-offset-4 font-medium"
           >
             Sign up
           </Link>
         </p>
       </div>
-    </form>
+    </div>
   );
 }

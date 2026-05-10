@@ -1,18 +1,33 @@
 # Current Feature
 
+P5-F3: Auth Pages Redesign
+
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- Define feature goals as checklist items -->
-- [ ] 
+- [ ] Create `SplitAuthLayout` component (split-screen grid, responsive, animations)
+- [ ] Create `BrandPane`, `DashboardPreview`, `GoogleAuthButton`, `DividerWithText`, `SuccessState`, `BackToSignInLink` components
+- [ ] Modify `SignInForm`, `SignUpForm`, `ForgotPasswordForm`, `ResetPasswordForm`, `VerifyEmailHandler` — remove AuthCard wrapper, add Google button + divider to sign-in/sign-up
+- [ ] Delete `AuthCard` component
+- [ ] Update `PublicLayout` — remove fixed footer (moved to SplitAuthLayout)
+- [ ] Update all 5 auth pages to use `SplitAuthLayout`
+- [ ] Add staggered entrance animations with CSS keyframes + `prefers-reduced-motion` guard
+- [ ] Ensure responsive: stacked column on mobile, 45/55 split on desktop
+- [ ] Build passes, all 259 tests pass
 
 ## Notes
 
-<!-- Add constraints, dependencies, and context -->
--
+- Pure frontend redesign — no backend/auth logic changes
+- Dashboard preview is pure CSS/HTML mockup (no images, no next/image)
+- Google button is non-functional (toast on click)
+- AuthCard deleted — SuccessCard becomes standalone `SuccessState` component
+- Legal footer moves from PublicLayout into SplitAuthLayout
+- Animations via CSS `@keyframes fade-up` + arbitrary delay utilities (no framer-motion)
+- Brand pane tagline is the `h1` on all pages
+
 
 ## History
 

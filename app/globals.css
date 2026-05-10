@@ -344,3 +344,45 @@
     transform: none;
   }
 }
+
+/* Auth page entrance animations */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes authFadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes authFadeUpScale {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .animate-auth-fade-up {
+    animation: authFadeUp 500ms cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  }
+
+  .animate-auth-fade-up-scale {
+    animation: authFadeUpScale 600ms cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-auth-fade-up,
+  .animate-auth-fade-up-scale {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

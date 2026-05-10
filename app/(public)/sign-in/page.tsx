@@ -1,6 +1,6 @@
 import { getSession } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
-import { AuthCard } from "@/components/auth/auth-card";
+import { SplitAuthLayout } from "@/components/auth/split-auth-layout";
 import { SignInForm } from "@/components/auth/sign-in-form";
 
 export default async function SignInPage() {
@@ -11,11 +11,12 @@ export default async function SignInPage() {
   }
 
   return (
-    <AuthCard
-      title="Welcome back"
-      description="Sign in to your account to continue"
+    <SplitAuthLayout
+      tagline="Your tasks. Your flow."
+      subCopy="Sign in to pick up where you left off."
+      showDashboardPreview={true}
     >
       <SignInForm />
-    </AuthCard>
+    </SplitAuthLayout>
   );
 }

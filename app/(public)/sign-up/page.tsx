@@ -1,6 +1,6 @@
 import { getSession } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
-import { AuthCard } from "@/components/auth/auth-card";
+import { SplitAuthLayout } from "@/components/auth/split-auth-layout";
 import { SignUpForm } from "@/components/auth/sign-up-form";
 
 export default async function SignUpPage() {
@@ -11,11 +11,12 @@ export default async function SignUpPage() {
   }
 
   return (
-    <AuthCard
-      title="Create an account"
-      description="Enter your details to get started"
+    <SplitAuthLayout
+      tagline="Start your flow."
+      subCopy="Create your account. No credit card required."
+      showDashboardPreview={true}
     >
       <SignUpForm />
-    </AuthCard>
+    </SplitAuthLayout>
   );
 }

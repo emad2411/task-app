@@ -21,7 +21,9 @@ import {
   signUpSchema,
 } from "@/lib/validation/auth";
 import { signUpAction } from "@/lib/actions/auth";
-import { SuccessCard } from "./auth-card";
+import { GoogleAuthButton } from "./google-auth-button";
+import { DividerWithText } from "./divider-with-text";
+import { SuccessState } from "./success-state";
 
 const signUpFormSchema = signUpSchema.extend({
   confirmPassword: z.string().min(8, { message: "Password must be at least 8 characters" }),
@@ -83,193 +85,202 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
 
   if (isSuccess) {
     return (
-      <SuccessCard
+      <SuccessState
         title="Check your email"
         message={`We've sent a verification link to ${registeredEmail}. Click the link to verify your account.`}
       >
-        <div className="flex flex-col gap-4 w-full">
-          <Button
-            variant="outline"
-            onClick={() => window.location.href = `mailto:${registeredEmail}`}
-          >
-            Open email app
-          </Button>
-          <div className="text-sm text-muted-foreground">
-            Didn&apos;t receive it? Check your spam folder or
-          </div>
-          <Button
-            variant="ghost"
-            onClick={() => {
-              toast.info("Resend functionality coming soon");
-            }}
-          >
-            Resend email
-          </Button>
-          <Link
-            href="/sign-in"
-            className="text-primary hover:underline underline-offset-4 font-medium text-sm"
-          >
-            Back to Sign In
-          </Link>
-        </div>
-      </SuccessCard>
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => window.location.href = `mailto:${registeredEmail}`}
+        >
+          Open email app
+        </Button>
+        <p className="text-sm text-muted-foreground">
+          Didn&apos;t receive it? Check your spam folder or
+        </p>
+        <Button
+          variant="ghost"
+          className="w-full"
+          onClick={() => {
+            toast.info("Resend functionality coming soon");
+          }}
+        >
+          Resend email
+        </Button>
+        <Link
+          href="/sign-in"
+          className="text-foreground hover:underline underline-offset-4 font-medium text-sm block text-center"
+        >
+          Back to Sign In
+        </Link>
+      </SuccessState>
     );
   }
 
   return (
-    <form
-      id="sign-up-form"
-      onSubmit={form.handleSubmit(onSubmit)}
-      className="space-y-4"
-    >
-      {form.formState.errors.root && (
-        <div className="p-3 text-sm font-medium bg-destructive/15 text-destructive rounded-md">
-          {form.formState.errors.root.message}
-        </div>
-      )}
-      <FieldGroup>
-        <Controller
-          name="name"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="sign-up-name">Name</FieldLabel>
-              <Input
-                {...field}
-                id="sign-up-name"
-                type="text"
-                placeholder="John Doe"
-                autoComplete="name"
-                disabled={isPending}
-                aria-invalid={fieldState.invalid}
-              />
-              {fieldState.invalid && (
-                <FieldError errors={[fieldState.error]} />
-              )}
-            </Field>
-          )}
-        />
+    <div className="space-y-6">
+      <GoogleAuthButton disabled={isPending} />
 
-        <Controller
-          name="email"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="sign-up-email">Email</FieldLabel>
-              <Input
-                {...field}
-                id="sign-up-email"
-                type="email"
-                placeholder="you@example.com"
-                autoCapitalize="none"
-                autoComplete="email"
-                autoCorrect="off"
-                disabled={isPending}
-                aria-invalid={fieldState.invalid}
-              />
-              {fieldState.invalid && (
-                <FieldError errors={[fieldState.error]} />
-              )}
-            </Field>
-          )}
-        />
+      <DividerWithText />
 
-        <Controller
-          name="password"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="sign-up-password">Password</FieldLabel>
-              <div className="relative">
-                <Input
-                  {...field}
-                  id="sign-up-password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  autoComplete="new-password"
-                  disabled={isPending}
-                  aria-invalid={fieldState.invalid}
-                  className="pr-10"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  tabIndex={-1}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-              {fieldState.invalid && (
-                <FieldError errors={[fieldState.error]} />
-              )}
-            </Field>
-          )}
-        />
-
-        <Controller
-          name="confirmPassword"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="sign-up-confirm-password">Confirm Password</FieldLabel>
-              <div className="relative">
-                <Input
-                  {...field}
-                  id="sign-up-confirm-password"
-                  type={showConfirmPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  autoComplete="new-password"
-                  disabled={isPending}
-                  aria-invalid={fieldState.invalid}
-                  className="pr-10"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  tabIndex={-1}
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-              {fieldState.invalid && (
-                <FieldError errors={[fieldState.error]} />
-              )}
-            </Field>
-          )}
-        />
-      </FieldGroup>
-
-      <Button
-        type="submit"
-        form="sign-up-form"
-        className="w-full"
-        disabled={isPending}
+      <form
+        id="sign-up-form"
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-4"
       >
-        {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        Create Account
-      </Button>
+        {form.formState.errors.root && (
+          <div className="p-3 text-sm font-medium bg-destructive/10 border border-destructive/20 text-destructive rounded-md" role="alert">
+            {form.formState.errors.root.message}
+          </div>
+        )}
+        <FieldGroup>
+          <Controller
+            name="name"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="sign-up-name">Name</FieldLabel>
+                <Input
+                  {...field}
+                  id="sign-up-name"
+                  type="text"
+                  placeholder="John Doe"
+                  autoComplete="name"
+                  disabled={isPending}
+                  aria-invalid={fieldState.invalid}
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+
+          <Controller
+            name="email"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="sign-up-email">Email</FieldLabel>
+                <Input
+                  {...field}
+                  id="sign-up-email"
+                  type="email"
+                  placeholder="you@example.com"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  autoCorrect="off"
+                  disabled={isPending}
+                  aria-invalid={fieldState.invalid}
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+
+          <Controller
+            name="password"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="sign-up-password">Password</FieldLabel>
+                <div className="relative">
+                  <Input
+                    {...field}
+                    id="sign-up-password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    autoComplete="new-password"
+                    disabled={isPending}
+                    aria-invalid={fieldState.invalid}
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    tabIndex={-1}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+
+          <Controller
+            name="confirmPassword"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="sign-up-confirm-password">Confirm Password</FieldLabel>
+                <div className="relative">
+                  <Input
+                    {...field}
+                    id="sign-up-confirm-password"
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    autoComplete="new-password"
+                    disabled={isPending}
+                    aria-invalid={fieldState.invalid}
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    tabIndex={-1}
+                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+        </FieldGroup>
+
+        <Button
+          type="submit"
+          form="sign-up-form"
+          className="w-full bg-brand text-background hover:bg-brand-deep"
+          disabled={isPending}
+          aria-busy={isPending}
+        >
+          {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          Create Account
+        </Button>
+      </form>
 
       <div className="text-center">
         <p className="text-sm text-muted-foreground">
           Already have an account?{" "}
           <Link
             href="/sign-in"
-            className="text-primary hover:underline underline-offset-4 font-medium"
+            className="text-foreground hover:underline underline-offset-4 font-medium"
           >
             Sign in
           </Link>
         </p>
       </div>
-    </form>
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 import { getSession } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
-import { AuthCard } from "@/components/auth/auth-card";
+import { SplitAuthLayout } from "@/components/auth/split-auth-layout";
 import { ForgotPasswordForm } from "@/components/auth/forgot-password-form";
 
 export default async function ForgotPasswordPage() {
@@ -11,11 +11,12 @@ export default async function ForgotPasswordPage() {
   }
 
   return (
-    <AuthCard
-      title="Reset your password"
-      description="Enter your email to receive a reset link"
+    <SplitAuthLayout
+      tagline="Reset your password"
+      subCopy="Enter your email and we'll send you a reset link."
+      showDashboardPreview={false}
     >
       <ForgotPasswordForm />
-    </AuthCard>
+    </SplitAuthLayout>
   );
 }
