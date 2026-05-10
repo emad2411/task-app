@@ -9,6 +9,11 @@ const PUBLIC_PATHS = [
   "/forgot-password",
   "/reset-password",
   "/verify-email",
+  "/terms",
+  "/privacy",
+  "/cookies",
+  "/about",
+  "/contact",
 ];
 
 const AUTH_PATHS = [

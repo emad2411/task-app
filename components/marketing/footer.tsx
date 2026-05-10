@@ -5,10 +5,12 @@ import { CheckSquare } from "lucide-react";
 
 export function Footer() {
   const footerLinks = [
-    { label: "Features", href: "#features" },
+    { label: "Features", href: "/#features" },
+    { label: "About", href: "/about" },
     { label: "Terms of Service", href: "/terms" },
     { label: "Privacy Policy", href: "/privacy" },
-    { label: "Sign Up", href: "/sign-up" },
+    { label: "Cookie Policy", href: "/cookies" },
+    { label: "Contact", href: "/contact" },
   ];
 
   return (

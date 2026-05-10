@@ -1,16 +1,29 @@
-# Current Feature
+# Current Feature: P5-F2 — Public Pages
 
 ## Status
 
-Not Started
+Complete
 
 ## Goals
 
-<!-- Feature goals go here -->
+- [x] Create `components/marketing/legal-layout.tsx` (shared wrapper with sticky TOC)
+- [x] Add `.prose-legal` styles to `app/globals.css`
+- [x] Build `/terms` page with 11 sections and TOC
+- [x] Build `/privacy` page with 11 sections and TOC
+- [x] Build `/cookies` page with cookie table
+- [x] Build `/about` page with brand narrative
+- [x] Build `/contact` page with contact form + email sections
+- [x] Update footer with links to all new pages
+- [x] Verify proxy.ts allows public access to new routes
+- [x] All pages use dark brand shell (navbar + footer)
+- [x] Build and lint pass with zero errors
 
 ## Notes
 
-<!-- Feature notes, constraints, or details go here -->
+- Dependencies: P5-F1 (marketing navbar, footer) existed
+- Pages use `app/(marketing)/` route group with dark brand shell, not auth-centered `(public)/layout.tsx`
+- Legal content: plain English, scannable, honest about current state
+- Contact form: shadcn Button + React Hook Form + Zod, simulated success with brand green styling
 
 ## History
 
@@ -41,3 +54,4 @@ Not Started
 - **Fix All Build Errors & Warnings** (2026-05-09) - Resolved all remaining build errors and lint warnings: (1) Fixed `headers()` HANGING_PROMISE_REJECTION during prerendering in `lib/auth/session.ts` by adding `.catch(() => null)` guard. (2) Removed unused `isUppercase` prop from `TypeSample` component in `app/(public)/design-system/page.tsx` and all 4 usages. (3) Fixed unused `data` param in `verify-email-handler.tsx` by prefixing with underscore. (4) Replaced `as any` cast in `task.test.ts` with typed cast. (5) Renamed unused `token`/`request` params to `_token`/`_request` in `lib/auth/auth.ts`. (6) Replaced incompatible `form.watch()` with `useWatch` hook in `preferences-form.tsx` for React Compiler compatibility. (7) Added `argsIgnorePattern`/`varsIgnorePattern` ESLint rules for underscore-prefixed unused vars. Build passes with zero errors and zero warnings.
 - **Streaming & Suspense Performance (P4-F3)** (2026-05-09) - Refactored `/tasks` page to use Next.js 16 streaming with `<Suspense>` boundaries. Created `TaskListLoader` server component that fetches `getTasks()` + `getTaskCount()` and renders `TaskList` or `TaskEmptyState`. Wrapped loader in `<Suspense key={JSON.stringify(query)}>` with `<TaskSkeleton />` fallback for realistic multi-card loading animation. Removed task fetching logic from page — page shell (header, filters, create button) now renders immediately while task list streams in. Filter changes show skeleton placeholder instantly. Deleted unused `/design-system` route. Build passes, 259 tests pass.
 - **Marketing Landing Page (P5-F1)** (2026-05-10) - Replaced default Next.js template on `/` with production-grade marketing landing page. Built marketing components: sticky Navbar with scroll blur and animated mobile Sheet drawer, Hero section with H1 (clamp 3rem–7rem, weight 900), Features section with 3 alternating rows (Capture, Organize, Focus), CTA section, and Footer. Added `useScrollReveal` hook with `IntersectionObserver` and `prefers-reduced-motion` guard. Added CSS animations for Sheet (slide, item stagger, logo pulse, backdrop fade). Updated `proxy.ts` so `/` is public and authenticated users are redirected to `/dashboard`. Updated `layout.tsx` metadata with OG/Twitter cards. Replaced all hardcoded hex colors with theme tokens (`bg-background`, `text-brand`, etc.). Generated OG image (1200×630 dark branded). Post-build accessibility hardening: fixed heading hierarchy (eyebrow `<h3>` → `<p>`), restored navbar `banner` landmark (removed `role="navigation"` from `<header>`), fixed footer link/copyright contrast (removed opacity overrides), added dashboard preview ARIA (`role="img"`), added no-JS fallback for scroll-reveal (`<noscript>` + `@media (scripting: none)`), and bumped `--muted-foreground` to `#a8a8a8` for WCAG AAA on card surfaces. Build passes, lint passes with zero errors, 259 tests pass.
+- **Public Pages (P5-F2)** (2026-05-10) - Built 5 public pages under `app/(marketing)/` route group with dark brand shell: Terms of Service, Privacy Policy, Cookie Policy, About, and Contact. Created `legal-layout.tsx` with conditional sticky TOC sidebar and `.prose-legal` styles. Built contact form with shadcn Button (brand green), React Hook Form + Zod validation, simulated success. Updated footer and navbar with links. Added routes to proxy.ts PUBLIC_PATHS. Build and lint pass with zero errors, 259 tests pass. Built marketing components: sticky Navbar with scroll blur and animated mobile Sheet drawer, Hero section with H1 (clamp 3rem–7rem, weight 900), Features section with 3 alternating rows (Capture, Organize, Focus), CTA section, and Footer. Added `useScrollReveal` hook with `IntersectionObserver` and `prefers-reduced-motion` guard. Added CSS animations for Sheet (slide, item stagger, logo pulse, backdrop fade). Updated `proxy.ts` so `/` is public and authenticated users are redirected to `/dashboard`. Updated `layout.tsx` metadata with OG/Twitter cards. Replaced all hardcoded hex colors with theme tokens (`bg-background`, `text-brand`, etc.). Generated OG image (1200×630 dark branded). Post-build accessibility hardening: fixed heading hierarchy (eyebrow `<h3>` → `<p>`), restored navbar `banner` landmark (removed `role="navigation"` from `<header>`), fixed footer link/copyright contrast (removed opacity overrides), added dashboard preview ARIA (`role="img"`), added no-JS fallback for scroll-reveal (`<noscript>` + `@media (scripting: none)`), and bumped `--muted-foreground` to `#a8a8a8` for WCAG AAA on card surfaces. Build passes, lint passes with zero errors, 259 tests pass.

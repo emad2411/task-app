@@ -13,11 +13,11 @@ export default function PublicLayout({
       <footer className="fixed bottom-4 left-0 right-0 text-center text-xs text-muted-foreground">
         <p>
           By continuing, you agree to our{" "}
-          <a href="#" className="underline underline-offset-2 hover:text-primary">
+          <a href="/terms" className="underline underline-offset-2 hover:text-primary">
             Terms of Service
           </a>{" "}
           and{" "}
-          <a href="#" className="underline underline-offset-2 hover:text-primary">
+          <a href="/privacy" className="underline underline-offset-2 hover:text-primary">
             Privacy Policy
           </a>
         </p>

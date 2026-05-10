@@ -27,7 +27,7 @@ export function Navbar() {
   }, []);
 
   const navLinks = [
-    { label: "Features", href: "#features" },
+    { label: "Features", href: "/#features" },
     { label: "Sign In", href: "/sign-in" },
   ];
 
