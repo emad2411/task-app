@@ -1,33 +1,18 @@
-# Dashboard Elevation
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- [ ] Replace hero-metric card grid with visual-first inline metrics strip
-- [ ] Add completion trend area chart (14-day sparkline, Recharts)
-- [ ] Add priority distribution donut chart
-- [ ] Add category breakdown horizontal bar chart
-- [ ] Redesign upcoming tasks with inline completion checkboxes
-- [ ] Build at `/dashboard-new` for review before replacing current dashboard
-- [ ] Extend data layer with time-series analytics queries (completion trend, category breakdown)
-- [ ] Server component architecture: `"use cache"` + `cacheTag`/`cacheLife` for all data fetching, props passed down
-- [ ] Full palette color strategy: green primary + semantic chart colors (red/amber/blue for priorities, category hex)
-- [ ] Maintain existing brand system (tokens, Inter typography, dark theme)
+<!-- Define feature goals as checklist items -->
+- [ ] 
 
 ## Notes
 
-- Build as `/dashboard-new` route, swap to `/dashboard` after review
-- Vercel Analytics visual anchor: dark canvas, sparkline-heavy, editorial calm
-- Command center emotional target: full situational awareness, relaxed density
-- No command palette (skip, focus screen real estate on visual dashboards)
-- Charts: completion trend (area), priority (donut), category (horizontal bars)
-- Task interaction: inline completion from upcoming tasks list
-- Recharts v3.8 already installed, use existing `chart.tsx` component
-- All new data queries use `"use cache"` with user-level cache isolation
-- Existing DESIGN.md tokens and brand colors are the foundation
+<!-- Add constraints, dependencies, and context -->
+-
 
 
 ## History
@@ -61,3 +46,4 @@ In Progress
 - **Marketing Landing Page (P5-F1)** (2026-05-10) - Replaced default Next.js template on `/` with production-grade marketing landing page. Built marketing components: sticky Navbar with scroll blur and animated mobile Sheet drawer, Hero section with H1 (clamp 3rem–7rem, weight 900), Features section with 3 alternating rows (Capture, Organize, Focus), CTA section, and Footer. Added `useScrollReveal` hook with `IntersectionObserver` and `prefers-reduced-motion` guard. Added CSS animations for Sheet (slide, item stagger, logo pulse, backdrop fade). Updated `proxy.ts` so `/` is public and authenticated users are redirected to `/dashboard`. Updated `layout.tsx` metadata with OG/Twitter cards. Replaced all hardcoded hex colors with theme tokens (`bg-background`, `text-brand`, etc.). Generated OG image (1200×630 dark branded). Post-build accessibility hardening: fixed heading hierarchy (eyebrow `<h3>` → `<p>`), restored navbar `banner` landmark (removed `role="navigation"` from `<header>`), fixed footer link/copyright contrast (removed opacity overrides), added dashboard preview ARIA (`role="img"`), added no-JS fallback for scroll-reveal (`<noscript>` + `@media (scripting: none)`), and bumped `--muted-foreground` to `#a8a8a8` for WCAG AAA on card surfaces. Build passes, lint passes with zero errors, 259 tests pass.
 - **Public Pages (P5-F2)** (2026-05-10) - Built 5 public pages under `app/(marketing)/` route group with dark brand shell: Terms of Service, Privacy Policy, Cookie Policy, About, and Contact. Created `legal-layout.tsx` with conditional sticky TOC sidebar and `.prose-legal` styles. Built contact form with shadcn Button (brand green), React Hook Form + Zod validation, simulated success. Updated footer and navbar with links. Added routes to proxy.ts PUBLIC_PATHS. Build and lint pass with zero errors, 259 tests pass. Built marketing components: sticky Navbar with scroll blur and animated mobile Sheet drawer, Hero section with H1 (clamp 3rem–7rem, weight 900), Features section with 3 alternating rows (Capture, Organize, Focus), CTA section, and Footer. Added `useScrollReveal` hook with `IntersectionObserver` and `prefers-reduced-motion` guard. Added CSS animations for Sheet (slide, item stagger, logo pulse, backdrop fade). Updated `proxy.ts` so `/` is public and authenticated users are redirected to `/dashboard`. Updated `layout.tsx` metadata with OG/Twitter cards. Replaced all hardcoded hex colors with theme tokens (`bg-background`, `text-brand`, etc.). Generated OG image (1200×630 dark branded). Post-build accessibility hardening: fixed heading hierarchy (eyebrow `<h3>` → `<p>`), restored navbar `banner` landmark (removed `role="navigation"` from `<header>`), fixed footer link/copyright contrast (removed opacity overrides), added dashboard preview ARIA (`role="img"`), added no-JS fallback for scroll-reveal (`<noscript>` + `@media (scripting: none)`), and bumped `--muted-foreground` to `#a8a8a8` for WCAG AAA on card surfaces. Build passes, lint passes with zero errors, 259 tests pass.
 - **Auth Pages Redesign (P5-F3)** (2026-05-11) - Redesigned all 5 public auth pages from centered-card layout to brand-first split-screen experience. Created `SplitAuthLayout`, `BrandPane`, `DashboardPreview`, `GoogleAuthButton`, `DividerWithText`, `SuccessState`, `BackToSignInLink` components. Modified all auth forms to remove `AuthCard` wrapper, use brand-colored submit buttons (`bg-brand text-background hover:bg-brand-deep`), and added Google OAuth button + divider to sign-in/sign-up. Deleted `AuthCard` component. Updated `PublicLayout` to minimal flex container. Added staggered entrance animations with CSS keyframes and `prefers-reduced-motion` guard. Responsive: stacked column on mobile, 45/55 split on desktop. Logo uses `CheckSquare` matching landing page brand. Build passes, lint zero errors, 259 tests pass.
+- **Dashboard Elevation** (2026-05-12) - Replaced hero-metric dashboard with visual command center: metrics strip cards, completion trend area chart (14-day, teal), weekly velocity bar chart (8-week, indigo), priority donut chart (red/amber/blue), category breakdown horizontal bars with expand/collapse (6-item limit), and upcoming tasks with inline checkboxes and fixed column widths. Extended data layer with `getCompletionTrend()`, `getCategoryBreakdown()`, `getWeeklyVelocity()`. Built at `/dashboard-new` then swapped to `/dashboard`. Deleted old components (stats-cards, priority-summary, quick-actions, dashboard-header, old empty-state, old upcoming-tasks). Used `"use cache"` + `cacheTag`/`cacheLife` for all analytics queries. Brand-aligned empty state with green accent and confident copy. Build and lint pass with zero errors.
