@@ -2,41 +2,46 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DashboardLoading() {
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="space-y-2">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-4 w-64" />
+    <div className="space-y-10">
+      <div className="space-y-1.5">
+        <Skeleton className="h-7 w-40" />
+        <Skeleton className="h-4 w-52" />
       </div>
 
-      {/* Quick Actions */}
-      <div className="flex flex-wrap gap-3">
-        <Skeleton className="h-10 w-28" />
-        <Skeleton className="h-10 w-28" />
-        <Skeleton className="h-10 w-32" />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Skeleton className="h-20 rounded-xl" />
+        <Skeleton className="h-20 rounded-xl" />
+        <Skeleton className="h-20 rounded-xl" />
+        <Skeleton className="h-20 rounded-xl" />
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Skeleton className="h-28 rounded-xl" />
-        <Skeleton className="h-28 rounded-xl" />
-        <Skeleton className="h-28 rounded-xl" />
-        <Skeleton className="h-28 rounded-xl" />
-      </div>
-
-      {/* Content Grid: Priority Summary + Upcoming Tasks */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Priority Summary */}
-        <Skeleton className="h-48 rounded-xl" />
-
-        {/* Upcoming Tasks */}
-        <div className="lg:col-span-2 space-y-4">
-          <Skeleton className="h-12 rounded-lg" />
-          <Skeleton className="h-12 rounded-lg" />
-          <Skeleton className="h-12 rounded-lg" />
-          <Skeleton className="h-12 rounded-lg" />
-          <Skeleton className="h-12 rounded-lg" />
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+        <div className="space-y-3">
+          <Skeleton className="h-5 w-32" />
+          <Skeleton className="h-[200px] w-full rounded-lg" />
         </div>
+        <div className="space-y-3">
+          <Skeleton className="h-5 w-32" />
+          <Skeleton className="h-[200px] w-full rounded-lg" />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+        <div className="space-y-3">
+          <Skeleton className="h-5 w-20" />
+          <Skeleton className="h-[200px] w-full rounded-lg" />
+        </div>
+        <div className="space-y-3">
+          <Skeleton className="h-5 w-28" />
+          <Skeleton className="h-[200px] w-full rounded-lg" />
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <Skeleton className="h-5 w-32" />
+        <Skeleton className="h-12 w-full rounded-lg" />
+        <Skeleton className="h-12 w-full rounded-lg" />
+        <Skeleton className="h-12 w-full rounded-lg" />
       </div>
     </div>
   );

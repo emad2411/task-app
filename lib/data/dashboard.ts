@@ -1,7 +1,7 @@
 import { cacheTag, cacheLife } from "next/cache";
 import { eq, and, count, gte, lt, asc, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { tasks, userPreferences } from "@/lib/db/schema";
+import { tasks, userPreferences, categories } from "@/lib/db/schema";
 import { TaskPriority, TaskStatus } from "@/lib/db/schema";
 import {
   getStartOfTodayInTimezone,
@@ -223,4 +223,190 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
     upcomingTasks,
     timezone,
   };
+}
+
+/**
+ * ============================================================================
+ * ANALYTICS DATA TYPES
+ * ============================================================================
+ */
+
+export interface CompletionTrendDay {
+  date: string;
+  completed: number;
+}
+
+export interface CategoryBreakdownItem {
+  id: string;
+  name: string;
+  color: string | null;
+  taskCount: number;
+}
+
+/**
+ * ============================================================================
+ * COMPLETION TREND FETCHER
+ * ============================================================================
+ * Returns daily completion counts for the last N days.
+ * Each day is counted in the user's timezone.
+ */
+export async function getCompletionTrend(
+  userId: string,
+  days: number = 14
+): Promise<CompletionTrendDay[]> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(`user-${userId}-dashboard`);
+
+  const preferences = await db.query.userPreferences.findFirst({
+    where: eq(userPreferences.userId, userId),
+  });
+  const timezone = preferences?.timezone ?? "UTC";
+
+  const now = new Date();
+  const results: CompletionTrendDay[] = [];
+
+  for (let i = days - 1; i >= 0; i--) {
+    const dayDate = new Date(now);
+    dayDate.setDate(dayDate.getDate() - i);
+
+    const dayStart = getStartOfTodayInTimezone(timezone);
+    dayStart.setDate(dayStart.getDate() - i);
+    const dayEnd = getEndOfTodayInTimezone(timezone);
+    dayEnd.setDate(dayEnd.getDate() - i);
+
+    const [row] = await db
+      .select({
+        completed: sql<number>`coalesce(count(*), 0)`.mapWith(Number),
+      })
+      .from(tasks)
+      .where(
+        and(
+          eq(tasks.userId, userId),
+          gte(tasks.completedAt, dayStart),
+          lt(tasks.completedAt, dayEnd)
+        )
+      );
+
+    const dateLabel = dayDate.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      timeZone: timezone,
+    });
+
+    results.push({
+      date: dateLabel,
+      completed: row?.completed ?? 0,
+    });
+  }
+
+  return results;
+}
+
+/**
+ * ============================================================================
+ * CATEGORY BREAKDOWN FETCHER
+ * ============================================================================
+ * Returns task counts grouped by category, including uncategorized tasks.
+ */
+export async function getCategoryBreakdown(
+  userId: string
+): Promise<CategoryBreakdownItem[]> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(`user-${userId}-dashboard`);
+
+  const categoryCounts = await db
+    .select({
+      id: categories.id,
+      name: categories.name,
+      color: categories.color,
+      taskCount: count(tasks.id),
+    })
+    .from(categories)
+    .leftJoin(
+      tasks,
+      and(
+        eq(tasks.categoryId, categories.id),
+        eq(tasks.userId, userId),
+        eq(tasks.status, "todo")
+      )
+    )
+    .where(eq(categories.userId, userId))
+    .groupBy(categories.id, categories.name, categories.color)
+    .orderBy(sql`count(${tasks.id}) desc`);
+
+  const [uncategorized] = await db
+    .select({
+      taskCount: sql<number>`coalesce(count(*), 0)`.mapWith(Number),
+    })
+    .from(tasks)
+    .where(
+      and(
+        eq(tasks.userId, userId),
+        eq(tasks.status, "todo"),
+        sql`${tasks.categoryId} is null`
+      )
+    );
+
+  const uncategorizedCount = uncategorized?.taskCount ?? 0;
+  const result: CategoryBreakdownItem[] = [...categoryCounts];
+
+  if (uncategorizedCount > 0) {
+    result.push({
+      id: "uncategorized",
+      name: "Uncategorized",
+      color: null,
+      taskCount: uncategorizedCount,
+    });
+  }
+
+  return result.sort((a, b) => b.taskCount - a.taskCount);
+}
+
+/**
+ * ============================================================================
+ * WEEKLY VELOCITY FETCHER
+ * ============================================================================
+ * Returns weekly completion counts for the last N weeks.
+ */
+export async function getWeeklyVelocity(
+  userId: string,
+  weeks: number = 8
+): Promise<Array<{ week: string; completed: number }>> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag(`user-${userId}-dashboard`);
+
+  const results: Array<{ week: string; completed: number }> = [];
+  const now = new Date();
+
+  for (let i = weeks - 1; i >= 0; i--) {
+    const weekEnd = new Date(now);
+    weekEnd.setDate(weekEnd.getDate() - i * 7);
+    const weekStart = new Date(weekEnd);
+    weekStart.setDate(weekStart.getDate() - 7);
+
+    const [row] = await db
+      .select({
+        completed: sql<number>`coalesce(count(*), 0)`.mapWith(Number),
+      })
+      .from(tasks)
+      .where(
+        and(
+          eq(tasks.userId, userId),
+          gte(tasks.completedAt, weekStart),
+          lt(tasks.completedAt, weekEnd)
+        )
+      );
+
+    const weekLabel = `W${weeks - i}`;
+
+    results.push({
+      week: weekLabel,
+      completed: row?.completed ?? 0,
+    });
+  }
+
+  return results;
 }

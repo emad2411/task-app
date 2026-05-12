@@ -1,18 +1,33 @@
-# Current Feature
+# Dashboard Elevation
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- Define feature goals as checklist items -->
-- [ ] 
+- [ ] Replace hero-metric card grid with visual-first inline metrics strip
+- [ ] Add completion trend area chart (14-day sparkline, Recharts)
+- [ ] Add priority distribution donut chart
+- [ ] Add category breakdown horizontal bar chart
+- [ ] Redesign upcoming tasks with inline completion checkboxes
+- [ ] Build at `/dashboard-new` for review before replacing current dashboard
+- [ ] Extend data layer with time-series analytics queries (completion trend, category breakdown)
+- [ ] Server component architecture: `"use cache"` + `cacheTag`/`cacheLife` for all data fetching, props passed down
+- [ ] Full palette color strategy: green primary + semantic chart colors (red/amber/blue for priorities, category hex)
+- [ ] Maintain existing brand system (tokens, Inter typography, dark theme)
 
 ## Notes
 
-<!-- Add constraints, dependencies, and context -->
--
+- Build as `/dashboard-new` route, swap to `/dashboard` after review
+- Vercel Analytics visual anchor: dark canvas, sparkline-heavy, editorial calm
+- Command center emotional target: full situational awareness, relaxed density
+- No command palette (skip, focus screen real estate on visual dashboards)
+- Charts: completion trend (area), priority (donut), category (horizontal bars)
+- Task interaction: inline completion from upcoming tasks list
+- Recharts v3.8 already installed, use existing `chart.tsx` component
+- All new data queries use `"use cache"` with user-level cache isolation
+- Existing DESIGN.md tokens and brand colors are the foundation
 
 
 ## History

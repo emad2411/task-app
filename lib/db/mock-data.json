@@ -46,14 +46,14 @@
       "id": "task_01j2m8n9p0q1r2s3t4u5v6w7x90",
       "userId": "user_01j2m8n9p0q1r2s3t4u5v6w7x8y",
       "categoryId": "cat_01j2m8n9p0q1r2s3t4u5v6w7x8a",
-      "title": "Complete Q1 financial report",
+      "title": "Complete Q2 financial report",
       "description": "Compile all revenue data and create the quarterly report for the executive team",
       "status": "todo",
       "priority": "high",
-      "dueDate": "2026-04-15T17:00:00.000Z",
+      "dueDate": "2026-05-12T17:00:00.000Z",
       "completedAt": null,
-      "createdAt": "2026-04-01T10:00:00.000Z",
-      "updatedAt": "2026-04-01T10:00:00.000Z"
+      "createdAt": "2026-05-01T10:00:00.000Z",
+      "updatedAt": "2026-05-01T10:00:00.000Z"
     },
     {
       "id": "task_01j2m8n9p0q1r2s3t4u5v6w7x91",
@@ -63,10 +63,10 @@
       "description": "Go through the 5 project proposals submitted by the team and provide feedback",
       "status": "in_progress",
       "priority": "high",
-      "dueDate": "2026-04-20T12:00:00.000Z",
+      "dueDate": "2026-05-14T12:00:00.000Z",
       "completedAt": null,
-      "createdAt": "2026-04-10T09:15:00.000Z",
-      "updatedAt": "2026-04-18T14:30:00.000Z"
+      "createdAt": "2026-05-05T09:15:00.000Z",
+      "updatedAt": "2026-05-10T14:30:00.000Z"
     },
     {
       "id": "task_01j2m8n9p0q1r2s3t4u5v6w7x92",
@@ -76,10 +76,10 @@
       "description": "Document action items from this week's standup",
       "status": "done",
       "priority": "medium",
-      "dueDate": "2026-04-18T14:00:00.000Z",
-      "completedAt": "2026-04-18T13:45:00.000Z",
-      "createdAt": "2026-04-17T08:00:00.000Z",
-      "updatedAt": "2026-04-18T13:45:00.000Z"
+      "dueDate": "2026-05-12T14:00:00.000Z",
+      "completedAt": "2026-05-12T13:45:00.000Z",
+      "createdAt": "2026-05-11T08:00:00.000Z",
+      "updatedAt": "2026-05-12T13:45:00.000Z"
     },
     {
       "id": "task_01j2m8n9p0q1r2s3t4u5v6w7x93",
@@ -89,10 +89,10 @@
       "description": "Book appointment with Dr. Smith for yearly physical",
       "status": "todo",
       "priority": "medium",
-      "dueDate": "2026-04-25T09:00:00.000Z",
+      "dueDate": "2026-05-15T09:00:00.000Z",
       "completedAt": null,
-      "createdAt": "2026-04-12T11:00:00.000Z",
-      "updatedAt": "2026-04-12T11:00:00.000Z"
+      "createdAt": "2026-05-08T11:00:00.000Z",
+      "updatedAt": "2026-05-08T11:00:00.000Z"
     },
     {
       "id": "task_01j2m8n9p0q1r2s3t4u5v6w7x94",
@@ -102,10 +102,10 @@
       "description": "Pay electricity and water bills before due date",
       "status": "done",
       "priority": "low",
-      "dueDate": "2026-04-10T17:00:00.000Z",
-      "completedAt": "2026-04-09T16:30:00.000Z",
-      "createdAt": "2026-04-08T09:00:00.000Z",
-      "updatedAt": "2026-04-09T16:30:00.000Z"
+      "dueDate": "2026-05-10T17:00:00.000Z",
+      "completedAt": "2026-05-09T16:30:00.000Z",
+      "createdAt": "2026-05-06T09:00:00.000Z",
+      "updatedAt": "2026-05-09T16:30:00.000Z"
     },
     {
       "id": "task_01j2m8n9p0q1r2s3t4u5v6w7x95",
@@ -113,12 +113,12 @@
       "categoryId": "cat_01j2m8n9p0q1r2s3t4u5v6w7x8c",
       "title": "Morning workout routine",
       "description": "30 minutes of cardio and stretching",
-      "status": "in_progress",
+      "status": "todo",
       "priority": "high",
-      "dueDate": "2026-04-21T07:00:00.000Z",
+      "dueDate": "2026-05-13T07:00:00.000Z",
       "completedAt": null,
-      "createdAt": "2026-04-20T21:00:00.000Z",
-      "updatedAt": "2026-04-21T06:30:00.000Z"
+      "createdAt": "2026-05-10T21:00:00.000Z",
+      "updatedAt": "2026-05-10T21:00:00.000Z"
     },
     {
       "id": "task_01j2m8n9p0q1r2s3t4u5v6w7x96",
@@ -128,10 +128,10 @@
       "description": "Get vegetables, fruits, and protein for the week",
       "status": "todo",
       "priority": "medium",
-      "dueDate": "2026-04-21T18:00:00.000Z",
+      "dueDate": "2026-05-12T18:00:00.000Z",
       "completedAt": null,
-      "createdAt": "2026-04-21T08:00:00.000Z",
-      "updatedAt": "2026-04-21T08:00:00.000Z"
+      "createdAt": "2026-05-12T08:00:00.000Z",
+      "updatedAt": "2026-05-12T08:00:00.000Z"
     },
     {
       "id": "task_01j2m8n9p0q1r2s3t4u5v6w7x97",
@@ -141,10 +141,10 @@
       "description": "Learn advanced TypeScript patterns and generics",
       "status": "todo",
       "priority": "medium",
-      "dueDate": "2026-05-01T23:59:00.000Z",
+      "dueDate": "2026-05-18T23:59:00.000Z",
       "completedAt": null,
-      "createdAt": "2026-04-15T19:00:00.000Z",
-      "updatedAt": "2026-04-15T19:00:00.000Z"
+      "createdAt": "2026-05-05T19:00:00.000Z",
+      "updatedAt": "2026-05-05T19:00:00.000Z"
     },
     {
       "id": "task_01j2m8n9p0q1r2s3t4u5v6w7x98",
@@ -154,10 +154,10 @@
       "description": "Chapter on SOLID principles",
       "status": "done",
       "priority": "low",
-      "dueDate": "2026-04-12T22:00:00.000Z",
-      "completedAt": "2026-04-11T20:00:00.000Z",
-      "createdAt": "2026-04-05T12:00:00.000Z",
-      "updatedAt": "2026-04-11T20:00:00.000Z"
+      "dueDate": "2026-05-08T22:00:00.000Z",
+      "completedAt": "2026-05-07T20:00:00.000Z",
+      "createdAt": "2026-05-01T12:00:00.000Z",
+      "updatedAt": "2026-05-07T20:00:00.000Z"
     },
     {
       "id": "task_01j2m8n9p0q1r2s3t4u5v6w7x99",
@@ -167,10 +167,10 @@
       "description": "Her birthday is next week - need to find something thoughtful",
       "status": "todo",
       "priority": "high",
-      "dueDate": "2026-04-27T17:00:00.000Z",
+      "dueDate": "2026-05-16T17:00:00.000Z",
       "completedAt": null,
-      "createdAt": "2026-04-19T10:00:00.000Z",
-      "updatedAt": "2026-04-19T10:00:00.000Z"
+      "createdAt": "2026-05-09T10:00:00.000Z",
+      "updatedAt": "2026-05-09T10:00:00.000Z"
     },
     {
       "id": "task_01j2m8n9p0q1r2s3t4u5v6w7x9a",
@@ -180,10 +180,10 @@
       "description": null,
       "status": "done",
       "priority": "low",
-      "dueDate": "2026-04-16T19:00:00.000Z",
-      "completedAt": "2026-04-16T18:00:00.000Z",
-      "createdAt": "2026-04-14T09:00:00.000Z",
-      "updatedAt": "2026-04-16T18:00:00.000Z"
+      "dueDate": "2026-05-11T19:00:00.000Z",
+      "completedAt": "2026-05-11T18:00:00.000Z",
+      "createdAt": "2026-05-09T09:00:00.000Z",
+      "updatedAt": "2026-05-11T18:00:00.000Z"
     },
     {
       "id": "task_01j2m8n9p0q1r2s3t4u5v6w7x9b",
@@ -193,10 +193,10 @@
       "description": "3 emails from clients need responses",
       "status": "todo",
       "priority": "high",
-      "dueDate": "2026-04-22T12:00:00.000Z",
+      "dueDate": "2026-05-12T12:00:00.000Z",
       "completedAt": null,
-      "createdAt": "2026-04-21T09:00:00.000Z",
-      "updatedAt": "2026-04-21T09:00:00.000Z"
+      "createdAt": "2026-05-11T09:00:00.000Z",
+      "updatedAt": "2026-05-11T09:00:00.000Z"
     },
     {
       "id": "task_01j2m8n9p0q1r2s3t4u5v6w7x9c",
@@ -208,8 +208,8 @@
       "priority": "low",
       "dueDate": null,
       "completedAt": null,
-      "createdAt": "2026-04-10T15:00:00.000Z",
-      "updatedAt": "2026-04-10T15:00:00.000Z"
+      "createdAt": "2026-05-06T15:00:00.000Z",
+      "updatedAt": "2026-05-06T15:00:00.000Z"
     },
     {
       "id": "task_01j2m8n9p0q1r2s3t4u5v6w7x9d",
@@ -221,8 +221,8 @@
       "priority": "low",
       "dueDate": null,
       "completedAt": null,
-      "createdAt": "2026-04-05T20:00:00.000Z",
-      "updatedAt": "2026-04-05T20:00:00.000Z"
+      "createdAt": "2026-05-01T20:00:00.000Z",
+      "updatedAt": "2026-05-01T20:00:00.000Z"
     },
     {
       "id": "task_01j2m8n9p0q1r2s3t4u5v6w7x9e",
@@ -245,10 +245,10 @@
       "description": "Policy expires end of this month",
       "status": "todo",
       "priority": "high",
-      "dueDate": "2026-04-30T17:00:00.000Z",
+      "dueDate": "2026-05-20T17:00:00.000Z",
       "completedAt": null,
-      "createdAt": "2026-04-18T14:00:00.000Z",
-      "updatedAt": "2026-04-18T14:00:00.000Z"
+      "createdAt": "2026-05-08T14:00:00.000Z",
+      "updatedAt": "2026-05-08T14:00:00.000Z"
     },
     {
       "id": "task_01j2m8n9p0q1r2s3t4u5v6w7x9g",
@@ -258,23 +258,23 @@
       "description": "15 minutes of mindfulness practice",
       "status": "done",
       "priority": "medium",
-      "dueDate": "2026-04-19T08:00:00.000Z",
-      "completedAt": "2026-04-19T07:45:00.000Z",
-      "createdAt": "2026-04-19T07:00:00.000Z",
-      "updatedAt": "2026-04-19T07:45:00.000Z"
+      "dueDate": "2026-05-11T08:00:00.000Z",
+      "completedAt": "2026-05-11T07:45:00.000Z",
+      "createdAt": "2026-05-11T07:00:00.000Z",
+      "updatedAt": "2026-05-11T07:45:00.000Z"
     },
     {
       "id": "task_01j2m8n9p0q1r2s3t4u5v6w7x9h",
       "userId": "user_01j2m8n9p0q1r2s3t4u5v6w7x8y",
       "categoryId": "cat_01j2m8n9p0q1r2s3t4u5v6w7x8a",
       "title": "Prepare presentation slides",
-      "description": "Slides for Monday's client meeting",
+      "description": "Slides for Wednesday's client meeting",
       "status": "in_progress",
       "priority": "high",
-      "dueDate": "2026-04-24T09:00:00.000Z",
+      "dueDate": "2026-05-14T09:00:00.000Z",
       "completedAt": null,
-      "createdAt": "2026-04-20T11:00:00.000Z",
-      "updatedAt": "2026-04-21T10:30:00.000Z"
+      "createdAt": "2026-05-09T11:00:00.000Z",
+      "updatedAt": "2026-05-11T10:30:00.000Z"
     },
     {
       "id": "task_01j2m8n9p0q1r2s3t4u5v6w7x9i",
@@ -284,10 +284,10 @@
       "description": "LeetCode medium difficulty",
       "status": "todo",
       "priority": "medium",
-      "dueDate": "2026-04-23T21:00:00.000Z",
+      "dueDate": "2026-05-13T21:00:00.000Z",
       "completedAt": null,
-      "createdAt": "2026-04-16T18:00:00.000Z",
-      "updatedAt": "2026-04-16T18:00:00.000Z"
+      "createdAt": "2026-05-07T18:00:00.000Z",
+      "updatedAt": "2026-05-07T18:00:00.000Z"
     },
     {
       "id": "task_01j2m8n9p0q1r2s3t4u5v6w7x9j",
@@ -297,10 +297,153 @@
       "description": "Leaky faucet in the kitchen",
       "status": "done",
       "priority": "medium",
-      "dueDate": "2026-04-14T14:00:00.000Z",
-      "completedAt": "2026-04-13T11:00:00.000Z",
-      "createdAt": "2026-04-11T09:00:00.000Z",
-      "updatedAt": "2026-04-13T11:00:00.000Z"
+      "dueDate": "2026-05-06T14:00:00.000Z",
+      "completedAt": "2026-05-05T11:00:00.000Z",
+      "createdAt": "2026-05-03T09:00:00.000Z",
+      "updatedAt": "2026-05-05T11:00:00.000Z"
+    },
+    {
+      "id": "task_01j2m8n9p0q1r2s3t4u5v6w7xa0",
+      "userId": "user_01j2m8n9p0q1r2s3t4u5v6w7x8y",
+      "categoryId": "cat_01j2m8n9p0q1r2s3t4u5v6w7x8a",
+      "title": "Write blog post draft",
+      "description": "Technical blog post about Next.js 16 features",
+      "status": "done",
+      "priority": "medium",
+      "dueDate": "2026-05-04T17:00:00.000Z",
+      "completedAt": "2026-05-04T15:30:00.000Z",
+      "createdAt": "2026-05-02T10:00:00.000Z",
+      "updatedAt": "2026-05-04T15:30:00.000Z"
+    },
+    {
+      "id": "task_01j2m8n9p0q1r2s3t4u5v6w7xa1",
+      "userId": "user_01j2m8n9p0q1r2s3t4u5v6w7x8y",
+      "categoryId": "cat_01j2m8n9p0q1r2s3t4u5v6w7x8c",
+      "title": "Evening run - 5K",
+      "description": "Run 5 kilometers around the park",
+      "status": "done",
+      "priority": "medium",
+      "dueDate": "2026-05-03T18:00:00.000Z",
+      "completedAt": "2026-05-03T17:45:00.000Z",
+      "createdAt": "2026-05-03T08:00:00.000Z",
+      "updatedAt": "2026-05-03T17:45:00.000Z"
+    },
+    {
+      "id": "task_01j2m8n9p0q1r2s3t4u5v6w7xa2",
+      "userId": "user_01j2m8n9p0q1r2s3t4u5v6w7x8y",
+      "categoryId": "cat_01j2m8n9p0q1r2s3t4u5v6w7x8a",
+      "title": "Deploy staging updates",
+      "description": "Push latest changes to staging environment",
+      "status": "done",
+      "priority": "high",
+      "dueDate": "2026-05-02T16:00:00.000Z",
+      "completedAt": "2026-05-02T15:20:00.000Z",
+      "createdAt": "2026-05-01T09:00:00.000Z",
+      "updatedAt": "2026-05-02T15:20:00.000Z"
+    },
+    {
+      "id": "task_01j2m8n9p0q1r2s3t4u5v6w7xa3",
+      "userId": "user_01j2m8n9p0q1r2s3t4u5v6w7x8y",
+      "categoryId": "cat_01j2m8n9p0q1r2s3t4u5v6w7x8d",
+      "title": "Complete React patterns course",
+      "description": "Finish the advanced patterns module",
+      "status": "done",
+      "priority": "low",
+      "dueDate": "2026-04-28T23:59:00.000Z",
+      "completedAt": "2026-04-28T21:00:00.000Z",
+      "createdAt": "2026-04-20T10:00:00.000Z",
+      "updatedAt": "2026-04-28T21:00:00.000Z"
+    },
+    {
+      "id": "task_01j2m8n9p0q1r2s3t4u5v6w7xa4",
+      "userId": "user_01j2m8n9p0q1r2s3t4u5v6w7x8y",
+      "categoryId": "cat_01j2m8n9p0q1r2s3t4u5v6w7x8b",
+      "title": "Fix kitchen sink drain",
+      "description": "Call landlord about slow drain",
+      "status": "done",
+      "priority": "medium",
+      "dueDate": "2026-04-25T12:00:00.000Z",
+      "completedAt": "2026-04-24T14:00:00.000Z",
+      "createdAt": "2026-04-22T09:00:00.000Z",
+      "updatedAt": "2026-04-24T14:00:00.000Z"
+    },
+    {
+      "id": "task_01j2m8n9p0q1r2s3t4u5v6w7xa5",
+      "userId": "user_01j2m8n9p0q1r2s3t4u5v6w7x8y",
+      "categoryId": "cat_01j2m8n9p0q1r2s3t4u5v6w7x8a",
+      "title": "Update project documentation",
+      "description": "Add API endpoint docs for new features",
+      "status": "done",
+      "priority": "low",
+      "dueDate": "2026-04-21T17:00:00.000Z",
+      "completedAt": "2026-04-21T16:00:00.000Z",
+      "createdAt": "2026-04-18T10:00:00.000Z",
+      "updatedAt": "2026-04-21T16:00:00.000Z"
+    },
+    {
+      "id": "task_01j2m8n9p0q1r2s3t4u5v6w7xa6",
+      "userId": "user_01j2m8n9p0q1r2s3t4u5v6w7x8y",
+      "categoryId": "cat_01j2m8n9p0q1r2s3t4u5v6w7x8c",
+      "title": "Grocery shopping for the week",
+      "description": "Stock up on healthy snacks and meal prep ingredients",
+      "status": "done",
+      "priority": "medium",
+      "dueDate": "2026-04-20T11:00:00.000Z",
+      "completedAt": "2026-04-20T10:30:00.000Z",
+      "createdAt": "2026-04-19T08:00:00.000Z",
+      "updatedAt": "2026-04-20T10:30:00.000Z"
+    },
+    {
+      "id": "task_01j2m8n9p0q1r2s3t4u5v6w7xa7",
+      "userId": "user_01j2m8n9p0q1r2s3t4u5v6w7x8y",
+      "categoryId": "cat_01j2m8n9p0q1r2s3t4u5v6w7x8e",
+      "title": "Order new headphones",
+      "description": "Sony WH-1000XM5 from Amazon",
+      "status": "done",
+      "priority": "low",
+      "dueDate": "2026-04-18T17:00:00.000Z",
+      "completedAt": "2026-04-18T12:00:00.000Z",
+      "createdAt": "2026-04-16T09:00:00.000Z",
+      "updatedAt": "2026-04-18T12:00:00.000Z"
+    },
+    {
+      "id": "task_01j2m8n9p0q1r2s3t4u5v6w7xa8",
+      "userId": "user_01j2m8n9p0q1r2s3t4u5v6w7x8y",
+      "categoryId": "cat_01j2m8n9p0q1r2s3t4u5v6w7x8a",
+      "title": "Code review for PR #142",
+      "description": "Review the authentication refactor pull request",
+      "status": "done",
+      "priority": "high",
+      "dueDate": "2026-04-15T17:00:00.000Z",
+      "completedAt": "2026-04-15T16:00:00.000Z",
+      "createdAt": "2026-04-14T09:00:00.000Z",
+      "updatedAt": "2026-04-15T16:00:00.000Z"
+    },
+    {
+      "id": "task_01j2m8n9p0q1r2s3t4u5v6w7xa9",
+      "userId": "user_01j2m8n9p0q1r2s3t4u5v6w7x8y",
+      "categoryId": "cat_01j2m8n9p0q1r2s3t4u5v6w7x8d",
+      "title": "Watch AWS re:Invent keynote",
+      "description": "Catch up on latest cloud announcements",
+      "status": "done",
+      "priority": "low",
+      "dueDate": "2026-04-12T20:00:00.000Z",
+      "completedAt": "2026-04-12T19:00:00.000Z",
+      "createdAt": "2026-04-10T08:00:00.000Z",
+      "updatedAt": "2026-04-12T19:00:00.000Z"
+    },
+    {
+      "id": "task_01j2m8n9p0q1r2s3t4u5v6w7xab",
+      "userId": "user_01j2m8n9p0q1r2s3t4u5v6w7x8y",
+      "categoryId": "cat_01j2m8n9p0q1r2s3t4u5v6w7x8b",
+      "title": "Overdue: Submit expense report",
+      "description": "This was due last week",
+      "status": "todo",
+      "priority": "high",
+      "dueDate": "2026-05-09T17:00:00.000Z",
+      "completedAt": null,
+      "createdAt": "2026-05-05T10:00:00.000Z",
+      "updatedAt": "2026-05-05T10:00:00.000Z"
     }
   ],
   "userPreferences": {
@@ -311,6 +454,6 @@
     "dateFormat": "MM/dd/yyyy",
     "defaultTaskSort": "due_date_asc",
     "createdAt": "2026-01-15T10:35:00.000Z",
-    "updatedAt": "2026-04-01T08:00:00.000Z"
+    "updatedAt": "2026-05-01T08:00:00.000Z"
   }
 }

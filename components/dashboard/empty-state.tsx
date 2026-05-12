@@ -1,28 +1,25 @@
-"use client";
-
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ClipboardList } from "lucide-react";
-import { Empty, EmptyMedia, EmptyHeader, EmptyTitle, EmptyDescription, EmptyContent } from "@/components/ui/empty";
+import { BarChart3 } from "lucide-react";
 
-export function EmptyState() {
+export function DashboardEmptyState() {
   return (
-    <Empty className="min-h-[400px] rounded-xl border bg-card p-8 shadow-sm">
-      <EmptyMedia variant="icon">
-        <ClipboardList className="size-4" />
-      </EmptyMedia>
-      <EmptyHeader>
-        <EmptyTitle>Welcome to TaskFlow!</EmptyTitle>
-        <EmptyDescription>
-          Start by creating your first task. TaskFlow helps you stay organized
-          and on top of your deadlines.
-        </EmptyDescription>
-      </EmptyHeader>
-      <EmptyContent>
-        <Button size="lg" asChild>
-          <Link href="/tasks">Create Your First Task</Link>
-        </Button>
-      </EmptyContent>
-    </Empty>
+    <div className="flex min-h-[400px] flex-col items-center justify-center gap-6 rounded-xl border border-border bg-card/50 px-6 py-16 text-center">
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand/10">
+        <BarChart3 className="h-7 w-7 text-brand" />
+      </div>
+      <div className="space-y-2">
+        <h3 className="text-xl font-semibold tracking-tight">
+          Your command center awaits
+        </h3>
+        <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
+          Create your first task to unlock completion trends, velocity tracking,
+          priority distribution, and category breakdowns.
+        </p>
+      </div>
+      <Button asChild className="bg-brand text-background hover:bg-brand-deep">
+        <Link href="/tasks">Create your first task</Link>
+      </Button>
+    </div>
   );
 }
