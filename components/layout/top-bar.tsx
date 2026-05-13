@@ -7,7 +7,7 @@ import {
   Search,
   Bell,
   Plus,
-  User,
+  User as UserIcon,
   Settings,
   LogOut,
 } from "lucide-react";
@@ -26,6 +26,7 @@ import { useSession } from "@/lib/auth/auth-client";
 import { signOutAction } from "@/lib/actions/auth";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { CreateTaskDialog } from "@/components/tasks/create-task-dialog";
+import type { User } from "@/lib/auth/types";
 
 function getInitials(name: string): string {
   return name
@@ -39,11 +40,13 @@ function getInitials(name: string): string {
 interface TopBarProps {
   isSidebarCollapsed: boolean;
   onToggleSidebar: () => void;
+  user: User;
 }
 
-export function TopBar({ isSidebarCollapsed, onToggleSidebar }: TopBarProps) {
+export function TopBar({ isSidebarCollapsed, onToggleSidebar, user: initialUser }: TopBarProps) {
   const router = useRouter();
   const { data: session } = useSession();
+  const user = (session?.user as User | undefined) ?? initialUser;
 
   async function handleSignOut() {
     const result = await signOutAction();
@@ -140,31 +143,31 @@ export function TopBar({ isSidebarCollapsed, onToggleSidebar }: TopBarProps) {
         </div>
 
         {/* User avatar dropdown */}
-        {session?.user ? (
+        {user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-11 w-11 md:h-9 md:w-9 rounded-full p-0">
                 <Avatar className="h-9 w-9">
                   <AvatarImage
-                    src={session.user.image || undefined}
-                    alt={session.user.name}
+                    src={user.image || undefined}
+                    alt={user.name}
                   />
                   <AvatarFallback>
-                    {getInitials(session.user.name)}
+                    {getInitials(user.name)}
                   </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
               <div className="px-2 py-1.5">
-                <p className="text-sm font-medium">{session.user.name}</p>
+                <p className="text-sm font-medium">{user.name}</p>
                 <p className="text-xs text-muted-foreground truncate">
-                  {session.user.email}
+                  {user.email}
                 </p>
               </div>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => router.push("/settings")}>
-                <User className="mr-2 h-4 w-4" />
+                <UserIcon className="mr-2 h-4 w-4" />
                 Profile
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push("/settings")}>

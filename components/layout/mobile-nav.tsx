@@ -21,6 +21,7 @@ import {
 import { signOutAction } from "@/lib/actions/auth";
 import { useSession } from "@/lib/auth/auth-client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { User } from "@/lib/auth/types";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -38,10 +39,15 @@ function getInitials(name: string): string {
     .slice(0, 2);
 }
 
-export function MobileNav() {
+interface MobileNavProps {
+  user: User;
+}
+
+export function MobileNav({ user: initialUser }: MobileNavProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { data: session } = useSession();
+  const user = (session?.user as User | undefined) ?? initialUser;
 
   async function handleSignOut() {
     const result = await signOutAction();
@@ -60,23 +66,23 @@ export function MobileNav() {
         </SheetDescription>
       </SheetHeader>
 
-      {session?.user && (
+      {user && (
         <div className="flex items-center gap-3 px-4 py-3 border-b">
           <Avatar className="h-10 w-10">
             <AvatarImage
-              src={session.user.image || undefined}
-              alt={session.user.name}
+              src={user.image || undefined}
+              alt={user.name}
             />
             <AvatarFallback>
-              {getInitials(session.user.name)}
+              {getInitials(user.name)}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col min-w-0">
             <span className="text-sm font-medium truncate">
-              {session.user.name}
+              {user.name}
             </span>
             <span className="text-xs text-muted-foreground truncate">
-              {session.user.email}
+              {user.email}
             </span>
           </div>
         </div>

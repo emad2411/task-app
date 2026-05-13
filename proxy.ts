@@ -79,7 +79,10 @@ export async function proxy(request: NextRequest) {
   // 4. Session-based route protection (pages only)
   const sessionCookie = getSessionCookie(request);
   const hasSession = !!sessionCookie;
-  const isPublicPath = PUBLIC_PATHS.some((path) => pathname.startsWith(path));
+  // Fix: "/" should only match exact root, not all paths (which all start with "/")
+  const isPublicPath = PUBLIC_PATHS.some((path) =>
+    path === "/" ? pathname === "/" : pathname.startsWith(path)
+  );
   const isAuthPath = AUTH_PATHS.some((path) => pathname.startsWith(path));
 
   // Redirect authenticated users from landing page to dashboard

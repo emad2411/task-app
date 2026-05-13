@@ -9,13 +9,16 @@ import { Sidebar } from "./sidebar";
 import { TopBar } from "./top-bar";
 import { MobileNav } from "./mobile-nav";
 import type { Category } from "@/lib/db/schema";
+import type { User, Session } from "@/lib/auth/types";
 
 interface AppShellProps {
   children: React.ReactNode;
   categories: Category[];
+  user: User;
+  session: Session;
 }
 
-export function AppShell({ children, categories }: AppShellProps) {
+export function AppShell({ children, categories, user, session: _session }: AppShellProps) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   return (
@@ -32,12 +35,13 @@ export function AppShell({ children, categories }: AppShellProps) {
             <TopBar
               isSidebarCollapsed={isSidebarCollapsed}
               onToggleSidebar={() => setIsSidebarCollapsed((prev) => !prev)}
+              user={user}
             />
             <main className="flex-1 p-4 md:p-6 lg:p-8">
               {children}
             </main>
           </div>
-          <MobileNav />
+          <MobileNav user={user} />
         </Sheet>
       </div>
     </CategoriesProvider>
