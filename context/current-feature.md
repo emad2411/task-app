@@ -2,22 +2,16 @@
 
 ## Status
 
-Complete
+Not Started
 
 ## Feature
 
-P5-F4: App Shell Redesign
+<!-- Feature name, e.g., P5-F4: App Shell Redesign -->
 
 ## Goals
 
-- [x] Redesign AppShell, Sidebar, TopBar, MobileNav to align with TaskFlow brand identity
-- [x] Remove double "TaskFlow" logo (TopBar + Sidebar redundancy)
-- [x] Fix layout property animation jank (margin-left transition)
-- [x] Replace generic active nav states with brand green accent
-- [x] Add sidebar footer with user context
-- [x] Simplify TopBar hierarchy and refine visual weight
-- [x] Ensure production-ready polish across all breakpoints
-- [x] Maintain full accessibility (keyboard, focus, reduced motion)
+<!-- Define feature goals as checklist items -->
+- [ ] 
 
 ## Notes
 
