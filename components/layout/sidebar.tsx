@@ -15,6 +15,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { SidebarFooter } from "./sidebar-footer";
+import type { User } from "@/lib/auth/types";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -25,36 +27,34 @@ const navItems = [
 
 interface SidebarProps {
   isCollapsed: boolean;
+  user: User;
 }
 
-export function Sidebar({ isCollapsed }: SidebarProps) {
+export function Sidebar({ isCollapsed, user }: SidebarProps) {
   const pathname = usePathname();
 
   return (
     <TooltipProvider delayDuration={0}>
       <aside
         className={cn(
-          "hidden lg:flex flex-col fixed left-0 top-0 z-40 h-screen border-r bg-background transition-all duration-300",
+          "hidden lg:flex flex-col fixed left-0 top-0 z-40 h-screen border-r bg-background transition-[width] duration-200 ease-out",
           isCollapsed ? "w-[72px]" : "w-[260px]"
         )}
       >
         <div className="flex flex-col h-full">
-          {/* Logo area - matches TopBar height and style */}
           <div
             className={cn(
-              "flex items-center h-14 border-b px-4 transition-all duration-300 overflow-hidden",
+              "flex items-center gap-2 h-14 border-b px-4 overflow-hidden shrink-0",
               isCollapsed && "justify-center px-2"
             )}
           >
+            <CheckSquare className="h-5 w-5 shrink-0 text-brand" aria-hidden="true" />
             <span className={cn(
-              "font-semibold text-lg transition-all duration-300 whitespace-nowrap",
-              isCollapsed ? "opacity-0 w-0" : "opacity-100"
+              "text-lg font-bold whitespace-nowrap",
+              isCollapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
             )}>
               TaskFlow
             </span>
-            {isCollapsed && (
-              <span className="font-semibold text-lg">T</span>
-            )}
           </div>
 
           <nav className="flex-1 p-3 space-y-1">
@@ -68,20 +68,20 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-colors",
-                    isCollapsed && "justify-center",
+                    "flex items-center gap-3 px-3 rounded-lg text-sm font-medium transition-colors h-10",
+                    isCollapsed && "justify-center px-0",
                     isActive
-                      ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                      ? "dark:bg-brand/10 bg-brand/15 dark:text-brand text-brand-deep"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   )}
                 >
-                  <item.icon className="h-5 w-5 shrink-0" />
+                  <item.icon className="h-[18px] w-[18px] shrink-0" />
                   <span
                     className={cn(
-                      "transition-all duration-300 whitespace-nowrap",
+                      "whitespace-nowrap",
                       isCollapsed
                         ? "opacity-0 w-0 overflow-hidden"
-                        : "opacity-100 w-auto"
+                        : "opacity-100"
                     )}
                   >
                     {item.label}
@@ -103,6 +103,8 @@ export function Sidebar({ isCollapsed }: SidebarProps) {
               return linkContent;
             })}
           </nav>
+
+          <SidebarFooter user={user} isCollapsed={isCollapsed} />
         </div>
       </aside>
     </TooltipProvider>

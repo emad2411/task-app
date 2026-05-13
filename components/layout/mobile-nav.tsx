@@ -98,10 +98,10 @@ export function MobileNav({ user: initialUser }: MobileNavProps) {
               <Link
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors h-11",
+                  "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors min-h-[48px]",
                   isActive
-                    ? "bg-accent text-accent-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    ? "dark:bg-brand/10 bg-brand/15 dark:text-brand text-brand-deep"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )}
               >
                 <item.icon className="h-5 w-5" />
@@ -115,7 +115,7 @@ export function MobileNav({ user: initialUser }: MobileNavProps) {
       <SheetFooter className="border-t p-2">
         <button
           onClick={handleSignOut}
-          className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors w-full h-11"
+          className="flex items-center gap-3 px-4 rounded-lg text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors w-full min-h-[48px]"
         >
           <LogOut className="h-5 w-5" />
           Sign Out

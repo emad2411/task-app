@@ -57,7 +57,7 @@ export function TopBar({ isSidebarCollapsed, onToggleSidebar, user: initialUser 
   }
 
   return (
-    <header className="flex items-center h-14 border-b px-4 shrink-0 gap-3">
+    <header className="flex items-center h-14 border-b px-4 shrink-0 gap-3 sticky top-0 z-30 bg-background">
       {/* Mobile: Hamburger menu */}
       <SheetTrigger asChild>
         <Button
@@ -83,8 +83,8 @@ export function TopBar({ isSidebarCollapsed, onToggleSidebar, user: initialUser 
         </span>
       </Button>
 
-      {/* Logo */}
-      <span className="font-semibold text-lg shrink-0">TaskFlow</span>
+      {/* Mobile logo - only visible when sidebar is hidden */}
+      <span className="font-semibold text-lg shrink-0 lg:hidden">TaskFlow</span>
 
       {/* Search - hidden on small screens */}
       <div className="hidden md:flex items-center flex-1 max-w-md ml-4">
@@ -92,8 +92,8 @@ export function TopBar({ isSidebarCollapsed, onToggleSidebar, user: initialUser 
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Search..."
-            className="w-full pl-9 h-9"
+            placeholder="Search tasks..."
+            className="w-full pl-9 h-9 bg-muted border-transparent focus:border-border"
           />
         </div>
       </div>
@@ -114,7 +114,7 @@ export function TopBar({ isSidebarCollapsed, onToggleSidebar, user: initialUser 
         <CreateTaskDialog>
           <Button
             size="sm"
-            className="hidden sm:inline-flex h-9"
+            className="hidden sm:inline-flex h-9 bg-brand text-background hover:bg-brand-deep"
           >
             <Plus className="mr-1.5 h-4 w-4" />
             Create Task

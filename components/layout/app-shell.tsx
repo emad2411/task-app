@@ -24,25 +24,25 @@ export function AppShell({ children, categories, user, session: _session }: AppS
   return (
     <CategoriesProvider categories={categories}>
       <div className="flex min-h-screen">
-        <Sidebar isCollapsed={isSidebarCollapsed} />
-        <Sheet>
-          <div
-            className={cn(
-              "flex-1 flex flex-col transition-all duration-300",
-              isSidebarCollapsed ? "lg:ml-[72px]" : "lg:ml-[260px]"
-            )}
-          >
+        <Sidebar isCollapsed={isSidebarCollapsed} user={user} />
+        <div
+          className={cn(
+            "flex-1 flex flex-col transition-[margin-left] duration-200 ease-out will-change-[margin-left]",
+            isSidebarCollapsed ? "lg:ml-[72px]" : "lg:ml-[260px]"
+          )}
+        >
+          <Sheet>
             <TopBar
               isSidebarCollapsed={isSidebarCollapsed}
               onToggleSidebar={() => setIsSidebarCollapsed((prev) => !prev)}
               user={user}
             />
-            <main className="flex-1 p-4 md:p-6 lg:p-8">
-              {children}
-            </main>
-          </div>
-          <MobileNav user={user} />
-        </Sheet>
+            <MobileNav user={user} />
+          </Sheet>
+          <main className="flex-1 p-4 md:p-6 lg:p-8">
+            {children}
+          </main>
+        </div>
       </div>
     </CategoriesProvider>
   );

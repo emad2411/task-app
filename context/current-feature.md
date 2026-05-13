@@ -2,18 +2,27 @@
 
 ## Status
 
-Not Started
+Complete
+
+## Feature
+
+P5-F4: App Shell Redesign
 
 ## Goals
 
-<!-- Define feature goals as checklist items -->
-- [ ] 
+- [x] Redesign AppShell, Sidebar, TopBar, MobileNav to align with TaskFlow brand identity
+- [x] Remove double "TaskFlow" logo (TopBar + Sidebar redundancy)
+- [x] Fix layout property animation jank (margin-left transition)
+- [x] Replace generic active nav states with brand green accent
+- [x] Add sidebar footer with user context
+- [x] Simplify TopBar hierarchy and refine visual weight
+- [x] Ensure production-ready polish across all breakpoints
+- [x] Maintain full accessibility (keyboard, focus, reduced motion)
 
 ## Notes
 
 <!-- Add constraints, dependencies, and context -->
 -
-
 
 ## History
 
@@ -48,3 +57,4 @@ Not Started
 - **Auth Pages Redesign (P5-F3)** (2026-05-11) - Redesigned all 5 public auth pages from centered-card layout to brand-first split-screen experience. Created `SplitAuthLayout`, `BrandPane`, `DashboardPreview`, `GoogleAuthButton`, `DividerWithText`, `SuccessState`, `BackToSignInLink` components. Modified all auth forms to remove `AuthCard` wrapper, use brand-colored submit buttons (`bg-brand text-background hover:bg-brand-deep`), and added Google OAuth button + divider to sign-in/sign-up. Deleted `AuthCard` component. Updated `PublicLayout` to minimal flex container. Added staggered entrance animations with CSS keyframes and `prefers-reduced-motion` guard. Responsive: stacked column on mobile, 45/55 split on desktop. Logo uses `CheckSquare` matching landing page brand. Build passes, lint zero errors, 259 tests pass.
 - **Dashboard Elevation** (2026-05-12) - Replaced hero-metric dashboard with visual command center: metrics strip cards, completion trend area chart (14-day, teal), weekly velocity bar chart (8-week, indigo), priority donut chart (red/amber/blue), category breakdown horizontal bars with expand/collapse (6-item limit), and upcoming tasks with inline checkboxes and fixed column widths. Extended data layer with `getCompletionTrend()`, `getCategoryBreakdown()`, `getWeeklyVelocity()`. Built at `/dashboard-new` then swapped to `/dashboard`. Deleted old components (stats-cards, priority-summary, quick-actions, dashboard-header, old empty-state, old upcoming-tasks). Used `"use cache"` + `cacheTag`/`cacheLife` for all analytics queries. Brand-aligned empty state with green accent and confident copy. Build and lint pass with zero errors.
 - **Hydration Mismatch Fix — User in Navbar** (2026-05-13) - Fixed hydration mismatch in `TopBar` and `MobileNav` where `useSession()` starts as `undefined` on the client, causing avatar/name flash. Created shared `lib/auth/types.ts` with `User`, `Session`, and `AuthSession` types handling both `Date` and `string` timestamps for server/client compatibility. Passed `user` and `session` from server layout through `AppShell` to `TopBar` and `MobileNav`, using server user as fallback when client session is loading. Fixed `proxy.ts` root path matching (`/` should match exact root only, not all paths via `startsWith`). Added `.impeccable/` to `.gitignore`.
+- **App Shell Redesign (P5-F4)** (2026-05-13) - Redesigned authenticated app shell with brand-aligned components. Restructured AppShell to scope Sheet wrapper around TopBar and MobileNav only. Replaced generic nav active states with brand green (`dark:bg-brand/10 bg-brand/15 dark:text-brand text-brand-deep`). Created `SidebarFooter` component with user avatar/name/email linking to `/settings`. Updated Sidebar logo to use `CheckSquare` green icon (matching landing page). Added sticky positioning to TopBar with `bg-background` for scroll coverage. Removed duplicate "TaskFlow" wordmark from TopBar on desktop. Updated Create Task button to brand green fill. Optimized layout transitions from `transition-all duration-300` to `transition-[margin-left] duration-200 ease-out` with `will-change-[margin-left]`. MobileNav now uses `min-h-[48px]` touch targets. All hover/active states use `hover:bg-muted hover:text-foreground` for consistency. Build and lint pass with zero errors.
