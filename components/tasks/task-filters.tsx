@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Search, X, ArrowUpDown, Group, SlidersHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -13,6 +14,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Sheet,
   SheetContent,
@@ -27,7 +33,6 @@ interface TaskFiltersProps {
 }
 
 const statusOptions = [
-  { value: "all", label: "All Statuses" },
   { value: "todo", label: "To Do" },
   { value: "in_progress", label: "In Progress" },
   { value: "done", label: "Done" },
@@ -35,14 +40,12 @@ const statusOptions = [
 ];
 
 const priorityOptions = [
-  { value: "all", label: "All Priorities" },
   { value: "high", label: "High" },
   { value: "medium", label: "Medium" },
   { value: "low", label: "Low" },
 ];
 
 const dueDateOptions = [
-  { value: "all", label: "All Dates" },
   { value: "today", label: "Due Today" },
   { value: "upcoming", label: "Upcoming" },
   { value: "overdue", label: "Overdue" },
@@ -57,17 +60,32 @@ const sortFieldOptions = [
   { value: "title", label: "Title (A-Z)" },
 ];
 
-const sortOrderOptions = [
-  { value: "asc", label: "Ascending" },
-  { value: "desc", label: "Descending" },
-];
-
 const groupByOptions = [
   { value: "none", label: "None" },
   { value: "status", label: "Status" },
   { value: "category", label: "Category" },
   { value: "dueDate", label: "Due Date" },
 ];
+
+const statusLabels: Record<string, string> = {
+  todo: "To Do",
+  in_progress: "In Progress",
+  done: "Done",
+  archived: "Archived",
+};
+
+const priorityLabels: Record<string, string> = {
+  high: "High",
+  medium: "Medium",
+  low: "Low",
+};
+
+const dueDateLabels: Record<string, string> = {
+  today: "Due Today",
+  upcoming: "Upcoming",
+  overdue: "Overdue",
+  none: "No Due Date",
+};
 
 function useDebouncedValue<T>(value: T, delay: number): T {
   const [debounced, setDebounced] = useState(value);
@@ -88,7 +106,6 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
   const category = searchParams.get("category") || "all";
   const dueDate = searchParams.get("dueDate") || "all";
   const sort = searchParams.get("sort") || "dueDate";
-  const order = searchParams.get("order") || "asc";
   const groupBy = searchParams.get("groupBy") || "none";
   const q = searchParams.get("q") || "";
 
@@ -98,7 +115,6 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
   const [optimisticCategory, setOptimisticCategory] = useState(category);
   const [optimisticDueDate, setOptimisticDueDate] = useState(dueDate);
   const [optimisticSort, setOptimisticSort] = useState(sort);
-  const [optimisticOrder, setOptimisticOrder] = useState(order);
   const [optimisticGroupBy, setOptimisticGroupBy] = useState(groupBy);
 
   // Search input state with external sync
@@ -134,13 +150,11 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
       setOptimisticCategory(searchParams.get("category") || "all");
       setOptimisticDueDate(searchParams.get("dueDate") || "all");
       setOptimisticSort(searchParams.get("sort") || "dueDate");
-      setOptimisticOrder(searchParams.get("order") || "asc");
       setOptimisticGroupBy(searchParams.get("groupBy") || "none");
     });
   }, [searchParams]);
 
   // Update URL when debounced search changes
-  // Only trigger search when user has typed at least 3 characters
   useEffect(() => {
     const trimmed = debouncedSearch.trim();
     const currentQ = searchParamsRef.current.get("q") || "";
@@ -172,7 +186,6 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
       if (key === "category") setOptimisticCategory(value);
       if (key === "dueDate") setOptimisticDueDate(value);
       if (key === "sort") setOptimisticSort(value);
-      if (key === "order") setOptimisticOrder(value);
       if (key === "groupBy") setOptimisticGroupBy(value);
 
       // URL update (triggers server re-render)
@@ -187,6 +200,13 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
     [router, searchParams]
   );
 
+  const removeFilter = useCallback(
+    (key: string) => {
+      updateFilter(key, "all");
+    },
+    [updateFilter]
+  );
+
   const clearFilters = useCallback(() => {
     // Clear optimistic state immediately
     setOptimisticStatus("all");
@@ -194,7 +214,6 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
     setOptimisticCategory("all");
     setOptimisticDueDate("all");
     setOptimisticSort("dueDate");
-    setOptimisticOrder("asc");
     setOptimisticGroupBy("none");
     setSearchInput("");
 
@@ -210,44 +229,40 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
 
   const hasSortOrGroup =
     optimisticSort !== "dueDate" ||
-    optimisticOrder !== "asc" ||
     optimisticGroupBy !== "none";
 
-  const filterContent = (
-    <>
-      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-        {/* Search */}
-        <div className="relative w-full sm:w-64">
-          <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="text"
-            placeholder="Search tasks..."
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            className="h-11 pl-9 pr-10 text-base md:h-8 md:text-sm"
-            aria-label="Search tasks"
-          />
-          {searchInput && (
-            <button
-              type="button"
-              onClick={() => setSearchInput("")}
-              className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center h-8 w-8 text-muted-foreground hover:text-foreground"
-              aria-label="Clear search"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          )}
-        </div>
+  // Build active filter chips
+  const activeFilters: { key: string; label: string }[] = [];
+  if (optimisticStatus !== "all") {
+    activeFilters.push({ key: "status", label: `Status: ${statusLabels[optimisticStatus] ?? optimisticStatus}` });
+  }
+  if (optimisticPriority !== "all") {
+    activeFilters.push({ key: "priority", label: `Priority: ${priorityLabels[optimisticPriority] ?? optimisticPriority}` });
+  }
+  if (optimisticCategory !== "all") {
+    const cat = categories.find((c) => c.id === optimisticCategory);
+    activeFilters.push({ key: "category", label: `Category: ${cat?.name ?? optimisticCategory}` });
+  }
+  if (optimisticDueDate !== "all") {
+    activeFilters.push({ key: "dueDate", label: `Due: ${dueDateLabels[optimisticDueDate] ?? optimisticDueDate}` });
+  }
 
-        {/* Status */}
+  const activeFilterCount = activeFilters.length;
+
+  const filterPopoverContent = (
+    <div className="space-y-3">
+      {/* Status */}
+      <div className="space-y-1.5">
+        <label className="text-xs font-medium text-muted-foreground">Status</label>
         <Select
           value={optimisticStatus}
           onValueChange={(value) => updateFilter("status", value)}
         >
-          <SelectTrigger className="h-11 w-full text-base sm:w-[140px] md:h-8 md:text-sm">
-            <SelectValue placeholder="Status" />
+          <SelectTrigger className="h-9 w-full text-sm">
+            <SelectValue placeholder="All Statuses" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="all">All Statuses</SelectItem>
             {statusOptions.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
@@ -255,16 +270,20 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
             ))}
           </SelectContent>
         </Select>
+      </div>
 
-        {/* Priority */}
+      {/* Priority */}
+      <div className="space-y-1.5">
+        <label className="text-xs font-medium text-muted-foreground">Priority</label>
         <Select
           value={optimisticPriority}
           onValueChange={(value) => updateFilter("priority", value)}
         >
-          <SelectTrigger className="h-11 w-full text-base sm:w-[140px] md:h-8 md:text-sm">
-            <SelectValue placeholder="Priority" />
+          <SelectTrigger className="h-9 w-full text-sm">
+            <SelectValue placeholder="All Priorities" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="all">All Priorities</SelectItem>
             {priorityOptions.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
@@ -272,15 +291,18 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
             ))}
           </SelectContent>
         </Select>
+      </div>
 
-        {/* Category */}
-        {categories.length > 0 && (
+      {/* Category */}
+      {categories.length > 0 && (
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground">Category</label>
           <Select
             value={optimisticCategory}
             onValueChange={(value) => updateFilter("category", value)}
           >
-            <SelectTrigger className="h-11 w-full text-base sm:w-[160px] md:h-8 md:text-sm">
-              <SelectValue placeholder="Category" />
+            <SelectTrigger className="h-9 w-full text-sm">
+              <SelectValue placeholder="All Categories" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Categories</SelectItem>
@@ -295,17 +317,21 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
               ))}
             </SelectContent>
           </Select>
-        )}
+        </div>
+      )}
 
-        {/* Due Date */}
+      {/* Due Date */}
+      <div className="space-y-1.5">
+        <label className="text-xs font-medium text-muted-foreground">Due Date</label>
         <Select
           value={optimisticDueDate}
           onValueChange={(value) => updateFilter("dueDate", value)}
         >
-          <SelectTrigger className="h-11 w-full text-base sm:w-[150px] md:h-8 md:text-sm">
-            <SelectValue placeholder="Due Date" />
+          <SelectTrigger className="h-9 w-full text-sm">
+            <SelectValue placeholder="All Dates" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="all">All Dates</SelectItem>
             {dueDateOptions.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
@@ -313,37 +339,152 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
             ))}
           </SelectContent>
         </Select>
+      </div>
+    </div>
+  );
 
-        {/* Sort Field */}
-        <div className="flex items-center gap-1">
-          <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />
-          <Select
-            value={optimisticSort}
-            onValueChange={(value) => updateFilter("sort", value)}
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      {/* Search — always visible */}
+      <div className="relative w-full sm:w-64">
+        <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          type="text"
+          placeholder="Search tasks..."
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          className="h-9 pl-9 pr-9 text-sm"
+          aria-label="Search tasks"
+        />
+        {searchInput && (
+          <button
+            type="button"
+            onClick={() => setSearchInput("")}
+            className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center h-6 w-6 text-muted-foreground hover:text-foreground"
+            aria-label="Clear search"
           >
-            <SelectTrigger className="h-11 w-full text-base sm:w-[140px] md:h-8 md:text-sm">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              {sortFieldOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+            <X className="h-3.5 w-3.5" />
+          </button>
+        )}
+      </div>
 
-        {/* Sort Order */}
-        <Select
-          value={optimisticOrder}
-          onValueChange={(value) => updateFilter("order", value)}
+      {/* Filters popover — desktop */}
+      <div className="hidden sm:block">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm" className="h-9">
+              <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
+              Filters
+              {activeFilterCount > 0 && (
+                <Badge variant="secondary" className="ml-1.5 h-5 px-1.5 text-[10px]">
+                  {activeFilterCount}
+                </Badge>
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-80" align="start">
+            {filterPopoverContent}
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      {/* Filters sheet — mobile */}
+      <div className="block sm:hidden">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="outline" size="sm" className="h-9">
+              <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
+              Filters
+              {activeFilterCount > 0 && (
+                <Badge variant="secondary" className="ml-1.5 h-5 px-1.5 text-[10px]">
+                  {activeFilterCount}
+                </Badge>
+              )}
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="bottom" className="max-h-[80vh] overflow-y-auto px-4 py-6">
+            <SheetHeader className="px-0">
+              <SheetTitle>Filters</SheetTitle>
+            </SheetHeader>
+            <div className="mt-4">{filterPopoverContent}</div>
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* Active filter chips — inline */}
+      {activeFilters.map((filter) => (
+        <Badge
+          key={filter.key}
+          variant="secondary"
+          className="h-7 gap-1 rounded-full text-xs"
         >
-          <SelectTrigger className="h-11 w-full text-base sm:w-[120px] md:h-8 md:text-sm">
-            <SelectValue placeholder="Order" />
+          {filter.label}
+          <button
+            type="button"
+            onClick={() => removeFilter(filter.key)}
+            className="ml-0.5 rounded-full p-0.5 text-muted-foreground hover:text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            aria-label={`Remove ${filter.label} filter`}
+          >
+            <X className="h-3 w-3" />
+          </button>
+        </Badge>
+      ))}
+
+      {/* Spacer */}
+      <div className="flex-1" />
+
+      {/* Sort — inline, always visible */}
+      <div className="hidden sm:flex items-center gap-1">
+        <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />
+        <Select
+          value={optimisticSort}
+          onValueChange={(value) => updateFilter("sort", value)}
+        >
+          <SelectTrigger className="h-8 w-[130px] text-sm">
+            <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
-            {sortOrderOptions.map((option) => (
+            {sortFieldOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Group By — inline, always visible */}
+      <div className="hidden sm:flex items-center gap-1">
+        <Group className="h-3.5 w-3.5 text-muted-foreground" />
+        <Select
+          value={optimisticGroupBy}
+          onValueChange={(value) => updateFilter("groupBy", value)}
+        >
+          <SelectTrigger className="h-8 w-[120px] text-sm">
+            <SelectValue placeholder="Group by" />
+          </SelectTrigger>
+          <SelectContent>
+            {groupByOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Mobile sort/group */}
+      <div className="flex sm:hidden items-center gap-2 w-full">
+        <Select
+          value={optimisticSort}
+          onValueChange={(value) => updateFilter("sort", value)}
+        >
+          <SelectTrigger className="h-9 flex-1 text-sm">
+            <ArrowUpDown className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />
+            <SelectValue placeholder="Sort" />
+          </SelectTrigger>
+          <SelectContent>
+            {sortFieldOptions.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
               </SelectItem>
@@ -351,131 +492,36 @@ export function TaskFilters({ categories = [] }: TaskFiltersProps) {
           </SelectContent>
         </Select>
 
-        {/* Group By */}
-        <div className="flex items-center gap-1">
-          <Group className="h-3.5 w-3.5 text-muted-foreground" />
-          <Select
-            value={optimisticGroupBy}
-            onValueChange={(value) => updateFilter("groupBy", value)}
-          >
-            <SelectTrigger className="h-11 w-full text-base sm:w-[130px] md:h-8 md:text-sm">
-              <SelectValue placeholder="Group by" />
-            </SelectTrigger>
-            <SelectContent>
-              {groupByOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Clear filters */}
-        {(hasFilters || hasSortOrGroup) && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearFilters}
-            className="h-11 md:h-8"
-          >
-            <X className="mr-1 h-3.5 w-3.5" />
-            Reset
-          </Button>
-        )}
+        <Select
+          value={optimisticGroupBy}
+          onValueChange={(value) => updateFilter("groupBy", value)}
+        >
+          <SelectTrigger className="h-9 flex-1 text-sm">
+            <Group className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />
+            <SelectValue placeholder="Group" />
+          </SelectTrigger>
+          <SelectContent>
+            {groupByOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
-    </>
-  );
 
-  return (
-    <div className="space-y-2">
-      {/* Desktop: inline filters */}
-      <div className="hidden sm:block">{filterContent}</div>
-
-      {/* Mobile: collapsible sheet */}
-      <div className="block sm:hidden">
-        <div className="flex flex-col gap-2">
-          {/* Search always visible on mobile */}
-          <div className="relative w-full">
-            <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search tasks..."
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              className="h-11 pl-9 pr-8 text-base md:h-9 md:text-sm"
-              aria-label="Search tasks"
-            />
-            {searchInput && (
-              <button
-                type="button"
-                onClick={() => setSearchInput("")}
-                className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center h-8 w-8 text-muted-foreground hover:text-foreground"
-                aria-label="Clear search"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            )}
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="h-11 flex-1 md:h-8">
-                  <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
-                  Filters
-                  {hasFilters && (
-                    <span className="ml-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">
-                      !
-                    </span>
-                  )}
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="bottom" className="max-h-[80vh] overflow-y-auto px-4 py-6">
-                <SheetHeader className="px-0">
-                  <SheetTitle>Filters</SheetTitle>
-                </SheetHeader>
-                <div className="mt-4 space-y-3">{filterContent}</div>
-              </SheetContent>
-            </Sheet>
-
-            {/* Quick sort/group on mobile */}
-            <Select
-              value={optimisticSort}
-              onValueChange={(value) => updateFilter("sort", value)}
-            >
-              <SelectTrigger className="h-11 flex-1 text-base md:h-8 md:text-sm">
-                <ArrowUpDown className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />
-                <SelectValue placeholder="Sort" />
-              </SelectTrigger>
-              <SelectContent>
-                {sortFieldOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select
-              value={optimisticGroupBy}
-              onValueChange={(value) => updateFilter("groupBy", value)}
-            >
-              <SelectTrigger className="h-11 flex-1 text-base md:h-8 md:text-sm">
-                <Group className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />
-                <SelectValue placeholder="Group" />
-              </SelectTrigger>
-              <SelectContent>
-                {groupByOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
+      {/* Reset — only when non-default */}
+      {(hasFilters || hasSortOrGroup) && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={clearFilters}
+          className="h-8"
+        >
+          <X className="mr-1 h-3.5 w-3.5" />
+          Reset
+        </Button>
+      )}
     </div>
   );
 }

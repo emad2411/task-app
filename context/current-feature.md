@@ -1,22 +1,35 @@
-# Current Feature
+# Current Feature: P5-F5 Task Page Redesign
 
 ## Status
 
-Not Started
+In Progress
 
 ## Feature
 
-<!-- Feature name, e.g., P5-F4: App Shell Redesign -->
+P5-F5: Task Page Redesign (Filters + Table)
 
 ## Goals
 
-<!-- Define feature goals as checklist items -->
-- [ ] 
+- [x] Replace 7-inline-Select filter layout with collapsed Popover + inline chips
+- [x] Replace vertical card list with HTML `<table>` (7 columns: checkbox, title, status, priority, category, due, created)
+- [x] Create `StatusBadge` and `PriorityBadge` pill components
+- [x] Create `TaskRow` (table row) replacing `TaskItem` (card)
+- [x] Adapt `TaskGroupHeader` for table context (colSpan row)
+- [x] Update `TaskSkeleton` to match table structure
+- [x] Delete `filter-chips.tsx` and `task-item.tsx`
+- [x] Mobile: table collapses to card list, filter Popover becomes Drawer
+- [x] Sortable column headers with aria-sort
+- [x] Row click navigates to detail, checkbox toggles completion inline
+- [x] All accessibility: focus rings, aria-labels, reduced motion, semantic table HTML
 
 ## Notes
 
-<!-- Add constraints, dependencies, and context -->
--
+- Spec: `context/features/phase-5/05-task-page-redesign/FEATURE.md`
+- Color strategy: Restrained (existing tokens, no new colors)
+- Anchor references: Notion database table, Linear filter bar, GitHub Issues table
+- Backend changes: none (purely frontend/presentational)
+- Existing data fetching, URL-driven filters, and Suspense streaming remain unchanged
+- `taskQueryParamsSchema`, data layer, and server actions untouched
 
 ## History
 
