@@ -2,21 +2,31 @@
 
 ## Status
 
-Not Started
+Complete
 
 ## Feature
 
-<!-- Feature name, e.g., P5-F4: App Shell Redesign -->
+P5-F7: Categories Page Redesign
 
 ## Goals
 
-<!-- Define feature goals as checklist items -->
-- [ ] 
+- [x] Shape design brief: product register, brand-infused app surface, row-based list, hover reveal actions, category name links to filtered tasks
+- [x] Rebuild page layout: strip nested main, card wrapper, min-h-screen container (app shell provides all)
+- [x] Rebuild CategoryList/CategoryItem: clean row list with bottom border separator, colored dot + name link + task count + hover-reveal edit/delete
+- [x] Category name links to `/tasks?category=<id>` for filtered task view
+- [x] Rebuild CategorySkeleton to match row shape
+- [x] Update loading.tsx to match new page shell
+- [x] Polish delete dialog: remove emoji, text-only warning
+- [x] Polish create/edit dialog descriptions for sharper copy
+- [x] Build passes, lint zero errors
 
 ## Notes
 
-<!-- Add constraints, dependencies, and context -->
--
+- Design brief confirmed. Product register, Restrained color strategy. Category colors carry the accent.
+- Raycast extensions list + Linear labels as anchor references.
+- "Anywhere, any light" scene — works in both themes.
+- Hover reveal on rows (not touch-first, but has fallback for touch via always-visible buttons).
+- No cards. No nested card pattern. Clean row list with bottom border separators.
 
 ## History
 

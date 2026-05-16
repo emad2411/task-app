@@ -49,32 +49,28 @@ export function DeleteCategoryDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {children || (
-          <Button variant="ghost" size="sm">
-            <Trash2 className="mr-2 h-4 w-4" />
-            Delete
+          <Button variant="ghost" size="icon-sm">
+            <Trash2 className="h-4 w-4" />
+            <span className="sr-only">Delete {category.name}</span>
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[480px]">
         <DialogHeader>
-          <DialogTitle>Delete Category</DialogTitle>
+          <DialogTitle>Delete &ldquo;{category.name}&rdquo;?</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete &quot;{category.name}&quot;?
+            This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           {taskCount > 0 && (
             <p className="text-sm text-destructive">
-              ⚠️ {taskCount} task{taskCount !== 1 ? "s" : ""} will become
-              uncategorized.
+              {taskCount} task{taskCount !== 1 ? "s" : ""} will become uncategorized.
             </p>
           )}
-          <p className="text-sm text-muted-foreground">
-            This action cannot be undone.
-          </p>
           <div className="flex justify-end gap-3">
             <Button variant="outline" onClick={() => setOpen(false)}>
-              Cancel
+              Keep
             </Button>
             <Button
               variant="destructive"

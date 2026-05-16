@@ -34,9 +34,9 @@ export function EditCategoryDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {children || (
-          <Button variant="ghost" size="sm">
-            <Pencil className="mr-2 h-4 w-4" />
-            Edit
+          <Button variant="ghost" size="icon-sm">
+            <Pencil className="h-4 w-4" />
+            <span className="sr-only">Edit {category.name}</span>
           </Button>
         )}
       </DialogTrigger>
@@ -44,7 +44,7 @@ export function EditCategoryDialog({
         <DialogHeader>
           <DialogTitle>Edit Category</DialogTitle>
           <DialogDescription>
-            Rename or change the color of this category.
+            Rename or change the color.
           </DialogDescription>
         </DialogHeader>
         <CategoryForm
