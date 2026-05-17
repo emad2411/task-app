@@ -2,30 +2,21 @@
 
 ## Status
 
-Complete
+Not Started
 
 ## Feature
 
-Landing Page Real Images & Auth-Aware CTAs
+<!-- Feature name, e.g., P5-F4: App Shell Redesign -->
 
 ## Goals
 
 <!-- Define feature goals as checklist items -->
-- [x] Remove redirect blocking logged-in users from landing page (/)
-- [x] Make landing page session-aware with conditional CTAs (Sign In vs Go to Dashboard)
-- [x] Reduce hero section spacing and font size
-- [x] Replace dashboard preview placeholder with real screenshot in macOS browser frame
-- [x] Replace feature section placeholders with real app screenshots (tasks, categories, dashboard)
-- [x] Add Mac browser frame wrapper to all feature images
-- [x] Generate demo data for rich dashboard visuals
+- [ ]
 
 ## Notes
 
 <!-- Add constraints, dependencies, and context -->
-- Seeded 21+ tasks to demo user for rich dashboard data showing weekly velocity bars
-- Screenshots captured at 1440x900 viewport for consistent aspect ratio
-- All images wrapped in macOS browser chrome (traffic lights + address bar)
-- Auth-aware components: Navbar shows Dashboard link, Hero shows Go to Dashboard button, CTA shows Welcome back message
+-
 
 ## History
 
@@ -65,3 +56,4 @@ Landing Page Real Images & Auth-Aware CTAs
 - **Task Detail Page Redesign (P5-F6)** (2026-05-16) - Redesigned `/tasks/[taskId]` detail page with two-column layout and inline editing. Created reusable inline edit components (`inline-edit.tsx`) using shadcn Input, Textarea, Select with zod validation: InlineTitleEdit, InlineDescriptionEdit, InlineStatusEdit, InlinePriorityEdit, InlineDueDateEdit, InlineCategoryEdit. Created TaskActivityTimeline component derived from task timestamps. Left column: inline-editable title, view-only status/priority badges, inline-editable description, activity timeline. Right sidebar: editable due date, category, status, priority, timestamps, and action buttons (mark complete with brand green, archive, delete). Keyboard shortcuts hook created but removed from UI. All edits call `updateTaskAction` with zod-validated fields. Build and lint pass with zero errors.
 - **Categories Page Redesign (P5-F7)** (2026-05-16) - Redesigned `/categories` page from card grid to brand-infused row list. Replaced card-wrapped category items with clean rows (colored dot, name link to `/tasks?category=<id>`, task count, hover-reveal edit/delete actions). Stripped nested `<main>`, `min-h-screen`, and card wrapper from page shell. Rebuilt skeleton and loading states to match row shape. Polished dialogs: removed emoji from delete warning, sharpened copy ("Keep" instead of "Cancel"), streamlined edit description to "Rename or change the color." Brand green CTA button with shadcn Button component. Responsive: actions always visible on touch, hover reveal on desktop via `group-hover:opacity-100`. Build and lint pass with zero errors.
 - **Settings Page Brand Alignment Redesign** (2026-05-17) - Aligned `/settings` page with TaskFlow brand personality. Updated page shell to match dashboard layout (`space-y-10`, `font-semibold` title). Refactored `settings-tabs.tsx` with icons (User, Lock, Palette, SlidersHorizontal) and brand green active states (`bg-[#18E299]/10`, `text-[#18E299]`). Flattened all four form cards (`profile-form.tsx`, `security-form.tsx`, `appearance-form.tsx`, `preferences-form.tsx`) into clean panel sections with `rounded-lg border bg-card`. Added brand-tinted icons to all panel headers. Theme tiles now use brand green for selection (`border-[#18E299]`, `ring-[#18E299]/20`). All submit buttons use shadcn Button with brand green styling (`bg-[#18E299]`, `text-[#0d0d0d]`, `hover:bg-[#0fa76e]`). Build passes with zero errors, 259 tests pass.
+- **Landing Page Real Images & Auth-Aware CTAs** (2026-05-17) - Removed redirect blocking logged-in users from landing page, added session-aware CTAs showing "Go to Dashboard" for authenticated users, reduced hero spacing and font size, replaced all placeholder visuals with real app screenshots (dashboard, tasks list, categories), wrapped all images in macOS browser frame with traffic lights and address bar, generated demo data with 21+ tasks for rich dashboard visuals including weekly velocity bars and completion trends.
