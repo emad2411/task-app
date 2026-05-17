@@ -3,8 +3,11 @@ import { HeroSection } from "@/components/marketing/hero-section";
 import { FeaturesSection } from "@/components/marketing/features-section";
 import { CTASection } from "@/components/marketing/cta-section";
 import { Footer } from "@/components/marketing/footer";
+import { getSession } from "@/lib/auth/session";
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const session = await getSession();
+
   return (
     <div className="dark bg-background">
       {/* No-JS fallback: ensure scroll-reveal content is visible */}
@@ -23,12 +26,12 @@ export default function LandingPage() {
         Skip to content
       </a>
 
-      <Navbar />
+      <Navbar session={session} />
 
       <main id="main-content">
-        <HeroSection />
+        <HeroSection session={session} />
         <FeaturesSection />
-        <CTASection />
+        <CTASection session={session} />
       </main>
 
       <Footer />

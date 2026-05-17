@@ -3,8 +3,13 @@
 import Link from "next/link";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { cn } from "@/lib/utils";
+import type { Session } from "@/lib/auth/session";
 
-export function CTASection() {
+interface CTASectionProps {
+  session?: Session | null;
+}
+
+export function CTASection({ session }: CTASectionProps) {
   const { ref, isRevealed } = useScrollReveal<HTMLDivElement>();
 
   return (
@@ -17,18 +22,29 @@ export function CTASection() {
         )}
       >
         <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-extrabold leading-tight tracking-[-0.02em] text-foreground">
-          Start organizing today.
+          {session ? "Welcome back!" : "Start organizing today."}
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Free for everyone. No credit card required.
+          {session
+            ? "Jump back into your tasks and stay productive."
+            : "Free for everyone. No credit card required."}
         </p>
         <div className="mt-10">
-          <Link
-            href="/sign-up"
-            className="inline-flex h-12 items-center justify-center rounded-md bg-brand px-8 text-sm font-semibold text-background transition-colors hover:bg-brand-deep landing-focus"
-          >
-            Create free account
-          </Link>
+          {session ? (
+            <Link
+              href="/dashboard"
+              className="inline-flex h-12 items-center justify-center rounded-md bg-brand px-8 text-sm font-semibold text-background transition-colors hover:bg-brand-deep landing-focus"
+            >
+              Go to Dashboard
+            </Link>
+          ) : (
+            <Link
+              href="/sign-up"
+              className="inline-flex h-12 items-center justify-center rounded-md bg-brand px-8 text-sm font-semibold text-background transition-colors hover:bg-brand-deep landing-focus"
+            >
+              Create free account
+            </Link>
+          )}
         </div>
       </div>
     </section>

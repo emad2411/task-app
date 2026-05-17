@@ -85,11 +85,6 @@ export async function proxy(request: NextRequest) {
   );
   const isAuthPath = AUTH_PATHS.some((path) => pathname.startsWith(path));
 
-  // Redirect authenticated users from landing page to dashboard
-  if (hasSession && pathname === "/") {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
-
   if (hasSession && isAuthPath) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }

@@ -2,21 +2,30 @@
 
 ## Status
 
-Not Started
+Complete
 
 ## Feature
 
-<!-- Feature name, e.g., P5-F4: App Shell Redesign -->
+Landing Page Real Images & Auth-Aware CTAs
 
 ## Goals
 
 <!-- Define feature goals as checklist items -->
-- [ ] 
+- [x] Remove redirect blocking logged-in users from landing page (/)
+- [x] Make landing page session-aware with conditional CTAs (Sign In vs Go to Dashboard)
+- [x] Reduce hero section spacing and font size
+- [x] Replace dashboard preview placeholder with real screenshot in macOS browser frame
+- [x] Replace feature section placeholders with real app screenshots (tasks, categories, dashboard)
+- [x] Add Mac browser frame wrapper to all feature images
+- [x] Generate demo data for rich dashboard visuals
 
 ## Notes
 
 <!-- Add constraints, dependencies, and context -->
--
+- Seeded 21+ tasks to demo user for rich dashboard data showing weekly velocity bars
+- Screenshots captured at 1440x900 viewport for consistent aspect ratio
+- All images wrapped in macOS browser chrome (traffic lights + address bar)
+- Auth-aware components: Navbar shows Dashboard link, Hero shows Go to Dashboard button, CTA shows Welcome back message
 
 ## History
 

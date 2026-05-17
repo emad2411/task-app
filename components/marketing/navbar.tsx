@@ -12,8 +12,13 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import type { Session } from "@/lib/auth/session";
 
-export function Navbar() {
+interface NavbarProps {
+  session?: Session | null;
+}
+
+export function Navbar({ session }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -28,7 +33,9 @@ export function Navbar() {
 
   const navLinks = [
     { label: "Features", href: "/#features" },
-    { label: "Sign In", href: "/sign-in" },
+    ...(session
+      ? [{ label: "Dashboard", href: "/dashboard" }]
+      : [{ label: "Sign In", href: "/sign-in" }]),
   ];
 
   return (
@@ -66,12 +73,21 @@ export function Navbar() {
 
         {/* Desktop CTA */}
         <div className="hidden md:block">
-          <Link
-            href="/sign-up"
-            className="inline-flex h-9 items-center justify-center rounded-md bg-brand px-4 text-sm font-semibold text-background transition-colors hover:bg-brand-deep landing-focus"
-          >
-            Get Started
-          </Link>
+          {session ? (
+            <Link
+              href="/dashboard"
+              className="inline-flex h-9 items-center justify-center rounded-md bg-brand px-4 text-sm font-semibold text-background transition-colors hover:bg-brand-deep landing-focus"
+            >
+              Go to Dashboard
+            </Link>
+          ) : (
+            <Link
+              href="/sign-up"
+              className="inline-flex h-9 items-center justify-center rounded-md bg-brand px-4 text-sm font-semibold text-background transition-colors hover:bg-brand-deep landing-focus"
+            >
+              Get Started
+            </Link>
+          )}
         </div>
 
         {/* Mobile hamburger */}
@@ -130,13 +146,23 @@ export function Navbar() {
                 ))}
               </nav>
               <SheetClose asChild className="mt-4">
-                <Link
-                  href="/sign-up"
-                  className="animate-sheet-item inline-flex h-12 items-center justify-center rounded-md bg-brand px-6 text-base font-semibold text-background transition-colors hover:bg-brand-deep landing-focus"
-                  style={{ "--sheet-item-delay": `${120 + navLinks.length * 60 + 40}ms` } as React.CSSProperties}
-                >
-                  Get Started
-                </Link>
+                {session ? (
+                  <Link
+                    href="/dashboard"
+                    className="animate-sheet-item inline-flex h-12 items-center justify-center rounded-md bg-brand px-6 text-base font-semibold text-background transition-colors hover:bg-brand-deep landing-focus"
+                    style={{ "--sheet-item-delay": `${120 + navLinks.length * 60 + 40}ms` } as React.CSSProperties}
+                  >
+                    Go to Dashboard
+                  </Link>
+                ) : (
+                  <Link
+                    href="/sign-up"
+                    className="animate-sheet-item inline-flex h-12 items-center justify-center rounded-md bg-brand px-6 text-base font-semibold text-background transition-colors hover:bg-brand-deep landing-focus"
+                    style={{ "--sheet-item-delay": `${120 + navLinks.length * 60 + 40}ms` } as React.CSSProperties}
+                  >
+                    Get Started
+                  </Link>
+                )}
               </SheetClose>
             </div>
           </SheetContent>

@@ -3,15 +3,51 @@
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { cn } from "@/lib/utils";
 
+interface MacBrowserFrameProps {
+  children: React.ReactNode;
+}
+
+function MacBrowserFrame({ children }: MacBrowserFrameProps) {
+  return (
+    <div className="overflow-hidden rounded-xl border border-white/[0.08] bg-[#1e1e1e] shadow-lg">
+      {/* macOS Browser Chrome */}
+      <div className="flex h-10 items-center gap-2 border-b border-white/[0.06] bg-[#2d2d2d] px-4">
+        {/* Traffic Lights */}
+        <div className="flex gap-2">
+          <div className="h-3 w-3 rounded-full bg-[#ff5f57] border border-[#e0443e]/30" />
+          <div className="h-3 w-3 rounded-full bg-[#febc2e] border border-[#d89e1f]/30" />
+          <div className="h-3 w-3 rounded-full bg-[#28c840] border border-[#1aab29]/30" />
+        </div>
+        
+        {/* Address Bar */}
+        <div className="mx-auto flex h-6 w-full max-w-xs items-center justify-center rounded-md bg-[#1e1e1e] px-3">
+          <div className="flex items-center gap-1.5 text-xs text-gray-400">
+            <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            <span className="text-gray-500">app.taskflow.com</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="w-full bg-background">
+        {children}
+      </div>
+    </div>
+  );
+}
+
 interface FeatureRowProps {
   eyebrow: string;
   title: string;
   body: string;
-  visual: React.ReactNode;
+  imageSrc: string;
+  imageAlt: string;
   reversed?: boolean;
 }
 
-function FeatureRow({ eyebrow, title, body, visual, reversed }: FeatureRowProps) {
+function FeatureRow({ eyebrow, title, body, imageSrc, imageAlt, reversed }: FeatureRowProps) {
   const { ref, isRevealed } = useScrollReveal<HTMLDivElement>();
 
   return (
@@ -26,111 +62,22 @@ function FeatureRow({ eyebrow, title, body, visual, reversed }: FeatureRowProps)
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand">
           {eyebrow}
         </p>
-        <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-extrabold leading-tight tracking-[-0.02em] text-foreground">
+        <h2 className="text-[clamp(1.75rem,4vw,2.75rem)] font-extrabold leading-tight tracking-[-0.02em] text-foreground">
           {title}
         </h2>
         <p className="max-w-prose text-base leading-relaxed text-muted-foreground">
           {body}
         </p>
       </div>
-      <div className={cn("overflow-hidden rounded-xl border border-white/[0.08] bg-card", reversed && "lg:order-1")}>
-        {visual}
-      </div>
-    </div>
-  );
-}
-
-function FakeTaskForm() {
-  return (
-    <div className="p-5 md:p-6">
-      <div className="mb-4 h-5 w-32 rounded bg-[#1a1a1a]" />
-      <div className="space-y-3">
-        <div>
-          <div className="mb-1.5 h-3 w-12 rounded bg-[#1a1a1a]" />
-          <div className="h-9 w-full rounded-md bg-[#1a1a1a]" />
-        </div>
-        <div>
-          <div className="mb-1.5 h-3 w-16 rounded bg-[#1a1a1a]" />
-          <div className="h-9 w-full rounded-md bg-[#1a1a1a]" />
-        </div>
-        <div className="flex gap-3">
-          <div className="flex-1">
-            <div className="mb-1.5 h-3 w-14 rounded bg-[#1a1a1a]" />
-            <div className="h-9 w-full rounded-md bg-[#1a1a1a]" />
-          </div>
-          <div className="flex-1">
-            <div className="mb-1.5 h-3 w-12 rounded bg-[#1a1a1a]" />
-            <div className="h-9 w-full rounded-md bg-[#1a1a1a]" />
-          </div>
-        </div>
-        <div className="pt-2">
-          <div className="h-9 w-28 rounded-md bg-brand/20" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FakeFilteredList() {
-  return (
-    <div className="p-5 md:p-6">
-      <div className="mb-4 flex items-center gap-2">
-        <div className="h-8 flex-1 rounded-md bg-[#1a1a1a]" />
-        <div className="h-8 w-24 rounded-md bg-[#1a1a1a]" />
-        <div className="h-8 w-20 rounded-md bg-brand/20" />
-      </div>
-      <div className="space-y-2">
-        {[...Array(4)].map((_, i) => (
-          <div
-            key={i}
-            className="flex items-center gap-3 rounded-lg border border-white/[0.06] bg-background p-3"
-          >
-            <div className="h-4 w-4 rounded-sm border border-white/20" />
-            <div className="flex-1">
-              <div className="mb-1.5 h-3 w-3/4 max-w-[240px] rounded bg-[#1a1a1a]" />
-              <div className="flex gap-2">
-                <div className="h-5 w-14 rounded-full bg-brand/15" />
-                <div className="h-5 w-16 rounded-full bg-[#1a1a1a]" />
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function FakeDashboardStats() {
-  return (
-    <div className="p-5 md:p-6">
-      <div className="mb-4 h-5 w-32 rounded bg-[#1a1a1a]" />
-      <div className="mb-6 grid grid-cols-2 gap-3">
-        {[...Array(4)].map((_, i) => (
-          <div
-            key={i}
-            className="rounded-lg border border-white/[0.06] bg-background p-3 md:p-4"
-          >
-            <div className="mb-2 h-3 w-16 rounded bg-[#1a1a1a]" />
-            <div className="h-6 w-8 rounded bg-[#1a1a1a]" />
-          </div>
-        ))}
-      </div>
-      <div className="space-y-2">
-        {[...Array(3)].map((_, i) => (
-          <div
-            key={i}
-            className="flex items-center gap-3 rounded-lg border border-white/[0.06] bg-background p-3"
-          >
-            <div className="h-4 w-4 rounded-sm border border-white/20" />
-            <div className="flex-1">
-              <div className="mb-1.5 h-3 w-3/4 max-w-[240px] rounded bg-[#1a1a1a]" />
-              <div className="flex gap-2">
-                <div className="h-5 w-14 rounded-full bg-brand/15" />
-                <div className="h-5 w-16 rounded-full bg-[#1a1a1a]" />
-              </div>
-            </div>
-          </div>
-        ))}
+      <div className={cn(reversed && "lg:order-1")}>
+        <MacBrowserFrame>
+          <img
+            src={imageSrc}
+            alt={imageAlt}
+            className="w-full h-auto"
+            loading="lazy"
+          />
+        </MacBrowserFrame>
       </div>
     </div>
   );
@@ -142,21 +89,24 @@ export function FeaturesSection() {
       eyebrow: "Capture",
       title: "Every task, instantly.",
       body: "Type a title, set a priority, pick a due date. Done. TaskFlow stays out of your way so you can stay in yours.",
-      visual: <FakeTaskForm />,
+      imageSrc: "/tasks-list.png",
+      imageAlt: "TaskFlow task list showing captured tasks",
       reversed: false,
     },
     {
       eyebrow: "Organize",
       title: "Categories that actually work.",
       body: "Create your own categories with custom colors. Filter, group, and sort until the view matches how you think.",
-      visual: <FakeFilteredList />,
+      imageSrc: "/categories.png",
+      imageAlt: "TaskFlow categories page showing custom color-coded categories",
       reversed: true,
     },
     {
       eyebrow: "Focus",
       title: "Your dashboard, your signal.",
       body: "Overdue tasks, due today, high priority — surfaced the moment you log in. No noise, no setup.",
-      visual: <FakeDashboardStats />,
+      imageSrc: "/dashboard-screenshot.png",
+      imageAlt: "TaskFlow dashboard showing metrics and priority overview",
       reversed: false,
     },
   ];
