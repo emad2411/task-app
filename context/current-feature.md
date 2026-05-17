@@ -2,21 +2,38 @@
 
 ## Status
 
-Not Started
+Complete
 
 ## Feature
 
-<!-- Feature name, e.g., P5-F4: App Shell Redesign -->
+Settings Page Brand Alignment Redesign
 
 ## Goals
 
-<!-- Define feature goals as checklist items -->
-- [ ] 
+- [x] Redesign settings page shell to match dashboard layout patterns
+- [x] Refactor tab navigation with brand green accent colors
+- [x] Add icons to all settings tabs (Profile, Security, Appearance, Preferences)
+- [x] Flatten shadcn Card components into clean panel structure
+- [x] Apply brand green (#18E299) to active states, icons, and CTA buttons
+- [x] Ensure all buttons use shadcn Button with brand-aligned styling
+- [x] Maintain full functionality and accessibility
+- [x] Pass build, lint, and all tests
 
 ## Notes
 
-<!-- Add constraints, dependencies, and context -->
--
+Design follows TaskFlow brand principles:
+- Restrained color strategy: tinted neutrals + brand green (≤10% surface)
+- Flat panels replacing cards per "cards are the lazy answer" principle
+- Dark-first theme (#0d0d0d background)
+- Raycast-influenced: sharp, confident, editorial
+- All interactive elements maintain WCAG AAA compliance
+
+Technical approach:
+- Used semantic HTML `<section>` and `<header>` elements
+- Tailwind CSS for all styling with explicit brand hex values
+- shadcn/ui Button component with custom brand color classes
+- Icons from lucide-react
+- Preserved all form logic, validation, and server actions
 
 ## History
 
@@ -55,3 +72,4 @@ Not Started
 - **Task Page Redesign (P5-F5)** (2026-05-14) - Redesigned `/tasks` page filters and task list. Replaced 7-inline-Select filter layout with collapsed Popover + inline filter chips. Replaced vertical card list with HTML table (7 columns: checkbox, title, status, priority, category, due, created). Created StatusBadge and PriorityBadge pill components. Created TaskRow (table row) replacing TaskItem (card). Created GroupedTaskList client component for collapsible group sections. Adapted TaskGroupHeader for table context (colSpan row). Updated TaskSkeleton to match table structure. Deleted filter-chips.tsx and task-item.tsx. Responsive: table collapses on mobile (hidden columns, inline status/priority badges), filter Popover becomes bottom Sheet Drawer. Table styled with rounded border matching dashboard. Removed duplicate CreateTaskDialog from page (already in TopBar). Build and lint pass with zero errors.
 - **Task Detail Page Redesign (P5-F6)** (2026-05-16) - Redesigned `/tasks/[taskId]` detail page with two-column layout and inline editing. Created reusable inline edit components (`inline-edit.tsx`) using shadcn Input, Textarea, Select with zod validation: InlineTitleEdit, InlineDescriptionEdit, InlineStatusEdit, InlinePriorityEdit, InlineDueDateEdit, InlineCategoryEdit. Created TaskActivityTimeline component derived from task timestamps. Left column: inline-editable title, view-only status/priority badges, inline-editable description, activity timeline. Right sidebar: editable due date, category, status, priority, timestamps, and action buttons (mark complete with brand green, archive, delete). Keyboard shortcuts hook created but removed from UI. All edits call `updateTaskAction` with zod-validated fields. Build and lint pass with zero errors.
 - **Categories Page Redesign (P5-F7)** (2026-05-16) - Redesigned `/categories` page from card grid to brand-infused row list. Replaced card-wrapped category items with clean rows (colored dot, name link to `/tasks?category=<id>`, task count, hover-reveal edit/delete actions). Stripped nested `<main>`, `min-h-screen`, and card wrapper from page shell. Rebuilt skeleton and loading states to match row shape. Polished dialogs: removed emoji from delete warning, sharpened copy ("Keep" instead of "Cancel"), streamlined edit description to "Rename or change the color." Brand green CTA button with shadcn Button component. Responsive: actions always visible on touch, hover reveal on desktop via `group-hover:opacity-100`. Build and lint pass with zero errors.
+- **Settings Page Brand Alignment Redesign** (2026-05-17) - Aligned `/settings` page with TaskFlow brand personality. Updated page shell to match dashboard layout (`space-y-10`, `font-semibold` title). Refactored `settings-tabs.tsx` with icons (User, Lock, Palette, SlidersHorizontal) and brand green active states (`bg-[#18E299]/10`, `text-[#18E299]`). Flattened all four form cards (`profile-form.tsx`, `security-form.tsx`, `appearance-form.tsx`, `preferences-form.tsx`) into clean panel sections with `rounded-lg border bg-card`. Added brand-tinted icons to all panel headers. Theme tiles now use brand green for selection (`border-[#18E299]`, `ring-[#18E299]/20`). All submit buttons use shadcn Button with brand green styling (`bg-[#18E299]`, `text-[#0d0d0d]`, `hover:bg-[#0fa76e]`). Build passes with zero errors, 259 tests pass.

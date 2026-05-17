@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { User, Lock, Palette, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ProfileForm } from "./profile-form";
 import { SecurityForm } from "./security-form";
@@ -28,13 +29,14 @@ interface SettingsTabsProps {
 interface NavItem {
   id: string;
   label: string;
+  icon: React.ComponentType<{ className?: string }>;
 }
 
 const navItems: NavItem[] = [
-  { id: "profile", label: "Profile" },
-  { id: "security", label: "Security" },
-  { id: "appearance", label: "Appearance" },
-  { id: "preferences", label: "Preferences" },
+  { id: "profile", label: "Profile", icon: User },
+  { id: "security", label: "Security", icon: Lock },
+  { id: "appearance", label: "Appearance", icon: Palette },
+  { id: "preferences", label: "Preferences", icon: SlidersHorizontal },
 ];
 
 /**
@@ -54,60 +56,68 @@ export function SettingsTabs({
   const [activeTab, setActiveTab] = useState("profile");
 
   return (
-    <div className="flex flex-col lg:flex-row lg:gap-8">
+    <div className="flex flex-col lg:flex-row lg:gap-10">
       {/* Mobile: horizontal scrollable tabs */}
       <nav
         className="lg:hidden mb-6 -mx-4 px-4 overflow-x-auto scrollbar-hide"
         aria-label="Settings sections"
       >
-        <div className="flex gap-1 min-w-max border-b pb-px">
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => setActiveTab(item.id)}
-              className={cn(
-                "relative px-4 h-11 text-sm font-medium transition-colors rounded-t-md flex items-center",
-                activeTab === item.id
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {item.label}
-              {activeTab === item.id && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
-              )}
-            </button>
-          ))}
+        <div className="flex gap-1 min-w-max border-b border-border pb-px">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setActiveTab(item.id)}
+                className={cn(
+                  "relative px-4 h-11 text-sm font-medium transition-colors rounded-t-md flex items-center gap-2",
+                  activeTab === item.id
+                    ? "text-[#18E299]"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <Icon className="h-4 w-4" />
+                {item.label}
+                {activeTab === item.id && (
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#18E299] rounded-full" />
+                )}
+              </button>
+            );
+          })}
         </div>
       </nav>
 
       {/* Desktop: sidebar tabs on the left */}
       <nav
-        className="hidden lg:block w-48 shrink-0"
+        className="hidden lg:block w-56 shrink-0"
         aria-label="Settings sections"
       >
-        <div className="sticky top-6 space-y-1">
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => setActiveTab(item.id)}
-              className={cn(
-                "w-full text-left px-3 py-2 text-sm font-medium rounded-md transition-colors",
-                activeTab === item.id
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}
-            >
-              {item.label}
-            </button>
-          ))}
+        <div className="sticky top-6 space-y-0.5">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setActiveTab(item.id)}
+                className={cn(
+                  "w-full text-left px-3 py-2 text-sm font-medium rounded-md transition-colors flex items-center gap-3",
+                  activeTab === item.id
+                    ? "bg-[#18E299]/10 text-[#18E299]"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                )}
+              >
+                <Icon className="h-4 w-4" />
+                {item.label}
+              </button>
+            );
+          })}
         </div>
       </nav>
 
       {/* Content area */}
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 space-y-6">
         {activeTab === "profile" && <ProfileForm defaultName={defaultName} />}
         {activeTab === "security" && <SecurityForm />}
         {activeTab === "appearance" && (

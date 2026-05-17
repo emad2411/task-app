@@ -5,7 +5,7 @@ import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { Sun, Moon, Monitor, Loader2, Palette } from "lucide-react";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
 import { cn } from "@/lib/utils";
 import { updatePreferencesAction } from "@/lib/actions/settings";
 
@@ -83,17 +83,17 @@ export function AppearanceForm({ defaultTheme }: AppearanceFormProps) {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <Palette className="h-5 w-5 text-muted-foreground" />
-          <CardTitle className="text-lg font-semibold">Appearance</CardTitle>
+    <section className="rounded-lg border bg-card">
+      <header className="flex items-center gap-3 px-6 py-4 border-b">
+        <Palette className="h-5 w-5 text-[#18E299]" />
+        <div>
+          <h2 className="text-base font-semibold">Appearance</h2>
+          <p className="text-sm text-muted-foreground">
+            Choose your preferred theme
+          </p>
         </div>
-        <CardDescription className="text-sm text-muted-foreground">
-          Choose your preferred theme
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+      </header>
+      <div className="px-6 py-5">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {themes.map((t) => {
             const Icon = t.icon;
@@ -108,7 +108,7 @@ export function AppearanceForm({ defaultTheme }: AppearanceFormProps) {
                 className={cn(
                   "relative flex flex-col items-center gap-3 rounded-lg border p-4 text-center transition-colors cursor-pointer",
                   isSelected
-                    ? "border-primary ring-2 ring-primary/20"
+                    ? "border-[#18E299] ring-2 ring-[#18E299]/20"
                     : "border-border hover:border-muted-foreground/50"
                 )}
                 aria-pressed={isSelected}
@@ -122,14 +122,14 @@ export function AppearanceForm({ defaultTheme }: AppearanceFormProps) {
                 </div>
                 {isPending && isSelected && (
                   <div className="absolute inset-0 flex items-center justify-center bg-background/60 rounded-lg">
-                    <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                    <Loader2 className="h-5 w-5 animate-spin text-[#18E299]" />
                   </div>
                 )}
               </button>
             );
           })}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }

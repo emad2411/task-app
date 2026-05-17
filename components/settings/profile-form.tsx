@@ -15,7 +15,7 @@ import {
   FieldError,
   FieldGroup,
 } from "@/components/ui/field";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
 import {
   updateProfileSchema,
   type UpdateProfileInput,
@@ -76,24 +76,24 @@ export function ProfileForm({ defaultName }: ProfileFormProps) {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <User className="h-5 w-5 text-muted-foreground" />
-          <CardTitle className="text-lg font-semibold">Profile</CardTitle>
+    <section className="rounded-lg border bg-card">
+      <header className="flex items-center gap-3 px-6 py-4 border-b">
+        <User className="h-5 w-5 text-[#18E299]" />
+        <div>
+          <h2 className="text-base font-semibold">Profile</h2>
+          <p className="text-sm text-muted-foreground">
+            Update your public display name
+          </p>
         </div>
-        <CardDescription className="text-sm text-muted-foreground">
-          Update your public display name
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+      </header>
+      <div className="px-6 py-5">
         <form
           id="profile-form"
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-4"
         >
           {form.formState.errors.root && (
-            <div className="p-3 text-sm font-medium bg-destructive/15 text-destructive rounded-md">
+            <div className="p-3 text-sm font-medium bg-destructive/10 text-destructive rounded-md border border-destructive/20">
               {form.formState.errors.root.message}
             </div>
           )}
@@ -123,7 +123,12 @@ export function ProfileForm({ defaultName }: ProfileFormProps) {
           </FieldGroup>
 
           <div className="flex justify-end pt-2">
-            <Button type="submit" form="profile-form" disabled={isPending}>
+            <Button 
+              type="submit" 
+              form="profile-form" 
+              disabled={isPending}
+              className="bg-[#18E299] text-[#0d0d0d] hover:bg-[#0fa76e] font-semibold"
+            >
               {isPending && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
@@ -131,7 +136,7 @@ export function ProfileForm({ defaultName }: ProfileFormProps) {
             </Button>
           </div>
         </form>
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }
