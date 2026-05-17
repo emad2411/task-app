@@ -2,38 +2,21 @@
 
 ## Status
 
-Complete
+Not Started
 
 ## Feature
 
-Settings Page Brand Alignment Redesign
+<!-- Feature name, e.g., P5-F4: App Shell Redesign -->
 
 ## Goals
 
-- [x] Redesign settings page shell to match dashboard layout patterns
-- [x] Refactor tab navigation with brand green accent colors
-- [x] Add icons to all settings tabs (Profile, Security, Appearance, Preferences)
-- [x] Flatten shadcn Card components into clean panel structure
-- [x] Apply brand green (#18E299) to active states, icons, and CTA buttons
-- [x] Ensure all buttons use shadcn Button with brand-aligned styling
-- [x] Maintain full functionality and accessibility
-- [x] Pass build, lint, and all tests
+<!-- Define feature goals as checklist items -->
+- [ ] 
 
 ## Notes
 
-Design follows TaskFlow brand principles:
-- Restrained color strategy: tinted neutrals + brand green (≤10% surface)
-- Flat panels replacing cards per "cards are the lazy answer" principle
-- Dark-first theme (#0d0d0d background)
-- Raycast-influenced: sharp, confident, editorial
-- All interactive elements maintain WCAG AAA compliance
-
-Technical approach:
-- Used semantic HTML `<section>` and `<header>` elements
-- Tailwind CSS for all styling with explicit brand hex values
-- shadcn/ui Button component with custom brand color classes
-- Icons from lucide-react
-- Preserved all form logic, validation, and server actions
+<!-- Add constraints, dependencies, and context -->
+-
 
 ## History
 
