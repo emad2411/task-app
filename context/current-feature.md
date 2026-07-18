@@ -2,7 +2,7 @@
 
 ## Status
 
-In Progress
+Complete
 
 ## Feature
 
@@ -10,9 +10,9 @@ P6-F1: Dashboard Active Status Correctness
 
 ## Goals
 
-- [ ] Include `todo` and `in_progress` tasks in every active dashboard query.
-- [ ] Add focused active-status regression coverage.
-- [ ] Pass tests, lint, build, and in-progress-only browser verification.
+- [x] Include `todo` and `in_progress` tasks in every active dashboard query.
+- [x] Add focused active-status regression coverage.
+- [x] Pass tests, lint, build, and in-progress-only browser verification.
 
 ## Notes
 
