@@ -35,8 +35,18 @@ interface MockTask {
   priority: string;
   dueDate: string | null;
   completedAt: string | null;
-  createdAt: string;
-  updatedAt: string;
+}
+
+/**
+ * Compute a Date relative to now. `daysOffset` can be negative (past) or
+ * positive (future). Times are anchored to 09:00 local to keep behaviour
+ * predictable and avoid all-day tasks landing at midnight.
+ */
+function relativeDate(daysOffset: number, hour = 9, minute = 0): Date {
+  const d = new Date();
+  d.setDate(d.getDate() + daysOffset);
+  d.setHours(hour, minute, 0, 0);
+  return d;
 }
 
 async function seed() {
@@ -46,11 +56,6 @@ async function seed() {
 
   console.log("Seeding database...");
 
-  function parseDate(dateStr: string | null): Date | null {
-    if (!dateStr) return null;
-    return new Date(dateStr);
-  }
-
   // Verify target user exists
   const existingUser = await db.select().from(users).where(eq(users.id, TARGET_USER_ID)).limit(1);
   if (existingUser.length === 0) {
@@ -58,6 +63,16 @@ async function seed() {
     process.exit(1);
   }
   console.log(`Using existing user: ${existingUser[0].name} (${TARGET_USER_ID})`);
+
+  // Clear any existing data for this user so the seed is idempotent
+  await db.delete(tasks).where(eq(tasks.userId, TARGET_USER_ID));
+  await db.delete(categories).where(eq(categories.userId, TARGET_USER_ID));
+  await db.delete(userPreferences).where(eq(userPreferences.userId, TARGET_USER_ID));
+  console.log("Cleared existing tasks, categories and preferences for user");
+
+  const now = new Date();
+  const createdAt = now;
+  const updatedAt = now;
 
   // Map category IDs to new UUIDs
   const categoryIdMap = new Map<string, string>();
@@ -72,8 +87,8 @@ async function seed() {
     userId: TARGET_USER_ID,
     name: cat.name,
     color: cat.color,
-    createdAt: parseDate(cat.createdAt)!,
-    updatedAt: parseDate(cat.updatedAt)!,
+    createdAt,
+    updatedAt,
   }));
 
   if (categoriesToInsert.length > 0) {
@@ -81,20 +96,48 @@ async function seed() {
     console.log(`Inserted ${categoriesToInsert.length} categories`);
   }
 
+  // Build a per-task date plan relative to today so the dashboard reflects a
+  // realistic spread of overdue / due-soon / completed items. Each entry maps
+  // a task index to { dueInDays, completedInDays | null }.
+  const taskDatePlan: { dueInDays: number | null; completedInDays: number | null }[] = mockData.tasks.map(
+    (task: MockTask) => {
+      const isDone = task.status === "done" || task.status === "archived";
+      const due = task.dueDate ? new Date(task.dueDate) : null;
+      const completed = task.completedAt ? new Date(task.completedAt) : null;
+      // Reference point: the original due date relative to the original
+      // "now" (2026-05-12). Use that offset so relative spacing is preserved.
+      const refNow = new Date("2026-05-12T00:00:00.000Z");
+      const dueInDays = due
+        ? Math.round((due.getTime() - refNow.getTime()) / (1000 * 60 * 60 * 24))
+        : null;
+      const completedInDays = completed
+        ? Math.round((completed.getTime() - refNow.getTime()) / (1000 * 60 * 60 * 24))
+        : null;
+      // Completed/archived items always get a concrete completedAt in the past.
+      const completedOffset = isDone
+        ? completedInDays ?? -2
+        : null;
+      return { dueInDays, completedInDays: completedOffset };
+    }
+  );
+
   // Insert tasks with proper UUIDs and mapped category IDs for target user
-  const tasksToInsert = mockData.tasks.map((task: MockTask) => ({
-    id: randomUUID(),
-    userId: TARGET_USER_ID,
-    categoryId: task.categoryId ? categoryIdMap.get(task.categoryId) ?? null : null,
-    title: task.title,
-    description: task.description,
-    status: task.status as "todo" | "in_progress" | "done" | "archived",
-    priority: task.priority as "low" | "medium" | "high",
-    dueDate: parseDate(task.dueDate),
-    completedAt: parseDate(task.completedAt),
-    createdAt: parseDate(task.createdAt)!,
-    updatedAt: parseDate(task.updatedAt)!,
-  }));
+  const tasksToInsert = mockData.tasks.map((task: MockTask, idx: number) => {
+    const plan = taskDatePlan[idx];
+    return {
+      id: randomUUID(),
+      userId: TARGET_USER_ID,
+      categoryId: task.categoryId ? categoryIdMap.get(task.categoryId) ?? null : null,
+      title: task.title,
+      description: task.description,
+      status: task.status as "todo" | "in_progress" | "done" | "archived",
+      priority: task.priority as "low" | "medium" | "high",
+      dueDate: plan.dueInDays === null ? null : relativeDate(plan.dueInDays, 17),
+      completedAt: plan.completedInDays === null ? null : relativeDate(plan.completedInDays, 16),
+      createdAt,
+      updatedAt,
+    };
+  });
 
   if (tasksToInsert.length > 0) {
     await db.insert(tasks).values(tasksToInsert);
@@ -110,8 +153,8 @@ async function seed() {
     timezone: prefsData.timezone,
     dateFormat: prefsData.dateFormat,
     defaultTaskSort: prefsData.defaultTaskSort,
-    createdAt: parseDate(prefsData.createdAt)!,
-    updatedAt: parseDate(prefsData.updatedAt)!,
+    createdAt: now,
+    updatedAt: now,
   }).onConflictDoUpdate({
     target: userPreferences.userId,
     set: {

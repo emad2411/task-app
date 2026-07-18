@@ -1,8 +1,14 @@
 import { cacheTag, cacheLife } from "next/cache";
-import { eq, and, count, gte, lt, asc, sql } from "drizzle-orm";
+import { eq, and, count, gte, lt, asc, sql, inArray } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { tasks, userPreferences, categories } from "@/lib/db/schema";
-import { TaskPriority, TaskStatus } from "@/lib/db/schema";
+import type { TaskPriority, TaskStatus } from "@/lib/db/schema";
+
+const ACTIVE_TASK_STATUSES = ["todo", "in_progress"] satisfies TaskStatus[];
+
+function activeTaskStatusCondition() {
+  return inArray(tasks.status, ACTIVE_TASK_STATUSES);
+}
 import {
   getStartOfTodayInTimezone,
   getEndOfTodayInTimezone,
@@ -136,10 +142,10 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
   // This reduces 4 database round trips to 1.
   const [statsResult] = await db
     .select({
-      dueToday: sql<number>`coalesce(sum(case when ${tasks.status} = 'todo' and ${tasks.dueDate} >= ${todayStart} and ${tasks.dueDate} < ${todayEnd} then 1 else 0 end), 0)`.mapWith(Number),
-      overdue: sql<number>`coalesce(sum(case when ${tasks.status} = 'todo' and ${tasks.dueDate} < ${todayStart} and ${tasks.completedAt} is null then 1 else 0 end), 0)`.mapWith(Number),
+      dueToday: sql<number>`coalesce(sum(case when ${activeTaskStatusCondition()} and ${tasks.dueDate} >= ${todayStart} and ${tasks.dueDate} < ${todayEnd} then 1 else 0 end), 0)`.mapWith(Number),
+      overdue: sql<number>`coalesce(sum(case when ${activeTaskStatusCondition()} and ${tasks.dueDate} < ${todayStart} and ${tasks.completedAt} is null then 1 else 0 end), 0)`.mapWith(Number),
       completedToday: sql<number>`coalesce(sum(case when ${tasks.completedAt} >= ${todayStart} and ${tasks.completedAt} < ${todayEnd} then 1 else 0 end), 0)`.mapWith(Number),
-      totalActive: sql<number>`coalesce(sum(case when ${tasks.status} = 'todo' then 1 else 0 end), 0)`.mapWith(Number),
+      totalActive: sql<number>`coalesce(sum(case when ${activeTaskStatusCondition()} then 1 else 0 end), 0)`.mapWith(Number),
     })
     .from(tasks)
     .where(eq(tasks.userId, userId));
@@ -159,7 +165,7 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
     .where(
       and(
         eq(tasks.userId, userId),
-        eq(tasks.status, "todo")
+        activeTaskStatusCondition()
       )
     )
     .groupBy(tasks.priority);
@@ -181,7 +187,7 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
   const upcomingTasksResult = await db.query.tasks.findMany({
     where: and(
       eq(tasks.userId, userId),
-      eq(tasks.status, "todo"),                    // Only active tasks
+      activeTaskStatusCondition(),                 // Only active tasks
       gte(tasks.dueDate, todayStart),              // Due >= today
       lt(tasks.dueDate, upcomingThreshold)         // Due < 7 days from now
     ),
@@ -329,7 +335,7 @@ export async function getCategoryBreakdown(
       and(
         eq(tasks.categoryId, categories.id),
         eq(tasks.userId, userId),
-        eq(tasks.status, "todo")
+        activeTaskStatusCondition()
       )
     )
     .where(eq(categories.userId, userId))
@@ -344,7 +350,7 @@ export async function getCategoryBreakdown(
     .where(
       and(
         eq(tasks.userId, userId),
-        eq(tasks.status, "todo"),
+        activeTaskStatusCondition(),
         sql`${tasks.categoryId} is null`
       )
     );

@@ -2,21 +2,23 @@
 
 ## Status
 
-Not Started
+Complete
 
 ## Feature
 
-<!-- Feature name, e.g., P5-F4: App Shell Redesign -->
+P6-F1: Dashboard Active Status Correctness
 
 ## Goals
 
-<!-- Define feature goals as checklist items -->
-- [ ]
+- [x] Include `todo` and `in_progress` tasks in every active dashboard query.
+- [x] Add focused active-status regression coverage.
+- [x] Pass tests, lint, build, and in-progress-only browser verification.
 
 ## Notes
 
-<!-- Add constraints, dependencies, and context -->
--
+- Source: `code-review-2026-07-17.md`, blocker #1.
+- Plan: `context/features/phase-6/01-dashboard-active-status/FEATURE.md`.
+- Branch: `fix/P6-F1-dashboard-active-status`.
 
 ## History
 
