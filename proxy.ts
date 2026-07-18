@@ -46,7 +46,12 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 1. Skip static assets — no rate limiting, no auth check
-  if (STATIC_PATHS.some((path) => pathname.startsWith(path))) {
+  if (
+    STATIC_PATHS.some((path) => pathname.startsWith(path)) ||
+    // Root-level public files (e.g. /og-image.png, /dashboard-screenshot.png)
+    // served from the project's public/ directory.
+    /^\/[^/]*\.[a-z0-9]+$/i.test(pathname)
+  ) {
     return NextResponse.next();
   }
 
@@ -99,5 +104,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next|favicon|icons|images|fonts).*)"],
+  matcher: ["/((?!_next|favicon|icons|images|fonts|.*\\.[a-z0-9]+$).*)"],
 };

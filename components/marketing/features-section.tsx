@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { cn } from "@/lib/utils";
 
@@ -71,9 +73,11 @@ function FeatureRow({ eyebrow, title, body, imageSrc, imageAlt, reversed }: Feat
       </div>
       <div className={cn(reversed && "lg:order-1")}>
         <MacBrowserFrame>
-          <img
+          <Image
             src={imageSrc}
             alt={imageAlt}
+            width={1200}
+            height={800}
             className="w-full h-auto"
             loading="lazy"
           />

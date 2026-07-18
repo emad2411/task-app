@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export function DashboardPreview() {
   return (
     <div
@@ -36,11 +38,13 @@ export function DashboardPreview() {
 
         {/* Real dashboard screenshot */}
         <div className="w-full bg-background">
-          <img
+          <Image
             src="/dashboard-screenshot.png"
             alt="TaskFlow Dashboard showing metrics, charts, and task list"
+            width={1200}
+            height={800}
             className="w-full h-auto object-cover object-top"
-            loading="eager"
+            priority
           />
         </div>
       </div>
