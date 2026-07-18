@@ -1,0 +1,12 @@
+C:\Users\Emad.LAPTOP-C995LHVB\Desktop\task-app\.agents\skills\impeccable\reference\adapt.md
+C:\Users\Emad.LAPTOP-C995LHVB\Desktop\task-app\context\features\phase-3\01-user-settings-preferences\FEATURE.md
+C:\Users\Emad.LAPTOP-C995LHVB\Desktop\task-app\context\features\phase-3\02-improve-states\FEATURE.md
+C:\Users\Emad.LAPTOP-C995LHVB\Desktop\task-app\context\features\phase-3\03-responsive-refinements\FEATURE.md
+C:\Users\Emad.LAPTOP-C995LHVB\Desktop\task-app\context\features\phase-3\04-test-coverage\FEATURE.md
+C:\Users\Emad.LAPTOP-C995LHVB\Desktop\task-app\context\features\phase-3\05-caching-optimistic-filters\FEATURE.md
+C:\Users\Emad.LAPTOP-C995LHVB\Desktop\task-app\context\features\phase-3\06-app-shell-redesign\FEATURE.md
+C:\Users\Emad.LAPTOP-C995LHVB\Desktop\task-app\context\features\phase-4\01-security-review-blockers\FEATURE.md
+C:\Users\Emad.LAPTOP-C995LHVB\Desktop\task-app\context\features\phase-4\01a-input-sanitization-data-integrity\FEATURE.md
+C:\Users\Emad.LAPTOP-C995LHVB\Desktop\task-app\context\features\phase-4\01b-error-sanitization-logging\FEATURE.md
+C:\Users\Emad.LAPTOP-C995LHVB\Desktop\task-app\context\features\phase-6\01-dashboard-active-status\FEATURE.md
+C:\Users\Emad.LAPTOP-C995LHVB\Desktop\task-app\context\features\phase-6\TASKS.md
