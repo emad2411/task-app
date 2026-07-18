@@ -2,23 +2,19 @@
 
 ## Status
 
-Complete
+Not Started
 
 ## Feature
 
-P6-F1: Dashboard Active Status Correctness
+
 
 ## Goals
 
-- [x] Include `todo` and `in_progress` tasks in every active dashboard query.
-- [x] Add focused active-status regression coverage.
-- [x] Pass tests, lint, build, and in-progress-only browser verification.
+
 
 ## Notes
 
-- Source: `code-review-2026-07-17.md`, blocker #1.
-- Plan: `context/features/phase-6/01-dashboard-active-status/FEATURE.md`.
-- Branch: `fix/P6-F1-dashboard-active-status`.
+
 
 ## History
 
@@ -59,3 +55,4 @@ P6-F1: Dashboard Active Status Correctness
 - **Categories Page Redesign (P5-F7)** (2026-05-16) - Redesigned `/categories` page from card grid to brand-infused row list. Replaced card-wrapped category items with clean rows (colored dot, name link to `/tasks?category=<id>`, task count, hover-reveal edit/delete actions). Stripped nested `<main>`, `min-h-screen`, and card wrapper from page shell. Rebuilt skeleton and loading states to match row shape. Polished dialogs: removed emoji from delete warning, sharpened copy ("Keep" instead of "Cancel"), streamlined edit description to "Rename or change the color." Brand green CTA button with shadcn Button component. Responsive: actions always visible on touch, hover reveal on desktop via `group-hover:opacity-100`. Build and lint pass with zero errors.
 - **Settings Page Brand Alignment Redesign** (2026-05-17) - Aligned `/settings` page with TaskFlow brand personality. Updated page shell to match dashboard layout (`space-y-10`, `font-semibold` title). Refactored `settings-tabs.tsx` with icons (User, Lock, Palette, SlidersHorizontal) and brand green active states (`bg-[#18E299]/10`, `text-[#18E299]`). Flattened all four form cards (`profile-form.tsx`, `security-form.tsx`, `appearance-form.tsx`, `preferences-form.tsx`) into clean panel sections with `rounded-lg border bg-card`. Added brand-tinted icons to all panel headers. Theme tiles now use brand green for selection (`border-[#18E299]`, `ring-[#18E299]/20`). All submit buttons use shadcn Button with brand green styling (`bg-[#18E299]`, `text-[#0d0d0d]`, `hover:bg-[#0fa76e]`). Build passes with zero errors, 259 tests pass.
 - **Landing Page Real Images & Auth-Aware CTAs** (2026-05-17) - Removed redirect blocking logged-in users from landing page, added session-aware CTAs showing "Go to Dashboard" for authenticated users, reduced hero spacing and font size, replaced all placeholder visuals with real app screenshots (dashboard, tasks list, categories), wrapped all images in macOS browser frame with traffic lights and address bar, generated demo data with 21+ tasks for rich dashboard visuals including weekly velocity bars and completion trends.
+- **P6-F1: Dashboard Active Status Correctness** (2026-07-18) - Fixed dashboard queries to consistently include `todo` and `in_progress` tasks via `ACTIVE_TASK_STATUSES` helper. Added focused regression tests. Restored `drizzle-kit` to `^0.31.10` for build compatibility. Restored and date-relative `scripts/seed.ts`. Build passes, 261 tests pass.
