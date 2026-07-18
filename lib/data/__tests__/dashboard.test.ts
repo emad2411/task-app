@@ -1,5 +1,22 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+const { mockInArray } = vi.hoisted(() => ({
+  mockInArray: vi.fn(),
+}));
+
+vi.mock("drizzle-orm", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("drizzle-orm")>();
+  const trackedInArray = ((column: unknown, values: unknown[]) => {
+    mockInArray(column, values);
+    return actual.inArray(column as never, values as never);
+  }) as typeof actual.inArray;
+
+  return {
+    ...actual,
+    inArray: trackedInArray,
+  };
+});
+
 const mockFindFirst = vi.fn();
 const mockFindMany = vi.fn();
 const mockGroupBy = vi.fn(() => Promise.resolve([]));
@@ -10,8 +27,16 @@ function makeWhereResult(overrides?: Partial<{ count: number }>) {
   return promise;
 }
 
+const mockOrderBy = vi.fn(() => Promise.resolve([]));
+const mockCategoryGroupBy = vi.fn(() => ({ orderBy: mockOrderBy }));
+const mockCategoryWhere = vi.fn(() => ({ groupBy: mockCategoryGroupBy }));
+const mockLeftJoin = vi.fn(() => ({ where: mockCategoryWhere }));
+
 const mockSelectWhere = vi.fn(() => makeWhereResult());
-const mockSelectFrom = vi.fn(() => ({ where: mockSelectWhere }));
+const mockSelectFrom = vi.fn(() => ({
+  where: mockSelectWhere,
+  leftJoin: mockLeftJoin,
+}));
 const mockSelect = vi.fn(() => ({ from: mockSelectFrom }));
 
 vi.mock("@/lib/db", () => ({
@@ -39,8 +64,14 @@ vi.mock("@/lib/db/schema", () => ({
     title: "title",
     categoryId: "categoryId",
   },
+  categories: {
+    id: "categoryId",
+    userId: "categoryUserId",
+    name: "categoryName",
+    color: "categoryColor",
+  },
   userPreferences: { userId: "userId" },
-  TaskStatus: { todo: "todo" },
+  TaskStatus: { todo: "todo", in_progress: "in_progress" },
   TaskPriority: { low: "low", medium: "medium", high: "high" },
 }));
 
@@ -50,7 +81,7 @@ vi.mock("@/lib/utils/date", () => ({
   getUpcomingThreshold: vi.fn(() => new Date("2026-05-04T00:00:00Z")),
 }));
 
-import { getDashboardData } from "../dashboard";
+import { getCategoryBreakdown, getDashboardData } from "../dashboard";
 
 describe("getDashboardData", () => {
   beforeEach(() => {
@@ -116,5 +147,31 @@ describe("getDashboardData", () => {
     expect(result.priorityDistribution.high).toBe(2);
     expect(result.priorityDistribution.medium).toBe(0);
     expect(result.priorityDistribution.low).toBe(5);
+  });
+
+  it("uses todo and in-progress statuses for every active dashboard query", async () => {
+    mockFindMany.mockResolvedValue([]);
+
+    await getDashboardData("user-123");
+
+    expect(mockInArray).toHaveBeenCalledTimes(5);
+    for (const [, statuses] of mockInArray.mock.calls) {
+      expect(statuses).toEqual(["todo", "in_progress"]);
+    }
+  });
+});
+
+describe("getCategoryBreakdown", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("uses todo and in-progress statuses for categorized and uncategorized counts", async () => {
+    await getCategoryBreakdown("user-123");
+
+    expect(mockInArray).toHaveBeenCalledTimes(2);
+    for (const [, statuses] of mockInArray.mock.calls) {
+      expect(statuses).toEqual(["todo", "in_progress"]);
+    }
   });
 });
