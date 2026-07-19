@@ -47,6 +47,11 @@ vi.mock("@/lib/db/schema", () => ({
   TaskPriority: { low: "low", medium: "medium", high: "high" },
 }));
 
+const mockGetUserTimezone = vi.fn().mockResolvedValue("UTC");
+vi.mock("@/lib/data/preferences", () => ({
+  getUserTimezone: (...args: unknown[]) => mockGetUserTimezone(...args),
+}));
+
 import {
   createTaskAction,
   updateTaskAction,
@@ -58,6 +63,7 @@ import {
 describe("createTaskAction", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockGetUserTimezone.mockResolvedValue("UTC");
   });
 
   it("should return error when user is not authenticated", async () => {
@@ -176,11 +182,47 @@ describe("createTaskAction", () => {
     expect(result.success).toBe(false);
     expect(result.error).toBe("Failed to create task. Please try again.");
   });
+
+  it("should convert dueDate using the user's timezone (America/New_York)", async () => {
+    mockGetCurrentUserId.mockResolvedValue("user-1");
+    mockGetUserTimezone.mockResolvedValue("America/New_York");
+    mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+    await createTaskAction({ title: "Task", dueDate: "2025-12-31T16:00" });
+
+    const values = mockValues.mock.calls[0][0];
+    expect(values.dueDate).toBeInstanceOf(Date);
+    // 16:00 NY (EST, UTC-5) = 21:00 UTC
+    expect((values.dueDate as Date).toISOString()).toBe("2025-12-31T21:00:00.000Z");
+  });
+
+  it("should store null dueDate when null is provided", async () => {
+    mockGetCurrentUserId.mockResolvedValue("user-1");
+    mockGetUserTimezone.mockResolvedValue("UTC");
+    mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+    await createTaskAction({ title: "Task", dueDate: null });
+
+    const values = mockValues.mock.calls[0][0];
+    expect(values.dueDate).toBeNull();
+  });
+
+  it("should store null categoryId when null is provided", async () => {
+    mockGetCurrentUserId.mockResolvedValue("user-1");
+    mockGetUserTimezone.mockResolvedValue("UTC");
+    mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+    await createTaskAction({ title: "Task", categoryId: null });
+
+    const values = mockValues.mock.calls[0][0];
+    expect(values.categoryId).toBeNull();
+  });
 });
 
 describe("updateTaskAction", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockGetUserTimezone.mockResolvedValue("UTC");
   });
 
   it("should return error when user is not authenticated", async () => {
@@ -308,6 +350,99 @@ describe("updateTaskAction", () => {
 
     const setCall = mockSet.mock.calls[0][0];
     expect(setCall.description).toBe("Notes");
+  });
+
+  it("should convert dueDate using the user's timezone on update (Asia/Tokyo)", async () => {
+    mockGetCurrentUserId.mockResolvedValue("user-1");
+    mockGetUserTimezone.mockResolvedValue("Asia/Tokyo");
+    mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+    await updateTaskAction({
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      dueDate: "2025-12-31T16:00",
+    });
+
+    const setCall = mockSet.mock.calls[0][0];
+    expect(setCall.dueDate).toBeInstanceOf(Date);
+    // 16:00 JST (UTC+9) = 07:00 UTC
+    expect((setCall.dueDate as Date).toISOString()).toBe("2025-12-31T07:00:00.000Z");
+  });
+
+  it("should clear dueDate when null is provided", async () => {
+    mockGetCurrentUserId.mockResolvedValue("user-1");
+    mockGetUserTimezone.mockResolvedValue("UTC");
+    mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+    await updateTaskAction({
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      dueDate: null,
+    });
+
+    const setCall = mockSet.mock.calls[0][0];
+    expect(setCall.dueDate).toBeNull();
+  });
+
+  it("should clear categoryId when null is provided", async () => {
+    mockGetCurrentUserId.mockResolvedValue("user-1");
+    mockGetUserTimezone.mockResolvedValue("UTC");
+    mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+    await updateTaskAction({
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      categoryId: null,
+    });
+
+    const setCall = mockSet.mock.calls[0][0];
+    expect(setCall.categoryId).toBeNull();
+  });
+
+  it("should leave dueDate unchanged when it is omitted", async () => {
+    mockGetCurrentUserId.mockResolvedValue("user-1");
+    mockGetUserTimezone.mockResolvedValue("UTC");
+    mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+    await updateTaskAction({
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      title: "Updated",
+    });
+
+    const setCall = mockSet.mock.calls[0][0];
+    expect(setCall.dueDate).toBeUndefined();
+    expect(setCall.categoryId).toBeUndefined();
+    expect(setCall.status).toBeUndefined();
+    expect(setCall.priority).toBeUndefined();
+    expect(setCall.description).toBeUndefined();
+    expect(setCall.title).toBe("Updated");
+    expect(setCall.updatedAt).toBeInstanceOf(Date);
+  });
+
+  it("should not reset status or priority to defaults when omitted", async () => {
+    mockGetCurrentUserId.mockResolvedValue("user-1");
+    mockGetUserTimezone.mockResolvedValue("UTC");
+    mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+    await updateTaskAction({
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      title: "Updated",
+    });
+
+    const setCall = mockSet.mock.calls[0][0];
+    expect(setCall).not.toHaveProperty("status");
+    expect(setCall).not.toHaveProperty("priority");
+  });
+
+  it("should set status when explicitly provided", async () => {
+    mockGetCurrentUserId.mockResolvedValue("user-1");
+    mockGetUserTimezone.mockResolvedValue("UTC");
+    mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+    await updateTaskAction({
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      status: "in_progress",
+    });
+
+    const setCall = mockSet.mock.calls[0][0];
+    expect(setCall.status).toBe("in_progress");
   });
 });
 

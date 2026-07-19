@@ -8,6 +8,8 @@ import { createTaskSchema, updateTaskSchema } from "@/lib/validation/task";
 import { getCurrentUserId } from "@/lib/auth/session";
 import { handleActionError } from "@/lib/utils/action-error";
 import { type ActionResult } from "@/lib/actions/types";
+import { getUserTimezone } from "@/lib/data/preferences";
+import { datetimeLocalToUtc } from "@/lib/utils/date";
 
 export async function createTaskAction(input: unknown): Promise<ActionResult> {
   try {
@@ -17,15 +19,16 @@ export async function createTaskAction(input: unknown): Promise<ActionResult> {
     }
 
     const validated = createTaskSchema.parse(input);
-    
+    const timezone = await getUserTimezone(userId);
+
     const [task] = await db.insert(tasks).values({
       ...validated,
       userId,
       description: validated.description || null,
-      dueDate: validated.dueDate ? new Date(validated.dueDate) : null,
+      dueDate: validated.dueDate ? datetimeLocalToUtc(validated.dueDate, timezone) : null,
       categoryId: validated.categoryId || null,
     }).returning();
-    
+
     revalidateTag(`user-${userId}-tasks`, { expire: 0 });
     revalidateTag(`user-${userId}-dashboard`, { expire: 0 });
     return { success: true, data: task };
@@ -43,22 +46,38 @@ export async function updateTaskAction(input: unknown): Promise<ActionResult> {
 
     const validated = updateTaskSchema.parse(input);
     const { id, ...data } = validated;
-    
+    const timezone = await getUserTimezone(userId);
+
+    const updates: Record<string, unknown> = { updatedAt: new Date() };
+
+    if (data.title !== undefined) {
+      updates.title = data.title;
+    }
+    if (data.description !== undefined) {
+      updates.description = data.description || null;
+    }
+    if (data.status !== undefined) {
+      updates.status = data.status;
+    }
+    if (data.priority !== undefined) {
+      updates.priority = data.priority;
+    }
+    if (data.dueDate !== undefined) {
+      updates.dueDate = data.dueDate ? datetimeLocalToUtc(data.dueDate, timezone) : null;
+    }
+    if (data.categoryId !== undefined) {
+      updates.categoryId = data.categoryId || null;
+    }
+
     const [task] = await db.update(tasks)
-      .set({
-        ...data,
-        description: data.description === undefined ? undefined : data.description || null,
-        dueDate: data.dueDate ? new Date(data.dueDate) : null,
-        categoryId: data.categoryId || null,
-        updatedAt: new Date(),
-      })
+      .set(updates)
       .where(and(eq(tasks.id, id), eq(tasks.userId, userId)))
       .returning();
-    
+
     if (!task) {
       return { success: false, error: "Task not found" };
     }
-    
+
     revalidateTag(`user-${userId}-tasks`, { expire: 0 });
     revalidateTag(`user-${userId}-dashboard`, { expire: 0 });
     return { success: true, data: task };

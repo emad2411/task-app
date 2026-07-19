@@ -143,6 +143,22 @@ describe("createTaskSchema", () => {
     const result = createTaskSchema.parse({ title: "Task" });
     expect(result.priority).toBe("medium");
   });
+
+  it("should accept null dueDate", () => {
+    const result = createTaskSchema.safeParse({ title: "Task", dueDate: null });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.dueDate).toBeNull();
+    }
+  });
+
+  it("should accept null categoryId", () => {
+    const result = createTaskSchema.safeParse({ title: "Task", categoryId: null });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.categoryId).toBeNull();
+    }
+  });
 });
 
 describe("updateTaskSchema", () => {
@@ -194,6 +210,57 @@ describe("updateTaskSchema", () => {
       title: "a".repeat(201),
     });
     expect(result.success).toBe(false);
+  });
+
+  it("should accept null dueDate for clearing", () => {
+    const result = updateTaskSchema.safeParse({
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      title: "Updated task",
+      dueDate: null,
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.dueDate).toBeNull();
+    }
+  });
+
+  it("should accept null categoryId for clearing", () => {
+    const result = updateTaskSchema.safeParse({
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      title: "Updated task",
+      categoryId: null,
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.categoryId).toBeNull();
+    }
+  });
+
+  it("should NOT apply createSchema defaults for status and priority when omitted", () => {
+    const result = updateTaskSchema.safeParse({
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      title: "Updated task",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.status).toBeUndefined();
+      expect(result.data.priority).toBeUndefined();
+      expect(result.data.dueDate).toBeUndefined();
+      expect(result.data.categoryId).toBeUndefined();
+      expect(result.data.description).toBeUndefined();
+    }
+  });
+
+  it("should allow title to be omitted for partial update", () => {
+    const result = updateTaskSchema.safeParse({
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      priority: "high",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.title).toBeUndefined();
+      expect(result.data.priority).toBe("high");
+    }
   });
 });
 

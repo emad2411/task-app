@@ -152,3 +152,40 @@ export function getTodayStartForQuery(timezone: string = "UTC"): Date {
 export function getTodayEndForQuery(timezone: string = "UTC"): Date {
   return getEndOfTodayInTimezone(timezone);
 }
+
+/**
+ * Convert a `datetime-local` string (YYYY-MM-DDTHH:mm) interpreted as wall time
+ * in the user's timezone into a UTC Date. Returns null for empty/null/undefined.
+ *
+ * Uses `new Date(year, month - 1, day, hours, minutes)` so the wall-time fields
+ * are runtime-independent, then `fromZonedTime` converts to the true UTC instant.
+ */
+export function datetimeLocalToUtc(
+  datetimeLocal: string | null | undefined,
+  timezone: string = "UTC"
+): Date | null {
+  if (!datetimeLocal) return null;
+  const [datePart, timePart] = datetimeLocal.split("T");
+  const [year, month, day] = datePart.split("-").map(Number);
+  const [hours, minutes] = (timePart ?? "00:00").split(":").map(Number);
+  if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) {
+    return null;
+  }
+  const wallTime = new Date(year, month - 1, day, hours ?? 0, minutes ?? 0, 0, 0);
+  return fromZonedTime(wallTime, timezone);
+}
+
+/**
+ * Format a UTC Date as a `datetime-local` string (YYYY-MM-DDTHH:mm) in the
+ * user's timezone. Returns "" for null/undefined.
+ *
+ * Inverse of `datetimeLocalToUtc`.
+ */
+export function toDatetimeLocalString(
+  date: Date | null | undefined,
+  timezone: string = "UTC"
+): string {
+  if (!date) return "";
+  const zoned = toZonedTime(date, timezone);
+  return format(zoned, "yyyy-MM-dd'T'HH:mm");
+}

@@ -29,6 +29,7 @@ import {
 import { TaskStatus, TaskPriority } from "@/lib/db/schema";
 import type { Category } from "@/lib/db/schema";
 import { z } from "zod";
+import { toDatetimeLocalString } from "@/lib/utils/date";
 
 interface TaskFormProps {
   task?: {
@@ -41,6 +42,7 @@ interface TaskFormProps {
     categoryId: string | null;
   };
   categories: Category[];
+  timezone?: string;
   onSubmit: (data: CreateTaskInput | UpdateTaskInput) => Promise<{ success: boolean; error?: string }>;
   onSuccess?: () => void;
   submitLabel?: string;
@@ -73,6 +75,7 @@ type BaseFormData = z.infer<typeof baseSchema>;
 export function TaskForm({
   task,
   categories,
+  timezone = "UTC",
   onSubmit,
   onSuccess,
   submitLabel = task ? "Save Changes" : "Create Task",
@@ -86,7 +89,7 @@ export function TaskForm({
       description: task?.description ?? "",
       status: task?.status ?? "todo",
       priority: task?.priority ?? "medium",
-      dueDate: task?.dueDate ? task.dueDate.toISOString().slice(0, 16) : "",
+      dueDate: task?.dueDate ? toDatetimeLocalString(task.dueDate, timezone) : "",
       categoryId: task?.categoryId ?? "",
     },
   });

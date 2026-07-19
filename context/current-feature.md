@@ -1,18 +1,28 @@
-# Current Feature
+# Current Feature: P6-F3: Task Date and Partial Update Correctness
 
 ## Status
 
-Not Started
+In Progress
 
 ## Feature
 
-
+P6-F3: Task Date and Partial Update Correctness
 
 ## Goals
 
-
+- Establish one wall-time conversion path and one shared render helper for `datetime-local` due dates.
+- Migrate persisted timestamps to `timestamptz` with a reviewed Drizzle migration.
+- Convert `updateTaskAction` to a true partial update that preserves omitted fields and clears on explicit `null`/`""`.
+- Add timezone, partial-update, and null-clearing regression coverage.
+- Pass tests, lint, build, and browser verification for non-UTC due-date round-trips.
 
 ## Notes
+
+- Source: `code-review-2026-07-17.md`, blockers #3, #4, and #6.
+- Plan: `context/features/phase-6/03-task-date-partial-update-correctness/FEATURE.md`.
+- Branch: `fix/P6-F3-task-date-partial-update`.
+- Migration `0004_nebulous_firelord.sql`: 21 `SET DATA TYPE timestamp with time zone` conversions (every `timestamp` column) + 14 idempotent `SET DEFAULT now()` statements on `created_at`/`updated_at` (defaults already exist from `0000_crazy_micromacro.sql`, so they are no-ops). No drops, no `USING` clause, no index/FK changes.
+- Migration semantics: the app has only ever run on UTC runtimes, so every existing naive `timestamp` value is already a UTC instant. Postgres casts `timestamp without time zone` → `timestamp with time zone` by reading the value as the session TZ; Neon's session TZ is UTC, so `2025-12-31 16:00:00` becomes `2025-12-31T16:00:00Z` — the same instant. No backfill needed. Applied via `drizzle-kit migrate` (never `db:push`).
 
 
 

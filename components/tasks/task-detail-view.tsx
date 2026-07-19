@@ -24,7 +24,7 @@ import {
 } from "@/lib/actions/task";
 import { TaskStatus, TaskPriority } from "@/lib/db/schema";
 import type { Category } from "@/lib/db/schema";
-import { isDueToday, isOverdue, formatDate } from "@/lib/utils/date";
+import { isDueToday, isOverdue, formatDate, toDatetimeLocalString } from "@/lib/utils/date";
 import {
   InlineTitleEdit,
   InlineDescriptionEdit,
@@ -79,7 +79,7 @@ export function TaskDetailView({
         data.dueDate !== undefined
           ? (data.dueDate as string | null) ?? ""
           : task.dueDate
-            ? task.dueDate.toISOString().slice(0, 16)
+            ? toDatetimeLocalString(task.dueDate, timezone)
             : "";
 
       const result = await updateTaskAction({
@@ -105,7 +105,7 @@ export function TaskDetailView({
       toast.error(result.error || "Failed to update");
       return false;
     },
-    [task]
+    [task, timezone]
   );
 
   function handleToggle() {
@@ -147,6 +147,7 @@ export function TaskDetailView({
               categoryId: task.categoryId,
             }}
             categories={categories}
+            timezone={timezone}
           >
             <Button variant="outline" size="sm" className="h-8">
               <Pencil className="mr-1.5 h-3.5 w-3.5" />
