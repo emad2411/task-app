@@ -1,18 +1,22 @@
-# Current Feature
+# Current Feature: Fix Lint Issues
 
 ## Status
 
-Not Started
+Complete
 
 ## Feature
 
-
+Fix the 2 pre-existing ESLint errors that have been accepted as baseline since P6-F3.
 
 ## Goals
 
-
+- Delete unused `components/ui/carousel.tsx` (zero consumers)
+- Fix `react-hooks/set-state-in-effect` in `hooks/use-mobile.ts:14` using `useSyncExternalStore`
+- Build and lint pass with zero errors
 
 ## Notes
+
+`Carousel` is unused in the app. `use-mobile` has one consumer (`components/ui/sidebar.tsx`); must preserve `useIsMobile()` return shape.
 
 
 
