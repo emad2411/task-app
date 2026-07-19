@@ -1,28 +1,18 @@
-# Current Feature: P6-F3: Task Date and Partial Update Correctness
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Feature
 
-P6-F3: Task Date and Partial Update Correctness
+
 
 ## Goals
 
-- Establish one wall-time conversion path and one shared render helper for `datetime-local` due dates.
-- Migrate persisted timestamps to `timestamptz` with a reviewed Drizzle migration.
-- Convert `updateTaskAction` to a true partial update that preserves omitted fields and clears on explicit `null`/`""`.
-- Add timezone, partial-update, and null-clearing regression coverage.
-- Pass tests, lint, build, and browser verification for non-UTC due-date round-trips.
+
 
 ## Notes
-
-- Source: `code-review-2026-07-17.md`, blockers #3, #4, and #6.
-- Plan: `context/features/phase-6/03-task-date-partial-update-correctness/FEATURE.md`.
-- Branch: `fix/P6-F3-task-date-partial-update`.
-- Migration `0004_nebulous_firelord.sql`: 21 `SET DATA TYPE timestamp with time zone` conversions (every `timestamp` column) + 14 idempotent `SET DEFAULT now()` statements on `created_at`/`updated_at` (defaults already exist from `0000_crazy_micromacro.sql`, so they are no-ops). No drops, no `USING` clause, no index/FK changes.
-- Migration semantics: the app has only ever run on UTC runtimes, so every existing naive `timestamp` value is already a UTC instant. Postgres casts `timestamp without time zone` → `timestamp with time zone` by reading the value as the session TZ; Neon's session TZ is UTC, so `2025-12-31 16:00:00` becomes `2025-12-31T16:00:00Z` — the same instant. No backfill needed. Applied via `drizzle-kit migrate` (never `db:push`).
 
 
 
@@ -67,3 +57,4 @@ P6-F3: Task Date and Partial Update Correctness
 - **Landing Page Real Images & Auth-Aware CTAs** (2026-05-17) - Removed redirect blocking logged-in users from landing page, added session-aware CTAs showing "Go to Dashboard" for authenticated users, reduced hero spacing and font size, replaced all placeholder visuals with real app screenshots (dashboard, tasks list, categories), wrapped all images in macOS browser frame with traffic lights and address bar, generated demo data with 21+ tasks for rich dashboard visuals including weekly velocity bars and completion trends.
 - **P6-F1: Dashboard Active Status Correctness** (2026-07-18) - Fixed dashboard queries to consistently include `todo` and `in_progress` tasks via `ACTIVE_TASK_STATUSES` helper. Added focused regression tests. Restored `drizzle-kit` to `^0.31.10` for build compatibility. Restored and date-relative `scripts/seed.ts`. Build passes, 261 tests pass.
 - **P6-F2: Clearable Task Descriptions** (2026-07-19) - Fixed code-review blocker #2 so task descriptions can be cleared. Added `.nullable()` to `createTaskSchema.description` (inherited by `updateTaskSchema`), and normalized `""`/`null` to `NULL` in `createTaskAction`/`updateTaskAction` at the persistence boundary (update preserves `undefined` so Drizzle skips the column). No client, schema-migration, or data-migration changes. Added 11 regression tests (4 validation, 7 action) covering null/empty/omitted/non-empty for both actions. Browser-verified inline clear, restore, and the latent NULL-forwarding path on a description-less task. Full suite 272 tests pass; build clean; lint has 2 pre-existing shadcn/ui errors accepted as baseline.
+- **P6-F3: Task Date and Partial Update Correctness** (2026-07-19) - Fixed code-review blockers #3, #4, #6 so task due dates store as timezone-correct UTC and updates are truly partial. Added wall-time conversion utilities (`datetimeLocalToUtc`, `toDatetimeLocalString`) in `lib/utils/date.ts` using per-user timezone via `date-fns-tz` (`fromZonedTime`/`toZonedTime`). Split task validation into a base `taskFieldSchema` (no defaults), `createTaskSchema` (adds create-time defaults), and `updateTaskSchema = taskFieldSchema.partial().extend({ id: z.uuid() })` — fixing Zod v4 `.default()`-inside-`.optional()` semantics. Converted `updateTaskAction` to a true partial update that writes only present keys, clears on explicit `null`/`""`, and preserves `undefined`. Migrated all 21 `timestamp` columns to `timestamptz` via reviewed Drizzle migration `0004` (defaults are idempotent no-ops; no backfill needed since the app ran only on UTC runtimes). Unified due-date rendering across `task-form`, `inline-edit`, `edit-task-dialog`, and `task-detail-view` via the shared helper. Added 48 regression tests (12 date, 15 validation, 21 action); full suite 299 tests pass; build clean; lint has 2 pre-existing shadcn/ui errors accepted as baseline. Browser-verified per-user timezone: the same stored instant renders `2026-09-10T14:30` in Tokyo and `2026-09-10T01:30` in New York.
