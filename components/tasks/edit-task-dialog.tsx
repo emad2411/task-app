@@ -28,10 +28,11 @@ interface EditTaskDialogProps {
     categoryId: string | null;
   };
   categories: Category[];
+  timezone?: string;
   children?: React.ReactNode;
 }
 
-export function EditTaskDialog({ task, categories, children }: EditTaskDialogProps) {
+export function EditTaskDialog({ task, categories, timezone, children }: EditTaskDialogProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -54,6 +55,7 @@ export function EditTaskDialog({ task, categories, children }: EditTaskDialogPro
         <TaskForm
           task={task}
           categories={categories}
+          timezone={timezone}
           onSubmit={updateTaskAction}
           onSuccess={() => setOpen(false)}
           submitLabel="Save Changes"

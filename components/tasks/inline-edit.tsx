@@ -21,7 +21,7 @@ import {
 import { z } from "zod";
 import { TaskStatus, TaskPriority } from "@/lib/db/schema";
 import type { Category } from "@/lib/db/schema";
-import { formatDate } from "@/lib/utils/date";
+import { formatDate, toDatetimeLocalString } from "@/lib/utils/date";
 
 const titleSchema = z.string().min(1, "Title is required").max(200);
 const descriptionSchema = z.string().max(2000).optional();
@@ -546,13 +546,7 @@ export function InlineDueDateEdit({
     });
   }
 
-  const dateValue = task.dueDate
-    ? new Date(
-        task.dueDate.getTime() - task.dueDate.getTimezoneOffset() * 60000
-      )
-        .toISOString()
-        .slice(0, 16)
-    : "";
+  const dateValue = toDatetimeLocalString(task.dueDate, timezone);
 
   if (isEditing) {
     return (

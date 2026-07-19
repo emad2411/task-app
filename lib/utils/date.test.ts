@@ -10,6 +10,8 @@ import {
   getStartOfTodayInTimezone,
   getEndOfTodayInTimezone,
   getUpcomingThreshold,
+  datetimeLocalToUtc,
+  toDatetimeLocalString,
 } from "./date";
 
 afterAll(() => {
@@ -244,6 +246,81 @@ describe("date utilities", () => {
       );
       expect(diffDays).toBeGreaterThanOrEqual(2);
       expect(diffDays).toBeLessThanOrEqual(4);
+    });
+  });
+
+  describe("datetimeLocalToUtc", () => {
+    it("returns null for null", () => {
+      expect(datetimeLocalToUtc(null, "UTC")).toBeNull();
+    });
+
+    it("returns null for undefined", () => {
+      expect(datetimeLocalToUtc(undefined, "UTC")).toBeNull();
+    });
+
+    it("returns null for empty string", () => {
+      expect(datetimeLocalToUtc("", "UTC")).toBeNull();
+    });
+
+    it("interprets the string as wall time in the given timezone (UTC)", () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2026-07-19T12:00:00Z"));
+      const utc = datetimeLocalToUtc("2025-12-31T16:00", "UTC");
+      expect(utc).toBeInstanceOf(Date);
+      expect(utc?.toISOString()).toBe("2025-12-31T16:00:00.000Z");
+      vi.useRealTimers();
+    });
+
+    it("interprets the string as wall time in America/New_York (EST, UTC-5)", () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2026-07-19T12:00:00Z"));
+      // Winter: NY is UTC-5, so 16:00 NY = 21:00 UTC
+      const utc = datetimeLocalToUtc("2025-12-31T16:00", "America/New_York");
+      expect(utc?.toISOString()).toBe("2025-12-31T21:00:00.000Z");
+      vi.useRealTimers();
+    });
+
+    it("interprets the string as wall time in Asia/Tokyo (UTC+9)", () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2026-07-19T12:00:00Z"));
+      // 16:00 JST = 07:00 UTC
+      const utc = datetimeLocalToUtc("2025-12-31T16:00", "Asia/Tokyo");
+      expect(utc?.toISOString()).toBe("2025-12-31T07:00:00.000Z");
+      vi.useRealTimers();
+    });
+  });
+
+  describe("toDatetimeLocalString", () => {
+    it("returns empty string for null", () => {
+      expect(toDatetimeLocalString(null, "UTC")).toBe("");
+    });
+
+    it("returns empty string for undefined", () => {
+      expect(toDatetimeLocalString(undefined, "UTC")).toBe("");
+    });
+
+    it("formats a UTC date as UTC wall time", () => {
+      expect(toDatetimeLocalString(new Date("2025-12-31T16:00:00Z"), "UTC")).toBe("2025-12-31T16:00");
+    });
+
+    it("formats a UTC date as America/New_York wall time (EST, UTC-5)", () => {
+      // 16:00 UTC = 11:00 NY in winter
+      expect(toDatetimeLocalString(new Date("2025-12-31T16:00:00Z"), "America/New_York")).toBe("2025-12-31T11:00");
+    });
+
+    it("formats a UTC date as Asia/Tokyo wall time (UTC+9)", () => {
+      // 16:00 UTC = 01:00 next-day JST
+      expect(toDatetimeLocalString(new Date("2025-12-31T16:00:00Z"), "Asia/Tokyo")).toBe("2026-01-01T01:00");
+    });
+
+    it("round-trips with datetimeLocalToUtc in America/New_York", () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2026-07-19T12:00:00Z"));
+      const original = new Date("2025-12-31T21:00:00Z"); // 16:00 NY
+      const rendered = toDatetimeLocalString(original, "America/New_York");
+      const roundTripped = datetimeLocalToUtc(rendered, "America/New_York");
+      expect(roundTripped?.toISOString()).toBe(original.toISOString());
+      vi.useRealTimers();
     });
   });
 });

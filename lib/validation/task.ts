@@ -7,16 +7,21 @@ export const sortOrderValues = ["asc", "desc"] as const;
 export const groupByValues = ["status", "category", "dueDate"] as const;
 export const dueDateFilterValues = ["today", "upcoming", "overdue", "none"] as const;
 
-export const createTaskSchema = z.object({
+const taskFieldSchema = z.object({
   title: z.string().min(1, "Title is required").max(200, "Title must be less than 200 characters"),
   description: z.string().max(2000, "Description must be less than 2000 characters").nullable().optional(),
-  status: z.enum(taskStatusValues).default("todo"),
-  priority: z.enum(taskPriorityValues).default("medium"),
-  dueDate: z.string().optional().or(z.literal("")),
-  categoryId: z.string().optional().or(z.literal("")),
+  status: z.enum(taskStatusValues),
+  priority: z.enum(taskPriorityValues),
+  dueDate: z.string().nullable().optional(),
+  categoryId: z.string().nullable().optional(),
 });
 
-export const updateTaskSchema = createTaskSchema.extend({
+export const createTaskSchema = taskFieldSchema.extend({
+  status: taskFieldSchema.shape.status.default("todo"),
+  priority: taskFieldSchema.shape.priority.default("medium"),
+});
+
+export const updateTaskSchema = taskFieldSchema.partial().extend({
   id: z.uuid(),
 });
 
