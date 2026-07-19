@@ -71,6 +71,27 @@ describe("createTaskSchema", () => {
     expect(result.success).toBe(true);
   });
 
+  it("should accept null description", () => {
+    const result = createTaskSchema.safeParse({ title: "Task", description: null });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.description).toBeNull();
+    }
+  });
+
+  it("should accept empty string description", () => {
+    const result = createTaskSchema.safeParse({ title: "Task", description: "" });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.description).toBe("");
+    }
+  });
+
+  it("should reject non-string description", () => {
+    const result = createTaskSchema.safeParse({ title: "Task", description: 123 });
+    expect(result.success).toBe(false);
+  });
+
   it("should reject invalid status", () => {
     const result = createTaskSchema.safeParse({
       title: "Task",
@@ -132,6 +153,18 @@ describe("updateTaskSchema", () => {
     });
     expect(result.id).toBe("550e8400-e29b-41d4-a716-446655440000");
     expect(result.title).toBe("Updated task");
+  });
+
+  it("should accept null description for clearing", () => {
+    const result = updateTaskSchema.safeParse({
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      title: "Updated task",
+      description: null,
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.description).toBeNull();
+    }
   });
 
   it("should reject missing id", () => {

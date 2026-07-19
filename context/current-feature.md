@@ -1,20 +1,30 @@
-# Current Feature
+# Current Feature: P6-F2 Clearable Task Descriptions
 
 ## Status
 
-Not Started
+Complete
 
 ## Feature
 
-
+P6-F2: Clearable Task Descriptions (review blocker #2 from `code-review-2026-07-17.md`)
 
 ## Goals
 
-
+- [x] Accept `null` task descriptions in the shared validation schema.
+- [x] Normalize empty string and `null` to `null` on create and update.
+- [x] Add validation and action regression coverage for clearing.
+- [x] Pass tests, lint, build, and clear-then-restore browser verification.
 
 ## Notes
 
-
+- Source: `code-review-2026-07-17.md`, blocker #2.
+- Plan: `context/features/phase-6/02-clearable-task-descriptions/FEATURE.md`.
+- Branch: `fix/P6-F2-clearable-task-descriptions`.
+- Single-line schema change in `lib/validation/task.ts:12` (`.nullable()` on `description`).
+- Action boundary normalization in `lib/actions/task.ts` (create + update), preserving `undefined` as "unchanged" for update so Drizzle skips the column.
+- No client, schema-migration, or data-migration changes required.
+- 11 new tests: 4 in `lib/validation/__tests__/task.test.ts`, 7 in `lib/actions/__tests__/task.test.ts`.
+- **Baseline (Task 1, 2026-07-19):** 261/261 tests pass, `npm run build` clean (19/19 pages). `npm run lint -- --max-warnings=0` fails with 2 pre-existing errors in untouched shadcn/ui-generated files (`components/ui/carousel.tsx:98` and `hooks/use-mobile.ts:14`, both `react-hooks/set-state-in-effect`). User chose to proceed and treat the errors as a known baseline exception. P6-F2 must not introduce any NEW lint error or warning; the two pre-existing errors are accepted.
 
 ## History
 
@@ -56,3 +66,4 @@ Not Started
 - **Settings Page Brand Alignment Redesign** (2026-05-17) - Aligned `/settings` page with TaskFlow brand personality. Updated page shell to match dashboard layout (`space-y-10`, `font-semibold` title). Refactored `settings-tabs.tsx` with icons (User, Lock, Palette, SlidersHorizontal) and brand green active states (`bg-[#18E299]/10`, `text-[#18E299]`). Flattened all four form cards (`profile-form.tsx`, `security-form.tsx`, `appearance-form.tsx`, `preferences-form.tsx`) into clean panel sections with `rounded-lg border bg-card`. Added brand-tinted icons to all panel headers. Theme tiles now use brand green for selection (`border-[#18E299]`, `ring-[#18E299]/20`). All submit buttons use shadcn Button with brand green styling (`bg-[#18E299]`, `text-[#0d0d0d]`, `hover:bg-[#0fa76e]`). Build passes with zero errors, 259 tests pass.
 - **Landing Page Real Images & Auth-Aware CTAs** (2026-05-17) - Removed redirect blocking logged-in users from landing page, added session-aware CTAs showing "Go to Dashboard" for authenticated users, reduced hero spacing and font size, replaced all placeholder visuals with real app screenshots (dashboard, tasks list, categories), wrapped all images in macOS browser frame with traffic lights and address bar, generated demo data with 21+ tasks for rich dashboard visuals including weekly velocity bars and completion trends.
 - **P6-F1: Dashboard Active Status Correctness** (2026-07-18) - Fixed dashboard queries to consistently include `todo` and `in_progress` tasks via `ACTIVE_TASK_STATUSES` helper. Added focused regression tests. Restored `drizzle-kit` to `^0.31.10` for build compatibility. Restored and date-relative `scripts/seed.ts`. Build passes, 261 tests pass.
+- **P6-F2: Clearable Task Descriptions** (2026-07-19) - Fixed code-review blocker #2 so task descriptions can be cleared. Added `.nullable()` to `createTaskSchema.description` (inherited by `updateTaskSchema`), and normalized `""`/`null` to `NULL` in `createTaskAction`/`updateTaskAction` at the persistence boundary (update preserves `undefined` so Drizzle skips the column). No client, schema-migration, or data-migration changes. Added 11 regression tests (4 validation, 7 action) covering null/empty/omitted/non-empty for both actions. Browser-verified inline clear, restore, and the latent NULL-forwarding path on a description-less task. Full suite 272 tests pass; build clean; lint has 2 pre-existing shadcn/ui errors accepted as baseline.

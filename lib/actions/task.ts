@@ -21,6 +21,7 @@ export async function createTaskAction(input: unknown): Promise<ActionResult> {
     const [task] = await db.insert(tasks).values({
       ...validated,
       userId,
+      description: validated.description || null,
       dueDate: validated.dueDate ? new Date(validated.dueDate) : null,
       categoryId: validated.categoryId || null,
     }).returning();
@@ -46,6 +47,7 @@ export async function updateTaskAction(input: unknown): Promise<ActionResult> {
     const [task] = await db.update(tasks)
       .set({
         ...data,
+        description: data.description === undefined ? undefined : data.description || null,
         dueDate: data.dueDate ? new Date(data.dueDate) : null,
         categoryId: data.categoryId || null,
         updatedAt: new Date(),
