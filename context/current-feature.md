@@ -1,30 +1,20 @@
-# Current Feature: P6-F2 Clearable Task Descriptions
+# Current Feature
 
 ## Status
 
-Complete
+Not Started
 
 ## Feature
 
-P6-F2: Clearable Task Descriptions (review blocker #2 from `code-review-2026-07-17.md`)
+
 
 ## Goals
 
-- [x] Accept `null` task descriptions in the shared validation schema.
-- [x] Normalize empty string and `null` to `null` on create and update.
-- [x] Add validation and action regression coverage for clearing.
-- [x] Pass tests, lint, build, and clear-then-restore browser verification.
+
 
 ## Notes
 
-- Source: `code-review-2026-07-17.md`, blocker #2.
-- Plan: `context/features/phase-6/02-clearable-task-descriptions/FEATURE.md`.
-- Branch: `fix/P6-F2-clearable-task-descriptions`.
-- Single-line schema change in `lib/validation/task.ts:12` (`.nullable()` on `description`).
-- Action boundary normalization in `lib/actions/task.ts` (create + update), preserving `undefined` as "unchanged" for update so Drizzle skips the column.
-- No client, schema-migration, or data-migration changes required.
-- 11 new tests: 4 in `lib/validation/__tests__/task.test.ts`, 7 in `lib/actions/__tests__/task.test.ts`.
-- **Baseline (Task 1, 2026-07-19):** 261/261 tests pass, `npm run build` clean (19/19 pages). `npm run lint -- --max-warnings=0` fails with 2 pre-existing errors in untouched shadcn/ui-generated files (`components/ui/carousel.tsx:98` and `hooks/use-mobile.ts:14`, both `react-hooks/set-state-in-effect`). User chose to proceed and treat the errors as a known baseline exception. P6-F2 must not introduce any NEW lint error or warning; the two pre-existing errors are accepted.
+
 
 ## History
 
