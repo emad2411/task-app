@@ -110,6 +110,36 @@ describe("createTaskAction", () => {
     expect(values.categoryId).toBeNull();
   });
 
+  it("should store null description when null is provided", async () => {
+    mockGetCurrentUserId.mockResolvedValue("user-1");
+    mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+    await createTaskAction({ title: "Task", description: null });
+
+    const values = mockValues.mock.calls[0][0];
+    expect(values.description).toBeNull();
+  });
+
+  it("should normalize empty string description to null", async () => {
+    mockGetCurrentUserId.mockResolvedValue("user-1");
+    mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+    await createTaskAction({ title: "Task", description: "" });
+
+    const values = mockValues.mock.calls[0][0];
+    expect(values.description).toBeNull();
+  });
+
+  it("should keep a non-empty description", async () => {
+    mockGetCurrentUserId.mockResolvedValue("user-1");
+    mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+    await createTaskAction({ title: "Task", description: "Notes" });
+
+    const values = mockValues.mock.calls[0][0];
+    expect(values.description).toBe("Notes");
+  });
+
   it("should return validation error for invalid input", async () => {
     mockGetCurrentUserId.mockResolvedValue("user-1");
 
@@ -222,6 +252,62 @@ describe("updateTaskAction", () => {
 
     const setCall = mockSet.mock.calls[0][0];
     expect(setCall.updatedAt).toBeInstanceOf(Date);
+  });
+
+  it("should clear an existing description when null is provided", async () => {
+    mockGetCurrentUserId.mockResolvedValue("user-1");
+    mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+    const result = await updateTaskAction({
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      title: "Updated",
+      description: null,
+    });
+
+    expect(result.success).toBe(true);
+    const setCall = mockSet.mock.calls[0][0];
+    expect(setCall.description).toBeNull();
+  });
+
+  it("should normalize empty string description to null", async () => {
+    mockGetCurrentUserId.mockResolvedValue("user-1");
+    mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+    await updateTaskAction({
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      title: "Updated",
+      description: "",
+    });
+
+    const setCall = mockSet.mock.calls[0][0];
+    expect(setCall.description).toBeNull();
+  });
+
+  it("should leave description unchanged when it is omitted", async () => {
+    mockGetCurrentUserId.mockResolvedValue("user-1");
+    mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+    await updateTaskAction({
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      title: "Updated",
+    });
+
+    const setCall = mockSet.mock.calls[0][0];
+    expect(setCall.description).toBeUndefined();
+  });
+
+  it("should keep a non-empty description on update", async () => {
+    mockGetCurrentUserId.mockResolvedValue("user-1");
+    mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+    await updateTaskAction({
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      title: "Updated",
+      description: "Notes",
+    });
+
+    const setCall = mockSet.mock.calls[0][0];
+    expect(setCall.description).toBe("Notes");
   });
 });
 

@@ -34,10 +34,12 @@
 
 ### P6-F2: Clearable Task Descriptions (Issue #2)
 
-- [ ] Make task descriptions nullable in the shared task validation schema.
-- [ ] Normalize both an empty string and `null` to `null` on the server.
-- [ ] Add action regression tests for clearing an existing description.
-- [ ] Verify inline description editing can clear and subsequently restore a description.
+- [x] Make task descriptions nullable in the shared task validation schema.
+- [x] Normalize both an empty string and `null` to `null` on the server.
+- [x] Add action regression tests for clearing an existing description.
+- [x] Verify inline description editing can clear and subsequently restore a description.
+
+**Plan:** `context/features/phase-6/02-clearable-task-descriptions/FEATURE.md`
 
 ### P6-F3: Task Date and Partial Update Correctness (Issues #3, #4, and #6)
 
