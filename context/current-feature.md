@@ -2,17 +2,25 @@
 
 ## Status
 
-Not Started
+Complete
 
 ## Feature
 
-
+P6-F4: Category Ownership Enforcement
 
 ## Goals
 
-
+- [x] Enforce that a supplied `categoryId` belongs to the authenticated user on task create and update.
+- [x] Return a sanitized `Invalid category` error for missing or foreign categories.
+- [x] Add cross-user rejection and positive-acceptance regression tests.
+- [x] Pass tests, lint, and build.
 
 ## Notes
+
+- Source: `code-review-2026-07-17.md`, blocker #5.
+- Plan: `context/features/phase-6/04-category-ownership-enforcement/FEATURE.md`.
+- Branch: `fix/P6-F4-category-ownership`.
+- Status: Not Started — awaiting user approval before any implementation.
 
 
 
@@ -59,3 +67,4 @@ Not Started
 - **P6-F2: Clearable Task Descriptions** (2026-07-19) - Fixed code-review blocker #2 so task descriptions can be cleared. Added `.nullable()` to `createTaskSchema.description` (inherited by `updateTaskSchema`), and normalized `""`/`null` to `NULL` in `createTaskAction`/`updateTaskAction` at the persistence boundary (update preserves `undefined` so Drizzle skips the column). No client, schema-migration, or data-migration changes. Added 11 regression tests (4 validation, 7 action) covering null/empty/omitted/non-empty for both actions. Browser-verified inline clear, restore, and the latent NULL-forwarding path on a description-less task. Full suite 272 tests pass; build clean; lint has 2 pre-existing shadcn/ui errors accepted as baseline.
 - **P6-F3: Task Date and Partial Update Correctness** (2026-07-19) - Fixed code-review blockers #3, #4, #6 so task due dates store as timezone-correct UTC and updates are truly partial. Added wall-time conversion utilities (`datetimeLocalToUtc`, `toDatetimeLocalString`) in `lib/utils/date.ts` using per-user timezone via `date-fns-tz` (`fromZonedTime`/`toZonedTime`). Split task validation into a base `taskFieldSchema` (no defaults), `createTaskSchema` (adds create-time defaults), and `updateTaskSchema = taskFieldSchema.partial().extend({ id: z.uuid() })` — fixing Zod v4 `.default()`-inside-`.optional()` semantics. Converted `updateTaskAction` to a true partial update that writes only present keys, clears on explicit `null`/`""`, and preserves `undefined`. Migrated all 21 `timestamp` columns to `timestamptz` via reviewed Drizzle migration `0004` (defaults are idempotent no-ops; no backfill needed since the app ran only on UTC runtimes). Unified due-date rendering across `task-form`, `inline-edit`, `edit-task-dialog`, and `task-detail-view` via the shared helper. Added 48 regression tests (12 date, 15 validation, 21 action); full suite 299 tests pass; build clean; lint has 2 pre-existing shadcn/ui errors accepted as baseline. Browser-verified per-user timezone: the same stored instant renders `2026-09-10T14:30` in Tokyo and `2026-09-10T01:30` in New York.
 - **Fix Lint Issues** (2026-07-20) - Deleted unused `components/ui/carousel.tsx` (zero consumers), refactored `hooks/use-mobile.ts` to use `useSyncExternalStore` eliminating the `react-hooks/set-state-in-effect` error. Lint now passes with zero errors. 299 tests pass, build clean.
+- **P6-F4: Category Ownership Enforcement** (2026-07-20) - Fixed code-review blocker #5 (IDOR: task create/update accepted a foreign `categoryId`). Imported the existing user-scoped `getCategoryById(userId, id)` from `lib/data/category.ts` and added an ownership gate in `createTaskAction` (before insert) and `updateTaskAction` (before update): when a `categoryId` is present and the lookup returns `null`, the action returns `{ success: false, error: "Invalid category" }` and performs no DB write; when omitted or set to `null`/`""` the check is skipped (clearing still works). Category self-operations (create/update/delete) were already safe — they pin `userId` in the query `where` clause. No schema migration, read-path, or UI changes. Added 6 regression tests (foreign-id rejection + own-id acceptance + omit-skip for both actions). Full suite 305 tests pass; build clean; lint zero errors. Branch `fix/P6-F4-category-ownership`. Note: browser happy-path confirm was not run because `requireEmailVerification: true` blocks unverified sign-in and no test credentials were available — gate behavior is covered by the unit tests.

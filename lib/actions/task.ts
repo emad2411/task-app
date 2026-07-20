@@ -6,6 +6,7 @@ import { tasks } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { createTaskSchema, updateTaskSchema } from "@/lib/validation/task";
 import { getCurrentUserId } from "@/lib/auth/session";
+import { getCategoryById } from "@/lib/data/category";
 import { handleActionError } from "@/lib/utils/action-error";
 import { type ActionResult } from "@/lib/actions/types";
 import { getUserTimezone } from "@/lib/data/preferences";
@@ -20,6 +21,13 @@ export async function createTaskAction(input: unknown): Promise<ActionResult> {
 
     const validated = createTaskSchema.parse(input);
     const timezone = await getUserTimezone(userId);
+
+    if (validated.categoryId) {
+      const owned = await getCategoryById(userId, validated.categoryId);
+      if (!owned) {
+        return { success: false, error: "Invalid category" };
+      }
+    }
 
     const [task] = await db.insert(tasks).values({
       ...validated,
@@ -47,6 +55,13 @@ export async function updateTaskAction(input: unknown): Promise<ActionResult> {
     const validated = updateTaskSchema.parse(input);
     const { id, ...data } = validated;
     const timezone = await getUserTimezone(userId);
+
+    if (data.categoryId) {
+      const owned = await getCategoryById(userId, data.categoryId);
+      if (!owned) {
+        return { success: false, error: "Invalid category" };
+      }
+    }
 
     const updates: Record<string, unknown> = { updatedAt: new Date() };
 

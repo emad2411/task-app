@@ -52,6 +52,11 @@ vi.mock("@/lib/data/preferences", () => ({
   getUserTimezone: (...args: unknown[]) => mockGetUserTimezone(...args),
 }));
 
+const mockGetCategoryById = vi.fn();
+vi.mock("@/lib/data/category", () => ({
+  getCategoryById: (...args: unknown[]) => mockGetCategoryById(...args),
+}));
+
 import {
   createTaskAction,
   updateTaskAction,
@@ -216,6 +221,47 @@ describe("createTaskAction", () => {
 
     const values = mockValues.mock.calls[0][0];
     expect(values.categoryId).toBeNull();
+  });
+
+  describe("category ownership", () => {
+    it("rejects a foreign categoryId with Invalid category and performs no insert", async () => {
+      mockGetCurrentUserId.mockResolvedValue("user-1");
+      mockGetCategoryById.mockResolvedValue(null); // foreign / non-existent
+      mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+      const result = await createTaskAction({
+        title: "Task",
+        categoryId: "other-users-category",
+      });
+
+      expect(result.success).toBe(false);
+      if (!result.success) expect(result.error).toBe("Invalid category");
+      expect(mockValues).not.toHaveBeenCalled();
+    });
+
+    it("accepts the user's own categoryId", async () => {
+      mockGetCurrentUserId.mockResolvedValue("user-1");
+      mockGetCategoryById.mockResolvedValue({ id: "cat-1", userId: "user-1" });
+      mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+      const result = await createTaskAction({
+        title: "Task",
+        categoryId: "cat-1",
+      });
+
+      expect(result.success).toBe(true);
+      expect(mockValues.mock.calls[0][0].categoryId).toBe("cat-1");
+    });
+
+    it("skips the ownership check when categoryId is omitted", async () => {
+      mockGetCurrentUserId.mockResolvedValue("user-1");
+      mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+      const result = await createTaskAction({ title: "Task" });
+
+      expect(result.success).toBe(true);
+      expect(mockGetCategoryById).not.toHaveBeenCalled();
+    });
   });
 });
 
@@ -443,6 +489,55 @@ describe("updateTaskAction", () => {
 
     const setCall = mockSet.mock.calls[0][0];
     expect(setCall.status).toBe("in_progress");
+  });
+
+  describe("category ownership", () => {
+    it("rejects a foreign categoryId with Invalid category and performs no update", async () => {
+      mockGetCurrentUserId.mockResolvedValue("user-1");
+      mockGetUserTimezone.mockResolvedValue("UTC");
+      mockGetCategoryById.mockResolvedValue(null); // foreign / non-existent
+      mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+      const result = await updateTaskAction({
+        id: "550e8400-e29b-41d4-a716-446655440000",
+        title: "Updated",
+        categoryId: "other-users-category",
+      });
+
+      expect(result.success).toBe(false);
+      if (!result.success) expect(result.error).toBe("Invalid category");
+      expect(mockSet).not.toHaveBeenCalled();
+    });
+
+    it("accepts the user's own categoryId", async () => {
+      mockGetCurrentUserId.mockResolvedValue("user-1");
+      mockGetUserTimezone.mockResolvedValue("UTC");
+      mockGetCategoryById.mockResolvedValue({ id: "cat-1", userId: "user-1" });
+      mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+      const result = await updateTaskAction({
+        id: "550e8400-e29b-41d4-a716-446655440000",
+        title: "Updated",
+        categoryId: "cat-1",
+      });
+
+      expect(result.success).toBe(true);
+      expect(mockSet.mock.calls[0][0].categoryId).toBe("cat-1");
+    });
+
+    it("skips the ownership check when categoryId is omitted", async () => {
+      mockGetCurrentUserId.mockResolvedValue("user-1");
+      mockGetUserTimezone.mockResolvedValue("UTC");
+      mockReturning.mockResolvedValue([{ id: "task-1" }]);
+
+      const result = await updateTaskAction({
+        id: "550e8400-e29b-41d4-a716-446655440000",
+        title: "Updated",
+      });
+
+      expect(result.success).toBe(true);
+      expect(mockGetCategoryById).not.toHaveBeenCalled();
+    });
   });
 });
 
