@@ -2,27 +2,19 @@
 
 ## Status
 
-Complete
+<!-- Planned | In Progress | Complete -->
 
 ## Feature
 
-P6-F4: Category Ownership Enforcement
+<!-- Feature name -->
 
 ## Goals
 
-- [x] Enforce that a supplied `categoryId` belongs to the authenticated user on task create and update.
-- [x] Return a sanitized `Invalid category` error for missing or foreign categories.
-- [x] Add cross-user rejection and positive-acceptance regression tests.
-- [x] Pass tests, lint, and build.
+<!-- Feature goals as bullet points -->
 
 ## Notes
 
-- Source: `code-review-2026-07-17.md`, blocker #5.
-- Plan: `context/features/phase-6/04-category-ownership-enforcement/FEATURE.md`.
-- Branch: `fix/P6-F4-category-ownership`.
-- Status: Not Started — awaiting user approval before any implementation.
-
-
+<!-- Additional notes or context -->
 
 ## History
 
