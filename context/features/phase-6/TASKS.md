@@ -22,13 +22,13 @@
 
 ### P6-F1: Dashboard Active Status Correctness (Issue #1)
 
-- [ ] Define the active task statuses once as `todo` and `in_progress`.
-- [ ] Include both active statuses in Due Today, Overdue, and Total Active metrics.
-- [ ] Include both active statuses in priority distribution.
-- [ ] Include both active statuses in upcoming tasks.
-- [ ] Include both active statuses in categorized and uncategorized category breakdown counts.
-- [ ] Add regression tests covering every dashboard active-status predicate.
-- [ ] Verify a user with only `in_progress` tasks does not see the dashboard empty state.
+- [x] Define the active task statuses once as `todo` and `in_progress`.
+- [x] Include both active statuses in Due Today, Overdue, and Total Active metrics.
+- [x] Include both active statuses in priority distribution.
+- [x] Include both active statuses in upcoming tasks.
+- [x] Include both active statuses in categorized and uncategorized category breakdown counts.
+- [x] Add regression tests covering every dashboard active-status predicate.
+- [x] Verify a user with only `in_progress` tasks does not see the dashboard empty state.
 
 **Plan:** `context/features/phase-6/01-dashboard-active-status/FEATURE.md`
 
@@ -43,22 +43,22 @@
 
 ### P6-F3: Task Date and Partial Update Correctness (Issues #3, #4, and #6)
 
-- [ ] Establish one wall-time conversion path for `datetime-local` values using the saved user timezone.
-- [ ] Establish one shared rendering helper for task due dates in both task editors.
-- [ ] Add timezone regression tests for create, update, and render behavior.
-- [ ] Migrate persisted timestamps from `timestamp` to `timestamptz` with a reviewed Drizzle migration.
-- [ ] Verify migration semantics against existing production timestamp data before applying it.
-- [ ] Change `updateTaskAction` to update only fields present in the request.
-- [ ] Preserve explicit `null` as the signal to clear `dueDate`, `categoryId`, and `description`.
-- [ ] Add regression tests proving omitted fields are preserved and explicit nulls clear values.
+- [x] Establish one wall-time conversion path for `datetime-local` values using the saved user timezone.
+- [x] Establish one shared rendering helper for task due dates in both task editors.
+- [x] Add timezone regression tests for create, update, and render behavior.
+- [x] Migrate persisted timestamps from `timestamp` to `timestamptz` with a reviewed Drizzle migration.
+- [x] Verify migration semantics against existing production timestamp data before applying it.
+- [x] Change `updateTaskAction` to update only fields present in the request.
+- [x] Preserve explicit `null` as the signal to clear `dueDate`, `categoryId`, and `description`.
+- [x] Add regression tests proving omitted fields are preserved and explicit nulls clear values.
 
 ### P6-F4: Category Ownership Enforcement (Issue #5)
 
-- [ ] Validate that a supplied `categoryId` belongs to the authenticated user before task creation.
-- [ ] Validate that a supplied `categoryId` belongs to the authenticated user before task updates.
-- [ ] Return a sanitized `Invalid category` result for missing or foreign categories.
-- [ ] Add cross-user create and update tests that prove foreign category IDs are rejected.
-- [ ] Verify reads cannot expose another user's category name or color through a task relation.
+- [x] Validate that a supplied `categoryId` belongs to the authenticated user before task creation.
+- [x] Validate that a supplied `categoryId` belongs to the authenticated user before task updates.
+- [x] Return a sanitized `Invalid category` result for missing or foreign categories.
+- [x] Add cross-user create and update tests that prove foreign category IDs are rejected.
+- [x] Verify reads cannot expose another user's category name or color through a task relation.
 
 ---
 
